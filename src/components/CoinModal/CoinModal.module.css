@@ -2,7 +2,10 @@
 
 .modalOverlay {
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(4px);
   display: flex;
@@ -80,7 +83,7 @@
 
 .actionBtn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .modalClose {
@@ -125,14 +128,16 @@
 
 .coinImageModal h3 {
   position: absolute;
-  top: 10px; left: 10px; margin: 0;
-  background: rgba(255,255,255,0.9);
+  top: 10px;
+  left: 10px;
+  margin: 0;
+  background: rgba(255, 255, 255, 0.9);
   padding: 4px 10px;
   border-radius: 20px;
   font-size: 0.8rem;
   font-weight: 600;
   z-index: 5;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* --- DETAILS GRID (3 Column Layout) --- */
@@ -144,15 +149,13 @@
 }
 
 .threeCol {
-  grid-template-columns: 1.2fr 1.2fr 0.8fr;
+  grid-template-columns: 0.8fr 1.6fr 0.8fr;
 }
 
 .detailGroup {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  
-  /* Added Card Styling */
   background: #f8fafc;
   border: 1px solid var(--border-light);
   padding: 1.25rem;
@@ -163,7 +166,7 @@
   font-size: 0.85rem;
   text-transform: uppercase;
   color: var(--text-light);
-  border-bottom: 2px solid #e2e8f0;
+  border-bottom: 2px solid var(--brand-gold);
   padding-bottom: 0.5rem;
   margin-bottom: 0.5rem;
   letter-spacing: 0.05em;
@@ -188,6 +191,39 @@
   font-weight: 500;
 }
 
+/* --- SKELETON LOADER --- */
+.skeleton {
+  display: inline-block;
+  height: 1.2em;
+  background-color: #e2e8f0;
+  border-radius: 4px;
+  animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Helper widths for skeletons */
+.w40 {
+  width: 40%;
+}
+.w60 {
+  width: 60%;
+}
+.w80 {
+  width: 80%;
+}
+.w100 {
+  width: 100%;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
 /* --- LINKS & TAGS --- */
 .modalLink {
   color: var(--primary);
@@ -197,7 +233,9 @@
   gap: 0.25rem;
 }
 
-.modalLink:hover { text-decoration: underline; }
+.modalLink:hover {
+  text-decoration: underline;
+}
 
 .priceTag {
   font-family: var(--font-cinzel), serif;
@@ -229,12 +267,38 @@
   font-size: 0.85rem;
 }
 
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
 
 @media (max-width: 768px) {
-  .coinImages { grid-template-columns: 1fr; }
-  .threeCol { grid-template-columns: 1fr; }
-  .coinImageModal { height: 300px; }
-  .headerTitleGroup { flex-direction: column; align-items: flex-start; gap: 0.25rem; }
+  .coinImages {
+    grid-template-columns: 1fr;
+  }
+  .threeCol {
+    grid-template-columns: 1fr;
+  }
+  .coinImageModal {
+    height: 300px;
+  }
+  .headerTitleGroup {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
 }
