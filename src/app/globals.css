@@ -1,0 +1,87 @@
+/* src/app/globals.css */
+
+/* * GLOBAL VARIABLES & RESET 
+ * Only universally applicable styles remain here.
+ */
+ :root {
+  /* Brand Colors */
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --secondary: #7c3aed;
+  --brand-gold: #d97706;
+
+  /* Backgrounds */
+  --light-bg: #f8fafc;
+  --card-bg: #ffffff;
+
+  /* Typography */
+  --text: #1f2937;
+  --text-light: #6b7280;
+
+  /* Borders & Shadows */
+  --border: #e5e7eb;
+  --border-light: #f1f5f9;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+
+  /* UI Dimensions */
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-md: 10px;
+
+  /* Ownership Theme */
+  --owned-green: #10b981;
+  --owned-green-light: #d1fae5;
+  --owned-green-dark: #065f46;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-montserrat), sans-serif;
+  background: var(--light-bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+
+input, button, select, textarea {
+  font-family: inherit;
+}
+
+/* --- GLOBAL UTILITIES --- */
+/* Used across multiple components for quick styling */
+.text-gold { color: var(--brand-gold) !important; }
+.relative { position: relative; }
+.object-cover { object-fit: cover; }
+.inline-icon { vertical-align: text-bottom; margin-right: 4px; }
+
+/* --- RESPONSIVE HELPERS --- */
+/* Shared logic for desktop/mobile label switching */
+.denom-label-desktop { display: inline; }
+.denom-label-mobile { display: none; }
+.mobile-hidden { display: inline; }
+
+@media (max-width: 768px) {
+  .denom-label-desktop { display: none; }
+  .denom-label-mobile { display: inline; }
+  .mobile-hidden { display: none; }
+}
+
+/* --- ANIMATIONS --- */
+/* Shared animations */
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+/* Utility class for spinners */
+.animate-spin {
+  animation: spin 1s linear infinite;
+}

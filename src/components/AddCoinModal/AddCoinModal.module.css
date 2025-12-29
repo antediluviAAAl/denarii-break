@@ -1,0 +1,191 @@
+/* src/components/AddCoinModal/AddCoinModal.module.css */
+
+/* Re-using modal base styles for consistency, 
+   but scoped to this module to avoid collisions */
+
+   .modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+  }
+  
+  .modalContent {
+    background: white;
+    border-radius: var(--radius);
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: var(--shadow-xl);
+  }
+  
+  .modalHeader {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .modalTitle {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  
+  .modalClose {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text-light);
+    padding: 4px;
+  }
+  
+  .modalBody {
+    padding: 1.5rem;
+    overflow-y: auto;
+  }
+  
+  /* --- SEARCH STEP --- */
+  .searchBox {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .searchBox:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  }
+  
+  .searchResults {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  
+  .searchResultItem {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .searchResultItem:hover {
+    background: #f8fafc;
+    border-color: var(--primary);
+  }
+  
+  .resultInfo {
+    flex: 1;
+  }
+  
+  .resultTitle {
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: block;
+  }
+  
+  .resultMeta {
+    font-size: 0.8rem;
+    color: var(--text-light);
+  }
+  
+  /* --- UPLOAD STEP --- */
+  .uploadStep {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .selectedCoinPreview {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    padding: 1rem;
+    border-radius: var(--radius-sm);
+  }
+  
+  .uploadField {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .uploadLabel {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text);
+  }
+  
+  /* Corrected Standard CSS for File Input */
+  .fileInput {
+    display: block;
+    width: 100%;
+    font-size: 0.875rem;
+    color: var(--text-light);
+  }
+  
+  .fileInput::file-selector-button {
+    margin-right: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    border: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    background-color: #eff6ff; /* matches bg-blue-50 */
+    color: #1d4ed8;            /* matches text-blue-700 */
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .fileInput::file-selector-button:hover {
+    background-color: #dbeafe; /* matches hover:bg-blue-100 */
+  }
+  
+  .submitBtn {
+    background: var(--brand-gold);
+    color: white;
+    border: none;
+    padding: 0.75rem;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  
+  .submitBtn:hover {
+    background: #b45309;
+  }
+  
+  .submitBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }

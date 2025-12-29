@@ -1,0 +1,167 @@
+/* src/components/CoinListItem/CoinListItem.module.css */
+
+.coinListItem {
+  display: flex;
+  align-items: center;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem;
+  gap: 1rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.coinListItem:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+/* Owned Status Styling */
+.owned {
+  background: linear-gradient(to right, #ffffff, #f0fdf4);
+  border-left: 4px solid var(--owned-green);
+}
+
+/* --- IMAGES --- */
+.listImagesContainer {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.listImgWrapper {
+  width: 70px;
+  height: 70px;
+  background: var(--border-light);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.listItemPlaceholder {
+  font-size: 0.6rem;
+  color: var(--text-light);
+  text-transform: uppercase;
+}
+
+/* --- CONTENT --- */
+.listItemContent {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.listItemHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.listItemTitle {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.listItemDenom {
+  font-size: 0.75rem;
+  background: var(--border-light);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--text-light);
+  white-space: nowrap;
+}
+
+/* --- META TAGS --- */
+.listItemMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--text-light);
+}
+
+.metaTag {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.7rem;
+}
+
+/* --- ACTIONS --- */
+.listItemActions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+  min-width: 80px;
+  padding-right: 0.5rem;
+}
+
+.listOwnedStatus {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--owned-green);
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.listPrice {
+  font-weight: 700;
+  color: var(--text);
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+}
+
+.listPrice svg {
+  color: var(--brand-gold);
+  width: 14px;
+  margin-right: 2px;
+}
+
+/* --- MOBILE RESPONSIVENESS --- */
+@media (max-width: 768px) {
+  .listImgWrapper {
+    width: 60px !important;
+    height: 60px !important;
+  }
+
+  .coinListItem {
+    /* Increased touch target and visual separation */
+    padding: 0.5rem 0.5rem !important;
+    gap: 0.75rem !important;
+    min-height: 80px;
+  }
+
+  .listItemTitle {
+    font-size: 0.9rem !important;
+  }
+
+  .listItemMeta {
+    gap: 0.5rem !important;
+    font-size: 0.65rem !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .listImgWrapper {
+    width: 50px;
+    height: 50px;
+  }
+}

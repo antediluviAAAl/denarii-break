@@ -1,0 +1,223 @@
+/* src/components/CoinModal/CoinModal.module.css */
+
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000; /* High z-index to sit on top of everything */
+    padding: 1rem;
+    animation: fadeIn 0.2s ease-out;
+  }
+  
+  .modalContent {
+    background: white;
+    border-radius: var(--radius);
+    width: 100%;
+    max-width: 900px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: var(--shadow-xl);
+    display: flex;
+    flex-direction: column;
+    animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  .modalHeader {
+    position: sticky;
+    top: 0;
+    background: white;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    z-index: 10;
+  }
+  
+  .headerTitleGroup {
+    padding-right: 2rem;
+  }
+  
+  .modalTitle {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.25rem;
+    line-height: 1.2;
+  }
+  
+  .modalSubtitle {
+    color: var(--text-light);
+    font-size: 0.9rem;
+  }
+  
+  .modalClose {
+    background: #f3f4f6;
+    border: none;
+    padding: 0.5rem;
+    border-radius: 50%;
+    cursor: pointer;
+    color: var(--text-light);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .modalClose:hover {
+    background: #e5e7eb;
+    color: var(--text);
+  }
+  
+  .modalBody {
+    padding: 1.5rem;
+  }
+  
+  /* --- IMAGES SECTION --- */
+  .coinImages {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .coinImageModal {
+    position: relative;
+    background: #f8fafc;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .imageLabel {
+    position: absolute;
+    bottom: 0.75rem;
+    left: 0.75rem;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text);
+    box-shadow: var(--shadow-sm);
+    z-index: 2;
+  }
+  
+  .modalImage {
+    object-fit: contain;
+    width: 100%;
+    height: 100%;
+  }
+  
+  /* --- DETAILS GRID --- */
+  .coinDetailsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-light);
+  }
+  
+  .detailGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .detailLabel {
+    font-size: 0.75rem;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+  }
+  
+  .detailValue {
+    font-size: 1rem;
+    color: var(--text);
+    font-weight: 500;
+    word-break: break-word;
+  }
+  
+  .modalLink {
+    color: var(--primary);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  
+  .modalLink:hover {
+    text-decoration: underline;
+  }
+  
+  /* --- BADGES & TAGS --- */
+  .badgeTrue {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: #dcfce7;
+    color: #166534;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  
+  .badgeFalse {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: #f3f4f6;
+    color: #6b7280;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  
+  .priceTag {
+    font-size: 1.25rem;
+    color: var(--brand-gold);
+    font-weight: 700;
+    font-family: var(--font-cinzel), serif;
+  }
+  
+  /* --- ANIMATIONS --- */
+  /* These match the global names but are defined locally for safety if globals change */
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  
+  /* --- RESPONSIVE --- */
+  @media (max-width: 768px) {
+    .coinImages {
+      grid-template-columns: 1fr; /* Stack images on mobile */
+      gap: 1rem;
+    }
+    
+    .coinImageModal {
+      max-height: 300px;
+    }
+    
+    .modalContent {
+      height: 100%;
+      max-height: 100%;
+      border-radius: 0;
+    }
+    
+    .coinDetailsGrid {
+      grid-template-columns: 1fr; /* Single column details */
+    }
+  }
