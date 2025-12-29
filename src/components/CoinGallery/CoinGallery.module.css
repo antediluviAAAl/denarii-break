@@ -1,167 +1,167 @@
 /* src/components/CoinGallery/CoinGallery.module.css */
 
 .galleryContainer {
-    display: flex;
-    flex-direction: column;
-    padding-bottom: 2rem;
-    width: 100%;
-  }
-  
-  /* --- LOADING STATE --- */
-  .loadingContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 4rem 2rem;
-    text-align: center;
-    color: var(--text-light);
-    margin-top: 1.5rem;
-  }
-  
-  .spinner {
-    color: var(--primary);
-    width: 3rem;
-    height: 3rem;
-    margin-bottom: 1rem;
-  }
-  
-  /* --- CATEGORY SECTION --- */
-  .categorySection {
-    border-radius: var(--radius);
-    border: 1px solid; /* Color injected via style prop */
-    overflow: hidden;
-    transition: all 0.3s;
-    box-shadow: var(--shadow);
-    /* Default positioning */
-    margin-top: 24px;
-    margin-bottom: 0;
-    min-height: 70px;
-    box-sizing: border-box;
-    background: white;
-  }
-  
-  .categoryHeader {
-    padding: 0 1.5rem;
-    height: auto;
-    min-height: 70px;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: background 0.2s;
-    font-family: var(--font-cinzel), serif;
-    border-bottom: 1px solid transparent; /* Often overridden */
-  }
-  
-  .categoryHeader:hover {
-    filter: brightness(0.98);
-  }
-  
-  .categoryTitle {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-  
-  .categoryName {
-    font-size: 1.125rem;
-    font-weight: 600;
-    /* Color injected via inline style */
-  }
-  
-  .categoryCount {
-    font-size: 0.875rem;
-    background: rgba(255, 255, 255, 0.7);
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-weight: 600;
-    color: inherit;
-    font-family: var(--font-cinzel), serif;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-  
-  .ownedInCategory {
-    color: var(--owned-green-dark);
-    font-weight: 600;
-    margin-left: 0.5rem;
-  }
-  
-  .categoryToggle {
-    background: none;
-    border: none;
-    color: inherit;
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  /* --- TABLE MODE CONTENT --- */
-  /* When a category expands in table mode */
-  .categoryContentTable {
-    padding: 0;
-    background: white;
-    border-top: none;
-    border-radius: 0 0 12px 12px;
-    overflow: hidden;
-    cursor: pointer;
-  }
-  
-  .periodGroupTable {
-    cursor: default;
-  }
-  
-  .periodRowTable {
-    padding: 0 1.5rem;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    background-color: white;
-  }
-  
-  .periodContentWrapper {
-    padding: 0 1.5rem 1.5rem 1.5rem;
-    cursor: pointer;
-  }
-  
-  /* --- VIRTUAL ROWS (Grid/List Mode) --- */
-  .virtualRowContainer {
-    background-color: rgb(255, 255, 255);
-    padding: 0 1.5rem;
-    min-height: 80px;
-    height: auto;
-    display: flex;
-    align-items: center;
-    box-sizing: border-box;
-    cursor: pointer;
-    position: relative;
-    z-index: 0; /* Base stacking context */
-  }
-  
-  .virtualRowContainer:hover {
-    background-color: rgb(255, 255, 255);
-  }
-  
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 2rem;
+  width: 100%;
+}
+
+/* --- LOADING STATE --- */
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  color: var(--text-light);
+  margin-top: 1.5rem;
+}
+
+.spinner {
+  color: var(--primary);
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 1rem;
+}
+
+/* --- CATEGORY SECTION --- */
+.categorySection {
+  border-radius: var(--radius);
+  border: 1px solid; /* Color injected via style prop */
+  overflow: hidden;
+  transition: all 0.3s;
+  box-shadow: var(--shadow);
+  /* Default positioning */
+  margin-top: 24px;
+  margin-bottom: 0;
+  min-height: 70px;
+  box-sizing: border-box;
+  background: white;
+}
+
+.categoryHeader {
+  padding: 0 1.5rem;
+  height: auto;
+  min-height: 70px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.2s;
+  font-family: var(--font-cinzel), serif;
+  border-bottom: 1px solid transparent; /* Often overridden */
+}
+
+.categoryHeader:hover {
+  filter: brightness(0.98);
+}
+
+.categoryTitle {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.categoryName {
+  font-size: 1.125rem;
+  font-weight: 600;
+  /* Color injected via inline style */
+}
+
+.categoryCount {
+  font-size: 0.875rem;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-weight: 600;
+  color: inherit;
+  font-family: var(--font-cinzel), serif;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.ownedInCategory {
+  color: var(--owned-green-dark);
+  font-weight: 600;
+  margin-left: 0.5rem;
+}
+
+.categoryToggle {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --- TABLE MODE CONTENT --- */
+/* When a category expands in table mode */
+.categoryContentTable {
+  padding: 0;
+  background: white;
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.periodGroupTable {
+  cursor: default;
+}
+
+.periodRowTable {
+  padding: 0 1.5rem;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  background-color: white;
+}
+
+.periodContentWrapper {
+  padding: 0 1.5rem 1.5rem 1.5rem;
+  cursor: pointer;
+}
+
+/* --- VIRTUAL ROWS (Grid/List Mode) --- */
+.virtualRowContainer {
+  background-color: rgb(255, 255, 255);
+  padding: 0 1.5rem;
+  min-height: 80px;
+  height: auto;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  cursor: pointer;
+  position: relative;
+  z-index: 0; /* Base stacking context */
+}
+
+.virtualRowContainer:hover {
+  background-color: rgb(255, 255, 255);
+}
+
+.virtualRow {
+  display: flex;
+  gap: 2rem;
+  width: 100%;
+  padding: 0.5rem 0;
+  box-sizing: border-box;
+}
+
+.virtualSpacer {
+  flex: 1;
+}
+
+/* --- MOBILE --- */
+@media (max-width: 768px) {
   .virtualRow {
-    display: flex;
-    gap: 2rem;
-    width: 100%;
-    padding: 0.5rem 0;
-    box-sizing: border-box;
+    padding: 0.3rem 0;
   }
-  
-  .virtualSpacer {
-    flex: 1;
-  }
-  
-  /* --- MOBILE --- */
-  @media (max-width: 768px) {
-    .virtualRow {
-      padding: 0.3rem 0;
-    }
-  }
+}

@@ -1,47 +1,53 @@
+/* src/components/AddCoinModal/useAddCoin.js */
 "use client";
 
 import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabaseClient";
+import { addCoinToCollection } from "../../app/actions";
 
-/**
- * Hook managing the 2-step process:
- * 1. Search for a coin in `f_coins`
- * 2. Upload images and insert into `d_coins_owned`
- */
-export function useAddCoin(onClose, onCoinAdded, userId) {
-  const [step, setStep] = useState(1); // 1: Search, 2: Upload
+export function useAddCoin(onClose, onCoinAdded, userId, initialCoin = null) {
+  // If initialCoin exists, start at Step 2 (Upload), else Step 1 (Search)
+  const [step, setStep] = useState(initialCoin ? 2 : 1);
+  const [selectedCoin, setSelectedCoin] = useState(initialCoin);
+  
   const [searchQuery, setSearchQuery] = useState("");
   const [results, setResults] = useState([]);
-  const [selectedCoin, setSelectedCoin] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [uploading, setUploading] = useState(false);
   
-  // Form State
-  const [obverseFile, setObverseFile] = useState(null);
-  const [reverseFile, setReverseFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Debounced Search
+  // Reset state if modal is re-opened with different props (though usually unmounts)
   useEffect(() => {
-    const delayDebounceFn = setTimeout(async () => {
-      if (searchQuery.length < 3) {
+    if (initialCoin) {
+      setSelectedCoin(initialCoin);
+      setStep(2);
+    } else {
+      // If we are opening generic mode, ensure we are at step 1
+      // Note: This relies on the component unmounting/remounting for clean slate
+      // or this hook running again.
+    }
+  }, [initialCoin]);
+
+  // Search Logic
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      if (searchQuery.length < 2) {
         setResults([]);
         return;
       }
-
       setLoading(true);
-      const { data, error } = await supabase
+
+      const { data } = await supabase
         .from("f_coins")
-        .select("coin_id, name, year, km, price_usd")
-        .ilike("name", `%${searchQuery}%`)
+        .select("coin_id, name, year, km, subject, d_period(period_shorthand), d_denominations(denomination_name)")
+        .or(`name.ilike.%${searchQuery}%,km.ilike.%${searchQuery}%`)
         .limit(10);
 
-      if (!error && data) {
-        setResults(data);
-      }
+      setResults(data || []);
       setLoading(false);
-    }, 500);
+    }, 300);
 
-    return () => clearTimeout(delayDebounceFn);
+    return () => clearTimeout(timer);
   }, [searchQuery]);
 
   const handleSelectCoin = (coin) => {
@@ -49,52 +55,36 @@ export function useAddCoin(onClose, onCoinAdded, userId) {
     setStep(2);
   };
 
-  const handleSubmit = async () => {
+  const handleBackToSearch = () => {
+    // If we were forced into this view by initialCoin, we might want to just close?
+    // But for now, allow searching for a DIFFERENT coin if they changed their mind.
+    setStep(1);
+    setSelectedCoin(null);
+    setSearchQuery("");
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     if (!selectedCoin || !userId) return;
-    setUploading(true);
+    setIsSubmitting(true);
 
     try {
-      // 1. Upload Images (if provided)
-      let obversePath = null;
-      let reversePath = null;
+      const formData = new FormData(e.target);
+      formData.append("coin_id", selectedCoin.coin_id);
 
-      if (obverseFile) {
-        const fileName = `${userId}/${selectedCoin.coin_id}_obv_${Date.now()}`;
-        const { data, error } = await supabase.storage
-          .from("user_coins")
-          .upload(fileName, obverseFile);
-        if (!error) obversePath = data.path;
+      const result = await addCoinToCollection(formData);
+
+      if (result.success) {
+        if (onCoinAdded) onCoinAdded();
+        onClose();
+      } else {
+        alert("Error: " + result.error);
       }
-
-      if (reverseFile) {
-        const fileName = `${userId}/${selectedCoin.coin_id}_rev_${Date.now()}`;
-        const { data, error } = await supabase.storage
-          .from("user_coins")
-          .upload(fileName, reverseFile);
-        if (!error) reversePath = data.path;
-      }
-
-      // 2. Insert Record
-      const { error: insertError } = await supabase
-        .from("d_coins_owned")
-        .insert({
-          coin_id: selectedCoin.coin_id,
-          user_id: userId,
-          original_path_obverse: obversePath,
-          original_path_reverse: reversePath,
-          // In a real app, you'd trigger a server function to generate thumbs
-        });
-
-      if (insertError) throw insertError;
-
-      // 3. Cleanup & Close
-      if (onCoinAdded) onCoinAdded();
-      onClose();
     } catch (err) {
-      console.error("Error adding coin:", err);
-      alert("Failed to add coin. Check console.");
+      console.error(err);
+      alert("Unexpected error occurred.");
     } finally {
-      setUploading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -106,9 +96,8 @@ export function useAddCoin(onClose, onCoinAdded, userId) {
     loading,
     selectedCoin,
     handleSelectCoin,
-    setObverseFile,
-    setReverseFile,
+    handleBackToSearch,
     handleSubmit,
-    uploading,
+    isSubmitting
   };
 }

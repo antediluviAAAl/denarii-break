@@ -13,9 +13,6 @@ const CATEGORY_COLORS = [
   { bg: "#f1f5f9", border: "#94a3b8", text: "#475569" },
 ];
 
-/**
- * Custom hook managing the complex virtualization, grouping, and expansion logic.
- */
 export function useCoinGallery({
   coins,
   categories,
@@ -27,14 +24,13 @@ export function useCoinGallery({
   const parentRef = useRef(null);
   const [offsetTop, setOffsetTop] = useState(0);
 
-  // Recalculate offset when width OR content above changes (like filters)
   useEffect(() => {
     if (parentRef.current) {
       setOffsetTop(parentRef.current.offsetTop);
     }
   }, [width, coins.length, viewMode]);
 
-  // --- 1. COLUMN CALCULATION ---
+  // --- 1. COLUMNS ---
   const columns = useMemo(() => {
     if (viewMode === "list") return 1;
     if (width < 650) return 1;
@@ -43,7 +39,7 @@ export function useCoinGallery({
     return 4;
   }, [width, viewMode]);
 
-  // --- 2. GROUPING LOGIC (Categories) ---
+  // --- 2. CATEGORY GROUPING ---
   const groupedCoins = useMemo(() => {
     const groupsMap = {};
     categories.forEach((cat, index) => {
@@ -77,7 +73,7 @@ export function useCoinGallery({
       .sort((a, b) => a.name.localeCompare(b.name));
   }, [coins, categories]);
 
-  // --- 3. EXPANSION STATE ---
+  // --- 3. EXPANSION ---
   const [expandedCategories, setExpandedCategories] = useState({});
   const toggleCategory = (id) => {
     setExpandedCategories((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -89,14 +85,14 @@ export function useCoinGallery({
     setCollapsedPeriods((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  // --- 4. PERIOD GROUPING HELPER ---
-  const getCoinsByPeriod = (categoryCoins, isTableMode) => {
+  // --- 4. PERIOD GROUPING (Unified Sorting) ---
+  const getCoinsByPeriod = (categoryCoins) => {
     const periodMap = {};
     const noPeriodKey = "no_period";
 
+    // A. Group Coins
     categoryCoins.forEach((c) => {
       const pid = c.period_id || noPeriodKey;
-
       if (!periodMap[pid]) {
         periodMap[pid] = {
           id: pid,
@@ -114,6 +110,7 @@ export function useCoinGallery({
       const group = periodMap[pid];
       group.coins.push(c);
 
+      // Collect stats for "Bubble Up" sorting
       const y = c.year || 0;
       const p = c.price_usd || 0;
       if (y < group.stats.minYear) group.stats.minYear = y;
@@ -122,35 +119,38 @@ export function useCoinGallery({
       if (p < group.stats.minPrice) group.stats.minPrice = p;
     });
 
+    // B. Sort Periods (Unified Logic)
     const sortedPeriods = Object.values(periodMap).sort((a, b) => {
-      // TABLE MODE: Historical Sort
-      if (isTableMode) {
-        if (sortBy === "year_asc") return a.startYear - b.startYear;
-        return b.startYear - a.startYear;
-      }
-
-      // GRID & LIST MODE: Bubble Up Sort
-      if (sortBy === "year_asc") {
-        const valA = a.stats.minYear;
-        const valB = b.stats.minYear;
-        if (valA !== valB) return valA - valB;
-      } else if (sortBy === "price_desc") {
+      // 1. Sort by Price
+      if (sortBy === "price_desc") {
         const valA = a.stats.maxPrice;
         const valB = b.stats.maxPrice;
-        if (valA !== valB) return valB - valA;
+        if (valA !== valB) return valB - valA; // High price first
       } else if (sortBy === "price_asc") {
         const valA = a.stats.minPrice === 9999999 ? 0 : a.stats.minPrice;
         const valB = b.stats.minPrice === 9999999 ? 0 : b.stats.minPrice;
+        if (valA !== valB) return valA - valB; // Low price first
+      } 
+      
+      // 2. Sort by Year (Default or Fallback)
+      // "Bubble Up" strategy: Use the min/max year of ACTUAL coins in the group
+      // This matches Grid view behavior.
+      else if (sortBy === "year_asc") {
+        const valA = a.stats.minYear;
+        const valB = b.stats.minYear;
         if (valA !== valB) return valA - valB;
       } else {
+        // year_desc (default)
         const valA = a.stats.maxYear;
         const valB = b.stats.maxYear;
         if (valA !== valB) return valB - valA;
       }
+
+      // 3. Fallback to Period Start Year if stats are identical
       return b.startYear - a.startYear;
     });
 
-    // Sort coins within each period
+    // C. Sort Coins inside each Period
     sortedPeriods.forEach((p) => {
       p.coins.sort((coinA, coinB) => {
         const yearA = coinA.year || 0;
@@ -169,7 +169,7 @@ export function useCoinGallery({
     return sortedPeriods;
   };
 
-  // --- 5. VIRTUAL ROWS GENERATION ---
+  // --- 5. VIRTUAL ROWS ---
   const virtualRows = useMemo(() => {
     if (loading || viewMode === "table") return [];
     const rows = [];
@@ -178,23 +178,20 @@ export function useCoinGallery({
       rows.push({ type: "header", group });
 
       if (expandedCategories[group.id]) {
-        const periodGroups = getCoinsByPeriod(group.coins, false);
+        // Pass only the coins, simplified flag no longer needed as logic is unified
+        const periodGroups = getCoinsByPeriod(group.coins);
 
         periodGroups.forEach((period, pIndex) => {
           const uniqueKey = `${group.id}-${period.id}`;
           const isPeriodExpanded = !collapsedPeriods[uniqueKey];
-
           const isLastPeriod = pIndex === periodGroups.length - 1;
-          const periodOwnedCount = period.coins.filter(
-            (c) => c.is_owned
-          ).length;
           const isLastVisualElement = isLastPeriod && !isPeriodExpanded;
 
           rows.push({
             type: "subheader",
             title: period.name,
             count: period.coins.length,
-            ownedCount: periodOwnedCount,
+            ownedCount: period.coins.filter((c) => c.is_owned).length,
             groupId: group.id,
             periodId: period.id,
             isExpanded: isPeriodExpanded,
@@ -204,13 +201,11 @@ export function useCoinGallery({
           if (isPeriodExpanded) {
             for (let i = 0; i < period.coins.length; i += columns) {
               const isLastRowInPeriod = i + columns >= period.coins.length;
-              const isLastRowInGroup = isLastPeriod && isLastRowInPeriod;
-
               rows.push({
                 type: "row",
                 coins: period.coins.slice(i, i + columns),
                 groupId: group.id,
-                isLast: isLastRowInGroup,
+                isLast: isLastPeriod && isLastRowInPeriod,
               });
             }
           }
@@ -228,18 +223,14 @@ export function useCoinGallery({
     sortBy,
   ]);
 
-  // --- 6. VIRTUALIZER SETUP ---
   const rowVirtualizer = useWindowVirtualizer({
     count: virtualRows.length,
     estimateSize: (index) => {
       const row = virtualRows[index];
-      if (row.type === "header") return 70; 
-      if (row.type === "subheader") return 50; 
-      
-      if (viewMode === "list") {
-        return width < 768 ? 95 : 100;
-      }
-      return 380; // Grid
+      if (row.type === "header") return 70;
+      if (row.type === "subheader") return 50;
+      if (viewMode === "list") return width < 768 ? 95 : 100;
+      return 380;
     },
     overscan: 5,
     scrollMargin: offsetTop,
@@ -255,6 +246,6 @@ export function useCoinGallery({
     rowVirtualizer,
     toggleCategory,
     togglePeriod,
-    getCoinsByPeriod, // Exposed for Table view usage
+    getCoinsByPeriod,
   };
 }

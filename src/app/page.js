@@ -3,14 +3,13 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabaseClient";
-import Header from "../components/Header"; // Resolves to Header/index.jsx
-import FilterBar from "../components/FilterBar"; // Resolves to FilterBar/index.jsx
-import CoinGallery from "../components/CoinGallery"; // Resolves to CoinGallery/index.jsx
-import CoinModal from "../components/CoinModal"; // Resolves to CoinModal/index.jsx
-import AddCoinModal from "../components/AddCoinModal"; // Resolves to AddCoinModal/index.jsx
+import Header from "../components/Header";
+import FilterBar from "../components/FilterBar";
+import CoinGallery from "../components/CoinGallery";
+import CoinModal from "../components/CoinModal";
+import AddCoinModal from "../components/AddCoinModal";
 import { useCoins } from "../hooks/useCoins";
 
-// Minimal inline style for the main wrapper to handle sticky behavior correctly
 const mainStyle = {
   maxWidth: "1400px",
   margin: "0 auto",
@@ -22,11 +21,14 @@ const mainStyle = {
 
 export default function Home() {
   const [session, setSession] = useState(null);
+  
+  // Modal States
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedCoin, setSelectedCoin] = useState(null);
-  
-  // View State (Lifted to Page level so FilterBar and Gallery can share it)
-  const [viewMode, setViewMode] = useState("grid"); // 'grid', 'list', 'table'
+  const [initialAddCoin, setInitialAddCoin] = useState(null); // New: For pre-selecting coin
+
+  // View State
+  const [viewMode, setViewMode] = useState("grid");
 
   const {
     coins,
@@ -39,14 +41,13 @@ export default function Home() {
     refetch,
   } = useCoins(session?.user?.id);
 
+  // Auth Listener
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
     });
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
     });
 
@@ -59,9 +60,14 @@ export default function Home() {
     window.location.reload();
   };
 
-  // Determine if we are in "Explore Mode" (No specific filters active)
-  const isExploreMode =
-    !filters.search && !filters.country && !filters.period && filters.showOwned === "all";
+  const isExploreMode = !filters.search && !filters.country && !filters.period && filters.showOwned === "all";
+
+  // Handler for "Add Coin" click from within CoinModal
+  const handleAddFromModal = (coin) => {
+    setSelectedCoin(null); // Close detail modal
+    setInitialAddCoin(coin); // Set the coin to add
+    setIsAddModalOpen(true); // Open add modal
+  };
 
   return (
     <main style={mainStyle}>
@@ -69,7 +75,10 @@ export default function Home() {
         ownedCount={ownedCount}
         displayCount={coins.length}
         totalCoins={totalCoins}
-        onAddCoin={() => setIsAddModalOpen(true)}
+        onAddCoin={() => {
+          setInitialAddCoin(null); // Clear previous selection
+          setIsAddModalOpen(true);
+        }}
         session={session}
         onLogout={handleLogout}
       />
@@ -93,19 +102,26 @@ export default function Home() {
         sortBy={filters.sortBy}
       />
 
-      {/* Modals */}
+      {/* Detail Modal */}
       {selectedCoin && (
         <CoinModal
           coin={selectedCoin}
           onClose={() => setSelectedCoin(null)}
+          session={session}
+          onAddCoin={handleAddFromModal}
         />
       )}
 
+      {/* Add Coin Modal */}
       {isAddModalOpen && session && (
         <AddCoinModal
-          onClose={() => setIsAddModalOpen(false)}
+          onClose={() => {
+            setIsAddModalOpen(false);
+            setInitialAddCoin(null);
+          }}
           onCoinAdded={refetch}
           userId={session.user.id}
+          initialCoin={initialAddCoin}
         />
       )}
     </main>
