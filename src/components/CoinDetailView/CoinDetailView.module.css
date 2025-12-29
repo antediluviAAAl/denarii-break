@@ -1,38 +1,9 @@
-/* src/components/CoinModal/CoinModal.module.css */
+/* src/components/CoinDetailView/CoinDetailView.module.css */
 
-.modalOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  /* Crucial: Must be transparent black, NOT white */
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 1rem;
-  animation: fadeIn 0.2s ease-out;
-}
-
-.modalContent {
-  background: white;
-  border-radius: var(--radius);
-  width: 100%;
-  max-width: 900px;
-  max-height: 90vh;
-  overflow-y: auto;
-  position: relative;
-  box-shadow: var(--shadow-xl);
-  display: flex;
-  flex-direction: column;
-  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
+/* Note: No .modalOverlay or .modalContent here. Just the guts. */
 
 /* --- HEADER --- */
-.modalHeader {
+.header {
   position: sticky;
   top: 0;
   background: white;
@@ -52,7 +23,7 @@
   gap: 1rem;
 }
 
-.modalTitle {
+.title {
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--text);
@@ -87,7 +58,7 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.modalClose {
+.closeBtn {
   background: transparent;
   border: none;
   padding: 0.5rem;
@@ -96,15 +67,16 @@
   margin-left: 1rem;
 }
 
-.modalClose:hover {
+.closeBtn:hover {
   color: var(--text);
   background: var(--background-highlight);
   border-radius: 50%;
 }
 
 /* --- BODY --- */
-.modalBody {
+.body {
   padding: 1.5rem;
+  background: white;
 }
 
 /* --- IMAGES --- */
@@ -115,7 +87,7 @@
   margin-bottom: 2rem;
 }
 
-.coinImageModal {
+.coinImageWrapper {
   position: relative;
   background: #f8fafc;
   border-radius: var(--radius-sm);
@@ -127,7 +99,7 @@
   justify-content: center;
 }
 
-.coinImageModal h3 {
+.coinImageWrapper h3 {
   position: absolute;
   top: 10px;
   left: 10px;
@@ -141,7 +113,7 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* --- DETAILS GRID (3 Column Layout) --- */
+/* --- GRID --- */
 .coinDetailsGrid {
   display: grid;
   gap: 1.5rem;
@@ -167,7 +139,7 @@
   font-size: 0.85rem;
   text-transform: uppercase;
   color: var(--text-light);
-  border-bottom: 2px solid var(--brand-gold);
+  border-bottom: 2px solid var(--brand-gold); /* Updated to Gold */
   padding-bottom: 0.5rem;
   margin-bottom: 0.5rem;
   letter-spacing: 0.05em;
@@ -192,7 +164,7 @@
   font-weight: 500;
 }
 
-/* --- SKELETON LOADER --- */
+/* --- HELPERS --- */
 .skeleton {
   display: inline-block;
   height: 1.2em;
@@ -200,8 +172,6 @@
   border-radius: 4px;
   animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
-
-/* Helper widths for skeletons */
 .w40 {
   width: 40%;
 }
@@ -210,9 +180,6 @@
 }
 .w80 {
   width: 80%;
-}
-.w100 {
-  width: 100%;
 }
 
 @keyframes pulse {
@@ -225,7 +192,6 @@
   }
 }
 
-/* --- LINKS & TAGS --- */
 .modalLink {
   color: var(--primary);
   text-decoration: none;
@@ -233,7 +199,6 @@
   align-items: center;
   gap: 0.25rem;
 }
-
 .modalLink:hover {
   text-decoration: underline;
 }
@@ -256,7 +221,6 @@
   font-size: 0.85rem;
   font-weight: 700;
 }
-
 .badgeFalse {
   display: inline-flex;
   align-items: center;
@@ -268,25 +232,6 @@
   font-size: 0.85rem;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-@keyframes slideUp {
-  from {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
 @media (max-width: 768px) {
   .coinImages {
     grid-template-columns: 1fr;
@@ -294,7 +239,7 @@
   .threeCol {
     grid-template-columns: 1fr;
   }
-  .coinImageModal {
+  .coinImageWrapper {
     height: 300px;
   }
   .headerTitleGroup {

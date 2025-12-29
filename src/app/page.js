@@ -6,28 +6,21 @@ import { supabase } from "../lib/supabaseClient";
 import Header from "../components/Header";
 import FilterBar from "../components/FilterBar";
 import CoinGallery from "../components/CoinGallery";
-import CoinModal from "../components/CoinModal";
+// REMOVE: import CoinModal ...
 import AddCoinModal from "../components/AddCoinModal";
 import { useCoins } from "../hooks/useCoins";
 
-const mainStyle = {
-  maxWidth: "1400px",
-  margin: "0 auto",
-  padding: "0",
-  minHeight: "100vh",
-  display: "flex",
-  flexDirection: "column",
-};
+// ... styles ...
 
 export default function Home() {
   const [session, setSession] = useState(null);
-  
-  // Modal States
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [selectedCoin, setSelectedCoin] = useState(null);
-  const [initialAddCoin, setInitialAddCoin] = useState(null); // New: For pre-selecting coin
 
-  // View State
+  // Only Global Add Modal State remains
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  // REMOVE: const [selectedCoin, setSelectedCoin] = useState(null);
+  // REMOVE: const [initialAddCoin, setInitialAddCoin] = useState(null);
+
   const [viewMode, setViewMode] = useState("grid");
 
   const {
@@ -41,16 +34,15 @@ export default function Home() {
     refetch,
   } = useCoins(session?.user?.id);
 
-  // Auth Listener
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-
+    supabase.auth
+      .getSession()
+      .then(({ data: { session } }) => setSession(session));
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) =>
+      setSession(session)
+    );
     return () => subscription.unsubscribe();
   }, []);
 
@@ -60,25 +52,28 @@ export default function Home() {
     window.location.reload();
   };
 
-  const isExploreMode = !filters.search && !filters.country && !filters.period && filters.showOwned === "all";
-
-  // Handler for "Add Coin" click from within CoinModal
-  const handleAddFromModal = (coin) => {
-    setSelectedCoin(null); // Close detail modal
-    setInitialAddCoin(coin); // Set the coin to add
-    setIsAddModalOpen(true); // Open add modal
-  };
+  const isExploreMode =
+    !filters.search &&
+    !filters.country &&
+    !filters.period &&
+    filters.showOwned === "all";
 
   return (
-    <main style={mainStyle}>
+    <main
+      style={{
+        maxWidth: "1400px",
+        margin: "0 auto",
+        padding: "0",
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       <Header
         ownedCount={ownedCount}
         displayCount={coins.length}
         totalCoins={totalCoins}
-        onAddCoin={() => {
-          setInitialAddCoin(null); // Clear previous selection
-          setIsAddModalOpen(true);
-        }}
+        onAddCoin={() => setIsAddModalOpen(true)}
         session={session}
         onLogout={handleLogout}
       />
@@ -96,32 +91,21 @@ export default function Home() {
         coins={coins}
         loading={loading}
         categories={metadata.categories}
-        onCoinClick={setSelectedCoin}
+        // REMOVE: onCoinClick={setSelectedCoin}
         viewMode={viewMode}
         setViewMode={setViewMode}
         sortBy={filters.sortBy}
       />
 
-      {/* Detail Modal */}
-      {selectedCoin && (
-        <CoinModal
-          coin={selectedCoin}
-          onClose={() => setSelectedCoin(null)}
-          session={session}
-          onAddCoin={handleAddFromModal}
-        />
-      )}
+      {/* REMOVE: CoinModal rendering */}
 
-      {/* Add Coin Modal */}
+      {/* Global Add Modal (Header Button) */}
       {isAddModalOpen && session && (
         <AddCoinModal
-          onClose={() => {
-            setIsAddModalOpen(false);
-            setInitialAddCoin(null);
-          }}
+          onClose={() => setIsAddModalOpen(false)}
           onCoinAdded={refetch}
           userId={session.user.id}
-          initialCoin={initialAddCoin}
+          initialCoin={null} // Always null from header
         />
       )}
     </main>

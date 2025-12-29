@@ -1,40 +1,24 @@
-// src/app/layout.js
-import { Cinzel, Montserrat } from "next/font/google";
+import { Inter, Cinzel } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
 
-// 1. Configure Cinzel (Display/Header Font)
-const cinzel = Cinzel({ 
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
-  variable: "--font-cinzel",
-  display: 'swap',
-});
-
-// 2. Configure Montserrat (Body Font)
-const montserrat = Montserrat({
-  subsets: ["latin"],
-  weight: ["100", "300", "400", "500", "600", "700", "800", "900"],
-  variable: "--font-montserrat",
-  display: 'swap',
-});
+const inter = Inter({ subsets: ["latin"] });
+const cinzel = Cinzel({ subsets: ["latin"], variable: "--font-cinzel" });
 
 export const metadata = {
-  title: "Denarii District",
-  description: "A numismatic collection gallery.",
+  title: "Numismatic Gallery",
+  description: "A digital collection of ancient and modern coins.",
 };
 
-export default function RootLayout({ children }) {
+// Note the 'modal' prop here
+export default function RootLayout({ children, modal }) {
   return (
     <html lang="en">
-      <head>
-        {/* NETWORK OPTIMIZATION: Pre-connect to critical 3rd parties */}
-        <link rel="preconnect" href="https://i.ibb.co" />
-        <link rel="preconnect" href="https://ulqeoqjtwbmkzvnudbbv.supabase.co" /> 
-      </head>
-      {/* 3. Apply both font variables to the body */}
-      <body className={`${cinzel.variable} ${montserrat.variable}`}>
-        <Providers>{children}</Providers>
+      <body className={`${inter.className} ${cinzel.variable}`}>
+        <Providers>
+          {children}
+          {modal}
+        </Providers>
       </body>
     </html>
   );

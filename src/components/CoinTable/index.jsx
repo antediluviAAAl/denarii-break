@@ -1,17 +1,16 @@
 "use client";
 
 import React, { memo } from "react";
+import Link from "next/link"; // Import Link
 import { Check, X, Minus } from "lucide-react";
 import { useCoinTable } from "./useCoinTable";
 import styles from "./CoinTable.module.css";
 
-// --- MEMOIZED MATRIX COMPONENT ---
 const CoinMatrix = memo(function CoinMatrix({
   years,
   denominations,
   matrix,
   hoverState,
-  onCoinClick,
   onMouseEnter,
   onMouseMove,
   onMouseLeave,
@@ -23,7 +22,6 @@ const CoinMatrix = memo(function CoinMatrix({
           <th className={styles.stickyColLeft}>Year</th>
           {denominations.map((d) => (
             <th key={d.name}>
-              {/* Responsive Labels */}
               <span className="denom-label-desktop">{d.name}</span>
               <span className="denom-label-mobile">
                 {d.shorthand || d.name}
@@ -43,87 +41,80 @@ const CoinMatrix = memo(function CoinMatrix({
               const denomName = d.name;
               const cellCoins = matrix[`${year}-${denomName}`];
               const hasCoins = cellCoins && cellCoins.length > 0;
-              
-              // Cell Coloring Logic
+
               const isMixed =
                 hasCoins &&
                 cellCoins.some((c) => c.is_owned) &&
                 cellCoins.some((c) => !c.is_owned);
               const allOwned = hasCoins && cellCoins.every((c) => c.is_owned);
 
-              let cellClass = styles.cellEmpty; // Default text color style (rarely used on td)
-              let tdClass = styles.matrixCell; // Base TD class
-
+              let tdClass = styles.matrixCell;
               if (allOwned) tdClass += ` ${styles.owned}`;
               else if (isMixed) tdClass += ` ${styles.mixed}`;
               else if (hasCoins) tdClass += ` ${styles.unowned}`;
 
-              // Multi-coin Logic
               const isMultiCoin = hasCoins && cellCoins.length > 1;
 
               return (
-                <td
-                  key={`${year}-${denomName}`}
-                  className={tdClass}
-                >
+                <td key={`${year}-${denomName}`} className={tdClass}>
                   {hasCoins ? (
                     <div className={styles.multiCoinContainer}>
                       {cellCoins.map((coin) => {
                         const isSeriesHighlighted =
                           hoverState.seriesId &&
                           coin.series_id === hoverState.seriesId;
-
                         const isDimmed =
                           hoverState.seriesId && !isSeriesHighlighted;
 
-                        let labelDesktop, labelMobile;
-
-                        if (isMultiCoin) {
-                          const subj = coin.subject
+                        let labelDesktop = isMultiCoin
+                          ? coin.subject
                             ? coin.subject.substring(0, 8)
-                            : denomName;
-                          labelDesktop = subj;
-                          labelMobile = subj;
-                        } else {
-                          labelDesktop = denomName;
-                          labelMobile = d.shorthand || denomName;
-                        }
+                            : denomName
+                          : denomName;
+                        let labelMobile = isMultiCoin
+                          ? labelDesktop
+                          : d.shorthand || denomName;
 
-                        // Determine wrapper classes dynamically
                         let wrapperClass = styles.coinItemWrapper;
                         if (coin.is_owned) wrapperClass += ` ${styles.owned}`;
                         else wrapperClass += ` ${styles.unowned}`;
-                        
-                        if (isSeriesHighlighted) wrapperClass += ` ${styles.highlight}`;
+                        if (isSeriesHighlighted)
+                          wrapperClass += ` ${styles.highlight}`;
                         if (isDimmed) wrapperClass += ` ${styles.dimmed}`;
 
                         return (
-                          <div
+                          // WRAPPER LINK
+                          <Link
                             key={coin.coin_id}
+                            href={`/coin/${coin.coin_id}`}
                             className={wrapperClass}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onCoinClick(coin);
+                            style={{
+                              textDecoration: "none",
+                              color: "inherit",
+                              display: "flex",
                             }}
                             onMouseEnter={(e) => onMouseEnter(e, coin)}
                             onMouseMove={onMouseMove}
                             onMouseLeave={onMouseLeave}
                           >
                             <div className={styles.coinItemContent}>
-                              <span className={`${styles.cellDenomLabel} denom-label-desktop`}>
+                              <span
+                                className={`${styles.cellDenomLabel} denom-label-desktop`}
+                              >
                                 {labelDesktop}
                               </span>
-                              <span className={`${styles.cellDenomLabel} denom-label-mobile`}>
+                              <span
+                                className={`${styles.cellDenomLabel} denom-label-mobile`}
+                              >
                                 {labelMobile}
                               </span>
-
                               {coin.is_owned ? (
                                 <Check size={16} strokeWidth={3} />
                               ) : (
                                 <X size={16} />
                               )}
                             </div>
-                          </div>
+                          </Link>
                         );
                       })}
                     </div>
@@ -142,7 +133,7 @@ const CoinMatrix = memo(function CoinMatrix({
   );
 });
 
-export default function CoinTable({ coins, onCoinClick }) {
+export default function CoinTable({ coins }) {
   const {
     years,
     denominations,
@@ -155,14 +146,8 @@ export default function CoinTable({ coins, onCoinClick }) {
 
   if (coins.length === 0) return null;
 
-  // Tooltip Helper
-  const getTooltipImage = (side) => {
-    if (!hoverState.coin) return null;
-    return hoverState.coin.images?.[side]?.thumb;
-  };
-
-  const tooltipObverse = getTooltipImage("obverse");
-  const tooltipReverse = getTooltipImage("reverse");
+  const tooltipObverse = hoverState.coin?.images?.obverse?.thumb;
+  const tooltipReverse = hoverState.coin?.images?.reverse?.thumb;
 
   return (
     <div className={styles.wrapper}>
@@ -172,7 +157,6 @@ export default function CoinTable({ coins, onCoinClick }) {
           denominations={denominations}
           matrix={matrix}
           hoverState={hoverState}
-          onCoinClick={onCoinClick}
           onMouseEnter={handleMouseEnter}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
@@ -182,10 +166,7 @@ export default function CoinTable({ coins, onCoinClick }) {
       {hoverState.coin && (
         <div
           className={styles.hoverTooltip}
-          style={{
-            top: hoverState.y + 15,
-            left: hoverState.x + 15,
-          }}
+          style={{ top: hoverState.y + 15, left: hoverState.x + 15 }}
         >
           <div className={styles.tooltipHeader}>
             <span className={styles.tooltipTitle}>{hoverState.coin.name}</span>
@@ -195,20 +176,18 @@ export default function CoinTable({ coins, onCoinClick }) {
           </div>
           <div className={styles.tooltipImages}>
             {tooltipObverse ? (
-              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={tooltipObverse}
-                alt="Obverse"
+                alt="Obv"
                 className={styles.tooltipImg}
               />
             ) : (
               <div className={styles.tooltipPlaceholder}>No Obv</div>
             )}
             {tooltipReverse ? (
-              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={tooltipReverse}
-                alt="Reverse"
+                alt="Rev"
                 className={styles.tooltipImg}
               />
             ) : (
