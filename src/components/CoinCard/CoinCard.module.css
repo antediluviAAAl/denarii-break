@@ -102,8 +102,8 @@
 
 .badgeDenom {
   right: 10px;
-  background: rgba(255, 255, 255, 0.9);
-  color: #4b5563;
+  background: rgba(128, 125, 125, 0.55);
+  color: white;
   border: 1px solid rgba(0, 0, 0, 0.05);
   max-width: 120px;
   white-space: nowrap;
