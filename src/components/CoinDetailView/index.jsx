@@ -10,20 +10,11 @@ import {
   AlertTriangle,
   XCircle,
 } from "lucide-react";
-import { supabase } from "../../lib/supabaseClient"; // Correct relative path
-import FadeInImage from "../FadeInImage"; // Correct relative path
-import { useCoinModal } from "../CoinModal/useCoinModal"; // Correct relative path
-import AddCoinModal from "../AddCoinModal"; // Correct relative path
+import { supabase } from "../../lib/supabaseClient";
+import { useCoinModal } from "../CoinModal/useCoinModal";
+import AddCoinModal from "../AddCoinModal";
+import HighResCoinImage from "./HighResCoinImage"; // New Component
 import styles from "./CoinDetailView.module.css";
-
-const buildSrcSet = (imgObj) => {
-  if (!imgObj) return undefined;
-  const variants = [];
-  if (imgObj.medium) variants.push(`${imgObj.medium} 600w`);
-  if (imgObj.original || imgObj.full)
-    variants.push(`${imgObj.original || imgObj.full} 1200w`);
-  return variants.join(", ") || undefined;
-};
 
 export default function CoinDetailView({
   coinId,
@@ -31,7 +22,6 @@ export default function CoinDetailView({
   onClose,
   showCloseBtn = true,
 }) {
-  // 1. Fetch Auth Session (Self-contained)
   const [session, setSession] = useState(null);
   useEffect(() => {
     supabase.auth
@@ -39,10 +29,7 @@ export default function CoinDetailView({
       .then(({ data: { session } }) => setSession(session));
   }, []);
 
-  // 2. Add Coin Modal State
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-
-  // 3. Fetch Deep Data
   const {
     data: details,
     isLoading,
@@ -51,13 +38,10 @@ export default function CoinDetailView({
     refetch,
   } = useCoinModal(coinId);
 
-  // 4. Merge Data (Optimistic if initialData provided)
-  // If we came from a link, initialData is null. If from Gallery, it's the coin object.
   const displayData = details
     ? { ...initialData, ...details }
     : initialData || {};
 
-  // Safety check: If we have absolutely no data yet (direct link, fetching)
   const isFetchingInitial = !displayData.coin_id && isLoading;
 
   if (isFetchingInitial) {
@@ -68,27 +52,20 @@ export default function CoinDetailView({
     );
   }
 
-  // Ensure IDs match if we have data
   if (
     displayData.coin_id &&
     String(displayData.coin_id) !== String(coinId) &&
     !isLoading
   ) {
-    return null; // Sync issue or error
+    return null;
   }
 
   // --- IMAGES ---
-  // Default to medium for cache hit
-  const obverseUrl =
-    displayData.images?.obverse?.medium ||
-    displayData.images?.obverse?.full ||
-    displayData.images?.obverse?.original;
-  const reverseUrl =
-    displayData.images?.reverse?.medium ||
-    displayData.images?.reverse?.full ||
-    displayData.images?.reverse?.original;
-  const obverseSrcSet = buildSrcSet(displayData.images?.obverse);
-  const reverseSrcSet = buildSrcSet(displayData.images?.reverse);
+  const images = displayData.images || {};
+  // Priority: Full/Original (for high res) vs Medium (for initial)
+  const getOriginal = (side) => images[side]?.full || images[side]?.original;
+  const getMedium = (side) =>
+    images[side]?.medium || images[side]?.full || images[side]?.original;
 
   // --- LINKS ---
   const coinName = displayData.name || "";
@@ -179,41 +156,31 @@ export default function CoinDetailView({
           </div>
         )}
 
+        {/* RESTORED IMAGE GRID */}
         <div className={styles.coinImages}>
           <div className={styles.coinImageWrapper}>
-            <h3>Obverse</h3>
-            {obverseUrl ? (
-              <FadeInImage
-                src={obverseUrl}
-                srcSet={obverseSrcSet}
-                sizes="(max-width: 768px) 100vw, 500px"
-                alt="Obverse"
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                priority={true}
-              />
-            ) : (
-              <span style={{ color: "#9ca3af" }}>No Image</span>
-            )}
+            <HighResCoinImage
+              key={`${coinId}-obverse`}
+              label="Obverse"
+              srcMedium={getMedium("obverse")}
+              srcOriginal={getOriginal("obverse")}
+              alt="Obverse"
+            />
           </div>
           <div className={styles.coinImageWrapper}>
-            <h3>Reverse</h3>
-            {reverseUrl ? (
-              <FadeInImage
-                src={reverseUrl}
-                srcSet={reverseSrcSet}
-                sizes="(max-width: 768px) 100vw, 500px"
-                alt="Reverse"
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                priority={true}
-              />
-            ) : (
-              <span style={{ color: "#9ca3af" }}>No Image</span>
-            )}
+            <HighResCoinImage
+              key={`${coinId}-reverse`}
+              label="Reverse"
+              srcMedium={getMedium("reverse")}
+              srcOriginal={getOriginal("reverse")}
+              alt="Reverse"
+            />
           </div>
         </div>
 
+        {/* RESTORED 3-COLUMN LAYOUT */}
         <div className={`${styles.coinDetailsGrid} ${styles.threeCol}`}>
-          {/* Ident */}
+          {/* Column 1: Identification (0.8fr) */}
           <div className={styles.detailGroup}>
             <h3>Identification</h3>
             <div className={styles.detailItem}>
@@ -251,7 +218,8 @@ export default function CoinDetailView({
               </span>
             </div>
           </div>
-          {/* Groups */}
+
+          {/* Column 2: Groups (1.6fr) */}
           <div className={styles.detailGroup}>
             <h3>Groups</h3>
             <div className={styles.detailItem}>
@@ -279,7 +247,8 @@ export default function CoinDetailView({
               </span>
             </div>
           </div>
-          {/* Extra */}
+
+          {/* Column 3: Extra (0.8fr) */}
           <div className={styles.detailGroup}>
             <h3>Extra</h3>
             <div className={styles.detailItem}>
@@ -314,14 +283,11 @@ export default function CoinDetailView({
         </div>
       </div>
 
-      {/* Internal Add Coin Modal */}
       {isAddModalOpen && session && (
         <AddCoinModal
           onClose={() => setIsAddModalOpen(false)}
           onCoinAdded={() => {
-            refetch(); // Refresh local details (to show 'Owned')
-            // Note: The global gallery might not update instantly unless we trigger a global refetch,
-            // but 'Owned' status on this page will update.
+            refetch();
           }}
           userId={session.user.id}
           initialCoin={displayData}
