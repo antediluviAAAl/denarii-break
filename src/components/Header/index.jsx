@@ -2,7 +2,14 @@
 
 import React from "react";
 import Link from "next/link";
-import { Database, CheckCircle, PlusCircle, LogIn, LogOut } from "lucide-react";
+import {
+  Database,
+  CheckCircle,
+  PlusCircle,
+  LogIn,
+  LogOut,
+  LineChart,
+} from "lucide-react";
 import styles from "./Header.module.css";
 
 export default function Header({
@@ -10,6 +17,7 @@ export default function Header({
   displayCount = 0,
   totalCoins = 264962,
   onAddCoin,
+  onOpenSilver,
   session,
   onLogout,
 }) {
@@ -50,6 +58,17 @@ export default function Header({
 
         {/* RIGHT: Actions & Stats */}
         <div className={styles.headerStats}>
+          {/* Silver Spot Button */}
+          <button
+            onClick={onOpenSilver}
+            /* Combine base button class with new blue theme class */
+            className={`${styles.headerActionBtn} ${styles.silverBtn}`}
+            title="View Silver Price"
+          >
+            <LineChart size={20} style={{ color: "#3b82f6" }} />
+            <span className={styles.statValue}>Silver Spot</span>
+          </button>
+
           {session ? (
             <>
               {/* Add Coin Button */}
@@ -76,9 +95,9 @@ export default function Header({
             </>
           ) : (
             /* Sign In Button */
-            <Link 
-              href="/login" 
-              className={styles.headerActionBtn} 
+            <Link
+              href="/login"
+              className={styles.headerActionBtn}
               title="Sign In"
             >
               <LogIn size={20} className="text-gold" />

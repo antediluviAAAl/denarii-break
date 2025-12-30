@@ -6,20 +6,16 @@ import { supabase } from "../lib/supabaseClient";
 import Header from "../components/Header";
 import FilterBar from "../components/FilterBar";
 import CoinGallery from "../components/CoinGallery";
-// REMOVE: import CoinModal ...
 import AddCoinModal from "../components/AddCoinModal";
+import SilverChartModal from "../components/SilverChartModal"; // NEW IMPORT
 import { useCoins } from "../hooks/useCoins";
-
-// ... styles ...
 
 export default function Home() {
   const [session, setSession] = useState(null);
 
-  // Only Global Add Modal State remains
+  // Modal States
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-
-  // REMOVE: const [selectedCoin, setSelectedCoin] = useState(null);
-  // REMOVE: const [initialAddCoin, setInitialAddCoin] = useState(null);
+  const [isSilverModalOpen, setIsSilverModalOpen] = useState(false); // NEW STATE
 
   const [viewMode, setViewMode] = useState("grid");
 
@@ -74,6 +70,7 @@ export default function Home() {
         displayCount={coins.length}
         totalCoins={totalCoins}
         onAddCoin={() => setIsAddModalOpen(true)}
+        onOpenSilver={() => setIsSilverModalOpen(true)} // PASS HANDLER
         session={session}
         onLogout={handleLogout}
       />
@@ -91,22 +88,24 @@ export default function Home() {
         coins={coins}
         loading={loading}
         categories={metadata.categories}
-        // REMOVE: onCoinClick={setSelectedCoin}
         viewMode={viewMode}
         setViewMode={setViewMode}
         sortBy={filters.sortBy}
       />
 
-      {/* REMOVE: CoinModal rendering */}
-
-      {/* Global Add Modal (Header Button) */}
+      {/* Global Add Modal */}
       {isAddModalOpen && session && (
         <AddCoinModal
           onClose={() => setIsAddModalOpen(false)}
           onCoinAdded={refetch}
           userId={session.user.id}
-          initialCoin={null} // Always null from header
+          initialCoin={null}
         />
+      )}
+
+      {/* NEW: Silver Chart Modal */}
+      {isSilverModalOpen && (
+        <SilverChartModal onClose={() => setIsSilverModalOpen(false)} />
       )}
     </main>
   );
