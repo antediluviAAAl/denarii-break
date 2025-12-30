@@ -270,11 +270,11 @@ export default function CoinDetailView({
               <span>
                 {displayData.marked ? (
                   <span className={styles.badgeTrue}>
-                    <CheckCircle size={12} /> Yes
+                    <CheckCircle size={14} /> Yes
                   </span>
                 ) : (
                   <span className={styles.badgeFalse}>
-                    <XCircle size={12} /> No
+                    <XCircle size={14} /> No
                   </span>
                 )}
               </span>

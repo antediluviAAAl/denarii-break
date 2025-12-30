@@ -222,7 +222,7 @@
   padding: 0.2rem 0.6rem;
   border-radius: 4px;
   font-size: 0.85rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 .badgeFalse {
   display: inline-flex;
@@ -233,6 +233,7 @@
   padding: 0.2rem 0.6rem;
   border-radius: 4px;
   font-size: 0.85rem;
+  font-weight: 600;
 }
 
 @media (max-width: 768px) {
