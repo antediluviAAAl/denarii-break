@@ -7,7 +7,7 @@ import Header from "../components/Header";
 import FilterBar from "../components/FilterBar";
 import CoinGallery from "../components/CoinGallery";
 import AddCoinModal from "../components/AddCoinModal";
-import SilverChartModal from "../components/SilverChartModal"; // NEW IMPORT
+import SilverChartModal from "../components/SilverChartModal";
 import { useCoins } from "../hooks/useCoins";
 
 export default function Home() {
@@ -15,7 +15,7 @@ export default function Home() {
 
   // Modal States
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isSilverModalOpen, setIsSilverModalOpen] = useState(false); // NEW STATE
+  const [isSilverModalOpen, setIsSilverModalOpen] = useState(false);
 
   const [viewMode, setViewMode] = useState("grid");
 
@@ -55,58 +55,63 @@ export default function Home() {
     filters.showOwned === "all";
 
   return (
-    <main
-      style={{
-        maxWidth: "1400px",
-        margin: "0 auto",
-        padding: "0",
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
+    <>
+      {/* CRITICAL: Header must be OUTSIDE of main to span full width.
+         This ensures the white background touches the edges of the screen.
+      */}
       <Header
         ownedCount={ownedCount}
         displayCount={coins.length}
         totalCoins={totalCoins}
         onAddCoin={() => setIsAddModalOpen(true)}
-        onOpenSilver={() => setIsSilverModalOpen(true)} // PASS HANDLER
+        onOpenSilver={() => setIsSilverModalOpen(true)}
         session={session}
         onLogout={handleLogout}
       />
 
-      <FilterBar
-        filters={filters}
-        setFilters={setFilters}
-        metadata={metadata}
-        viewMode={viewMode}
-        setViewMode={setViewMode}
-        isExploreMode={isExploreMode}
-      />
-
-      <CoinGallery
-        coins={coins}
-        loading={loading}
-        categories={metadata.categories}
-        viewMode={viewMode}
-        setViewMode={setViewMode}
-        sortBy={filters.sortBy}
-      />
-
-      {/* Global Add Modal */}
-      {isAddModalOpen && session && (
-        <AddCoinModal
-          onClose={() => setIsAddModalOpen(false)}
-          onCoinAdded={refetch}
-          userId={session.user.id}
-          initialCoin={null}
+      <main
+        style={{
+          maxWidth: "1400px",
+          margin: "0 auto",
+          padding: "0",
+          minHeight: "100vh",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <FilterBar
+          filters={filters}
+          setFilters={setFilters}
+          metadata={metadata}
+          viewMode={viewMode}
+          setViewMode={setViewMode}
+          isExploreMode={isExploreMode}
         />
-      )}
 
-      {/* NEW: Silver Chart Modal */}
-      {isSilverModalOpen && (
-        <SilverChartModal onClose={() => setIsSilverModalOpen(false)} />
-      )}
-    </main>
+        <CoinGallery
+          coins={coins}
+          loading={loading}
+          categories={metadata.categories}
+          viewMode={viewMode}
+          setViewMode={setViewMode}
+          sortBy={filters.sortBy}
+        />
+
+        {/* Global Add Modal */}
+        {isAddModalOpen && session && (
+          <AddCoinModal
+            onClose={() => setIsAddModalOpen(false)}
+            onCoinAdded={refetch}
+            userId={session.user.id}
+            initialCoin={null}
+          />
+        )}
+
+        {/* Silver Chart Modal */}
+        {isSilverModalOpen && (
+          <SilverChartModal onClose={() => setIsSilverModalOpen(false)} />
+        )}
+      </main>
+    </>
   );
 }
