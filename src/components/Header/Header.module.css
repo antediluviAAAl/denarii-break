@@ -8,7 +8,7 @@
   
   border-bottom: 1px solid var(--border);
   box-shadow: var(--shadow-sm);
-  padding: 0.5rem 0;
+  padding: 0.3rem 0;
   margin-bottom: 1rem;
   width: 100%;
   
@@ -26,7 +26,7 @@
 /* Optional: Add a stronger shadow when scrolled to separate it from content */
 .appHeader.scrolled {
   box-shadow: var(--shadow-md);
-  padding: 0.5rem 0;
+  padding: 0.3rem 0;
 }
 
 .headerContent {
@@ -215,12 +215,12 @@
 /* --- RESPONSIVE MEDIA QUERIES --- */
 @media (max-width: 768px) {
   .appHeader {
-    padding: 1rem 0;
+    padding: 0.3rem 0;
   }
   
   /* Reduce padding when scrolled to make it tighter */
   .appHeader.scrolled {
-    padding: 0.5rem 0;
+    padding: 0.3rem 0;
   }
 
   .headerContent {
