@@ -1,11 +1,11 @@
+/* src/components/CoinModal/useCoinModal.js */
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "../../lib/supabaseClient";
 
-// --- Fetcher Function ---
 async function fetchCoinDetails(coinId) {
-  // 1. Fetch Catalog Data (Generic)
+  // 1. Fetch Catalog Data
   const { data: coinData, error } = await supabase
     .from("f_coins")
     .select(
@@ -21,14 +21,14 @@ async function fetchCoinDetails(coinId) {
   if (error) throw error;
   if (!coinData) return null;
 
-  // 2. Fetch Owned Data (Specific to User)
+  // 2. Fetch Owned Data
   const { data: ownedData } = await supabase
     .from("d_coins_owned")
     .select("*")
     .eq("coin_id", coinId)
     .maybeSingle();
 
-  // 3. Robust Country Fetch
+  // 3. Country Fetch
   let countryName = "Unknown";
   if (coinData.period_id) {
     try {
@@ -52,38 +52,25 @@ async function fetchCoinDetails(coinId) {
     }
   }
 
-  // 4. Merge & Normalize Images
-  // We prioritize Owned Images -> Catalog Images
+  // 4. Images Logic: Only return images if Owned.
   let finalImages = {
     obverse: { medium: null, original: null, full: null },
     reverse: { medium: null, original: null, full: null },
   };
 
   if (ownedData) {
-    // User Owned Images
     finalImages.obverse = {
       full: ownedData.url_obverse,
       medium: ownedData.medium_url_obverse || ownedData.url_obverse,
-      original: ownedData.original_path_obverse, // or url_obverse
+      original: ownedData.original_path_obverse,
     };
     finalImages.reverse = {
       full: ownedData.url_reverse,
       medium: ownedData.medium_url_reverse || ownedData.url_reverse,
       original: ownedData.original_path_reverse,
     };
-  } else {
-    // Catalog Images
-    finalImages.obverse = {
-      medium: coinData.image_url_obverse,
-      original: coinData.image_url_obverse,
-      full: coinData.image_url_obverse,
-    };
-    finalImages.reverse = {
-      medium: coinData.image_url_reverse,
-      original: coinData.image_url_reverse,
-      full: coinData.image_url_reverse,
-    };
   }
+  // NO 'else' block here.
 
   return {
     ...coinData,
@@ -93,12 +80,11 @@ async function fetchCoinDetails(coinId) {
   };
 }
 
-// --- Hook ---
 export function useCoinModal(coinId) {
   return useQuery({
     queryKey: ["coin_detail", coinId],
     queryFn: () => fetchCoinDetails(coinId),
     enabled: !!coinId,
-    staleTime: 1000 * 60 * 5, // 5 mins
+    staleTime: 1000 * 60 * 5,
   });
 }

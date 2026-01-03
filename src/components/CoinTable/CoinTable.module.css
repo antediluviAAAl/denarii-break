@@ -1,264 +1,279 @@
 /* src/components/CoinTable/CoinTable.module.css */
 
 .wrapper {
-    margin-bottom: 1.5rem;
+  margin-bottom: 0rem;
+}
+
+.container {
+  overflow-x: auto;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.table {
+  width: max-content;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+/* --- HEADERS --- */
+.table th {
+  background: #f8fafc;
+  color: var(--text-light);
+  font-weight: 700;
+  padding: 0.75rem 0.5rem;
+  text-align: center;
+  border-bottom: 2px solid var(--border);
+  border-right: 1px solid var(--border-light);
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  width: 100px;
+  min-width: 100px;
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Sticky Year Column */
+.stickyColLeft {
+  position: sticky;
+  left: 0;
+  background: #f8fafc;
+  z-index: 6;
+  border-right: 2px solid var(--border);
+  color: var(--text);
+  text-align: center;
+  width: 80px;
+  min-width: 80px;
+  max-width: 80px;
+}
+
+.yearCell {
+  background: #f8fafc;
+  font-weight: 700;
+  color: var(--text);
+  font-family: monospace;
+}
+
+/* --- CELLS --- */
+.table td {
+  padding: 0;
+  border-bottom: 1px solid var(--border-light);
+  border-right: 1px solid var(--border-light);
+  text-align: center;
+  vertical-align: middle;
+  height: auto;
+  min-height: 50px;
+}
+
+.matrixCell.owned {
+  background-color: #f0fdf4;
+}
+.matrixCell.mixed {
+  background-color: #fffbeb;
+}
+
+.matrixCell.unowned:hover,
+.matrixCell.owned:hover,
+.matrixCell.mixed:hover {
+  filter: brightness(0.97);
+}
+
+/* --- CELL CONTENT --- */
+.multiCoinContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  height: auto;
+  width: 100%;
+  min-height: 50px;
+}
+
+.coinItemWrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  border: 1px solid transparent;
+}
+
+.coinItemWrapper:not(:last-child) {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.coinItemWrapper.highlight {
+  background-color: #fef9c3;
+  border: 1px solid #facc15;
+  z-index: 2;
+}
+
+.coinItemWrapper.dimmed {
+  opacity: 0.3;
+}
+
+.coinItemWrapper:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.coinItemContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.coinItemWrapper.owned .coinItemContent {
+  color: var(--owned-green);
+}
+.coinItemWrapper.unowned .coinItemContent {
+  color: #cbd5e1;
+}
+
+.cellDenomLabel {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: none;
+  color: var(--text-light);
+  line-height: 1;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+}
+
+.coinItemWrapper.owned .cellDenomLabel {
+  color: var(--owned-green-dark);
+}
+
+.cellEmpty {
+  color: #e2e8f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  padding: 0.5rem;
+}
+
+/* --- TOOLTIP --- */
+.hoverTooltip {
+  position: fixed;
+  z-index: 9999;
+  background: white;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-xl);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem;
+  pointer-events: none;
+  min-width: 200px;
+  max-width: 250px;
+  animation: fadeIn 0.15s ease-out;
+}
+
+.tooltipHeader {
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 0.5rem;
+}
+
+.tooltipTitle {
+  display: block;
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.tooltipSeries {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--text-light);
+  margin-top: 2px;
+}
+
+.tooltipImages {
+  display: flex;
+  gap: 0.5rem;
+  height: 80px;
+}
+
+.tooltipImg {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid var(--border-light);
+  background: #f1f5f9;
+}
+
+.tooltipPlaceholder {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f1f5f9;
+  border-radius: 4px;
+  font-size: 0.6rem;
+  color: var(--text-light);
+  border: 1px solid var(--border-light);
+}
+
+/* --- ANIMATIONS --- */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
-  
-  .container {
-    overflow-x: auto;
-    background: white;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow-sm);
+  to {
+    opacity: 1;
   }
-  
-  .table {
-    width: max-content;
-    border-collapse: collapse;
-    font-size: 0.8rem;
-  }
-  
-  /* --- HEADERS --- */
+}
+
+/* --- RESPONSIVE OVERRIDES --- */
+@media (max-width: 768px) {
   .table th {
-    background: #f8fafc;
-    color: var(--text-light);
-    font-weight: 700;
-    padding: 0.75rem 0.5rem;
-    text-align: center;
-    border-bottom: 2px solid var(--border);
-    border-right: 1px solid var(--border-light);
-    white-space: nowrap;
-    position: sticky;
-    top: 0;
-    z-index: 5;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    padding: 0.75rem 0.1rem;
+    font-size: 0.7rem;
     width: 100px;
     min-width: 100px;
     max-width: 100px;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
-  
-  /* Sticky Year Column */
+
   .stickyColLeft {
-    position: sticky;
-    left: 0;
-    background: #f8fafc;
-    z-index: 6;
-    border-right: 2px solid var(--border);
-    color: var(--text);
-    text-align: center;
-    width: 80px;
-    min-width: 80px;
-    max-width: 80px;
+    padding-left: 0.1rem !important;
+    padding-right: 0.1rem !important;
+    width: 48px;
+    min-width: 48px;
+    max-width: 48px;
   }
-  
+
   .yearCell {
-    background: #f8fafc;
-    font-weight: 700;
-    color: var(--text);
-    font-family: monospace;
-  }
-  
-  /* --- CELLS --- */
-  .table td {
-    padding: 0;
-    border-bottom: 1px solid var(--border-light);
-    border-right: 1px solid var(--border-light);
-    text-align: center;
-    vertical-align: middle;
-    height: auto;
-    min-height: 50px;
-  }
-  
-  .matrixCell.owned { background-color: #f0fdf4; }
-  .matrixCell.mixed { background-color: #fffbeb; }
-  
-  .matrixCell.unowned:hover,
-  .matrixCell.owned:hover,
-  .matrixCell.mixed:hover {
-    filter: brightness(0.97);
-  }
-  
-  /* --- CELL CONTENT --- */
-  .multiCoinContainer {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: stretch;
-    height: auto;
-    width: 100%;
-    min-height: 50px;
-  }
-  
-  .coinItemWrapper {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 0.5rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    position: relative;
-    border: 1px solid transparent;
-  }
-  
-  .coinItemWrapper:not(:last-child) {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  }
-  
-  .coinItemWrapper.highlight {
-    background-color: #fef9c3;
-    border: 1px solid #facc15;
-    z-index: 2;
-  }
-  
-  .coinItemWrapper.dimmed {
-    opacity: 0.3;
-  }
-  
-  .coinItemWrapper:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-  }
-  
-  .coinItemContent {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-    width: 100%;
-    overflow: hidden;
-  }
-  
-  .coinItemWrapper.owned .coinItemContent { color: var(--owned-green); }
-  .coinItemWrapper.unowned .coinItemContent { color: #cbd5e1; }
-  
-  .cellDenomLabel {
+    font-family: var(--font-montserrat), sans-serif !important;
+    font-variant-numeric: tabular-nums;
     font-size: 0.65rem;
-    font-weight: 700;
-    text-transform: none;
-    color: var(--text-light);
-    line-height: 1;
-    width: 100%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-align: center;
+    letter-spacing: -0.05em;
   }
-  
-  .coinItemWrapper.owned .cellDenomLabel {
-    color: var(--owned-green-dark);
+
+  .coinItemWrapper {
+    padding: 0.25rem 0.1rem;
   }
-  
+
   .cellEmpty {
-    color: #e2e8f0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    width: 100%;
-    padding: 0.5rem;
+    padding: 0.25rem;
   }
-  
-  /* --- TOOLTIP --- */
-  .hoverTooltip {
-    position: fixed;
-    z-index: 9999;
-    background: white;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow-xl);
-    border-radius: var(--radius-sm);
-    padding: 0.75rem;
-    pointer-events: none;
-    min-width: 200px;
-    max-width: 250px;
-    animation: fadeIn 0.15s ease-out;
-  }
-  
-  .tooltipHeader {
-    margin-bottom: 0.5rem;
-    border-bottom: 1px solid var(--border-light);
-    padding-bottom: 0.5rem;
-  }
-  
-  .tooltipTitle {
-    display: block;
-    font-weight: 600;
-    font-size: 0.8rem;
-    color: var(--text);
-    line-height: 1.2;
-  }
-  
-  .tooltipSeries {
-    display: block;
-    font-size: 0.7rem;
-    color: var(--text-light);
-    margin-top: 2px;
-  }
-  
-  .tooltipImages {
-    display: flex;
-    gap: 0.5rem;
-    height: 80px;
-  }
-  
-  .tooltipImg {
-    width: 80px;
-    height: 80px;
-    object-fit: cover;
-    border-radius: 4px;
-    border: 1px solid var(--border-light);
-    background: #f1f5f9;
-  }
-  
-  .tooltipPlaceholder {
-    width: 80px;
-    height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #f1f5f9;
-    border-radius: 4px;
-    font-size: 0.6rem;
-    color: var(--text-light);
-    border: 1px solid var(--border-light);
-  }
-  
-  /* --- ANIMATIONS --- */
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-  
-  /* --- RESPONSIVE OVERRIDES --- */
-  @media (max-width: 768px) {
-    .table th {
-      padding: 0.75rem 0.1rem;
-      font-size: 0.7rem;
-      width: 100px;
-      min-width: 100px;
-      max-width: 100px;
-    }
-    
-    .stickyColLeft {
-      padding-left: 0.1rem !important;
-      padding-right: 0.1rem !important;
-      width: 48px;
-      min-width: 48px;
-      max-width: 48px;
-    }
-    
-    .yearCell {
-      font-family: var(--font-montserrat), sans-serif !important;
-      font-variant-numeric: tabular-nums;
-      font-size: 0.65rem;
-      letter-spacing: -0.05em;
-    }
-    
-    .coinItemWrapper {
-      padding: 0.25rem 0.1rem;
-    }
-    
-    .cellEmpty {
-      padding: 0.25rem;
-    }
-  }
+}
