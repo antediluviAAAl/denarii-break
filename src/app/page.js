@@ -8,6 +8,7 @@ import FilterBar from "../components/FilterBar";
 import CoinGallery from "../components/CoinGallery";
 import AddCoinModal from "../components/AddCoinModal";
 import SilverChartModal from "../components/SilverChartModal";
+import Footer from "../components/Footer"; // <--- New Import
 import { useCoins } from "../hooks/useCoins";
 
 export default function Home() {
@@ -55,10 +56,19 @@ export default function Home() {
     filters.showOwned === "all";
 
   return (
-    <>
-      {/* CRITICAL: Header must be OUTSIDE of main to span full width.
-         This ensures the white background touches the edges of the screen.
-      */}
+    /* WRAPPER DIV:
+       This replaces the React Fragment (<>). 
+       It forces the page to be at least as tall as the screen (100vh).
+       Flex-column lays out Header -> Main -> Footer vertically.
+    */
+    <div
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        backgroundColor: "var(--light-bg)", // Ensure background matches global
+      }}
+    >
       <Header
         ownedCount={ownedCount}
         displayCount={coins.length}
@@ -71,12 +81,16 @@ export default function Home() {
 
       <main
         style={{
+          /* Layout Strategy: */
+          flex: 1, // This pushes the footer to the bottom if content is short
+          display: "flex",
+          flexDirection: "column",
+
+          /* Centering & Width */
+          width: "100%",
           maxWidth: "1400px",
           margin: "0 auto",
           padding: "0",
-          minHeight: "100vh",
-          display: "flex",
-          flexDirection: "column",
         }}
       >
         <FilterBar
@@ -112,6 +126,11 @@ export default function Home() {
           <SilverChartModal onClose={() => setIsSilverModalOpen(false)} />
         )}
       </main>
-    </>
+
+      {/* FOOTER:
+          Placed here, it will sit at the bottom of the flex container.
+      */}
+      <Footer />
+    </div>
   );
 }

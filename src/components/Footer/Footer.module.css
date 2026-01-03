@@ -1,0 +1,94 @@
+/* src/components/Footer/Footer.module.css */
+.footer {
+  background-color: var(--card-bg);
+  border-top: 1px solid var(--border);
+  margin-top: auto;
+  width: 100%;
+
+  /* DESKTOP DEFAULT (Matches your other components) */
+  padding: 2rem 1.5rem;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+
+  /* DESKTOP DEFAULT: Row layout, wide gap */
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+
+  color: var(--text-light);
+  font-size: 0.9rem;
+  text-align: left;
+}
+
+/* BRAND STYLES */
+.brandLink {
+  text-decoration: none;
+}
+
+.brandGroup {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  font-family: var(--font-cinzel), serif;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.denarii {
+  color: var(--brand-gold);
+  font-size: 1.5rem;
+}
+
+.district {
+  color: var(--text);
+  font-size: 1.35rem;
+}
+
+/* NAV LINKS */
+.links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.link {
+  color: var(--text-light);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.link:hover {
+  color: var(--primary);
+}
+
+.copyright {
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+/* --- MOBILE OVERRIDES (Max-Width) --- */
+/* This matches the strategy used in Header.module.css */
+@media (max-width: 768px) {
+  .footer {
+    /* Tighter padding for mobile */
+    padding: 0.5rem;
+  }
+
+  .container {
+    /* Stack vertically */
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+
+    /* Tighter gap */
+    gap: 0.7rem;
+  }
+
+  .copyright {
+    text-align: center;
+  }
+}
