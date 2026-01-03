@@ -285,6 +285,12 @@ export function useCoins() {
     staleTime: 1000 * 60 * 5,
   });
 
+  // NEW: Compute efficient lookup Set for the UI
+  const ownedIds = useMemo(() => {
+    if (!ownedData?.cache) return new Set();
+    return new Set(Object.keys(ownedData.cache));
+  }, [ownedData]);
+
   // 4. Derived State: Valid Countries
   const validCountryIds = useMemo(() => {
     if (
@@ -357,6 +363,7 @@ export function useCoins() {
       validCountryIds,
     },
     ownedCount: ownedData?.count || 0,
-    isExploreMode, // Expose this for UI
+    ownedIds, // EXPORTED
+    isExploreMode,
   };
 }

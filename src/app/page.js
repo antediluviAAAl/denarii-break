@@ -28,6 +28,7 @@ export default function Home() {
     metadata,
     totalCoins,
     ownedCount,
+    ownedIds, // NEW: Grab the set of owned IDs
     refetch,
   } = useCoins(session?.user?.id);
 
@@ -110,6 +111,7 @@ export default function Home() {
             onCoinAdded={refetch}
             userId={session.user.id}
             initialCoin={null}
+            ownedIds={ownedIds} // NEW: Pass the set to the modal
           />
         )}
 
@@ -119,7 +121,7 @@ export default function Home() {
         )}
       </main>
 
-      {/* FOOTER: Now receives props for Logic */}
+      {/* FOOTER */}
       <Footer session={session} onLogout={handleLogout} />
     </div>
   );

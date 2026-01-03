@@ -2,8 +2,11 @@
 
 .modalOverlay {
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.6);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(2px);
   display: flex;
   align-items: center;
@@ -52,7 +55,9 @@
   padding: 0.25rem;
   transition: color 0.2s;
 }
-.modalClose:hover { color: var(--text); }
+.modalClose:hover {
+  color: var(--text);
+}
 
 .modalBody {
   flex: 1;
@@ -99,10 +104,22 @@
   background: white;
 }
 
+/* NEW: Owned Styling */
+.resultItem.owned {
+  border: 1px solid var(--owned-green);
+  background: var(--owned-green-light);
+}
+
 .resultItem:hover {
   border-color: var(--primary);
   background: #f8fafc;
   transform: translateY(-1px);
+}
+
+/* Specific hover for owned items to maintain the green feel but show interaction */
+.resultItem.owned:hover {
+  border-color: var(--owned-green-dark);
+  background: #dcfce7; /* slightly darker green tint */
 }
 
 .resultInfo {
@@ -216,5 +233,21 @@
   cursor: not-allowed;
 }
 
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
