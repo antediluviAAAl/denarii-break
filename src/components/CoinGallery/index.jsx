@@ -81,8 +81,9 @@ export default function CoinGallery({
                   style={{
                     backgroundColor: group.color.bg,
                     border: `1px solid ${group.color.border}`,
+                    // FIX: Use transparent border instead of 'none' to prevent height jump/text shift
                     borderBottom: isCategoryExpanded
-                      ? "none"
+                      ? "1px solid transparent"
                       : `1px solid ${group.color.border}`,
                     borderRadius: isCategoryExpanded ? "12px 12px 0 0" : "12px",
                   }}
@@ -206,14 +207,9 @@ export default function CoinGallery({
                   <div
                     className={styles.categorySection}
                     style={{
-                      backgroundColor: row.group.color.bg,
-                      border: `1px solid ${borderColor}`,
-                      borderBottom: expandedCategories[row.group.id]
-                        ? "none"
-                        : `1px solid ${borderColor}`,
-                      borderRadius: expandedCategories[row.group.id]
-                        ? "12px 12px 0 0"
-                        : "12px",
+                      backgroundColor: "transparent",
+                      border: "none",
+                      overflow: "visible",
                       zIndex: 2,
                       position: "relative",
                     }}
@@ -221,7 +217,17 @@ export default function CoinGallery({
                     <div
                       className={styles.categoryHeader}
                       onClick={() => toggleCategory(row.group.id)}
-                      style={{ borderBottom: "none" }}
+                      style={{
+                        backgroundColor: row.group.color.bg,
+                        border: `1px solid ${borderColor}`,
+                        // FIX: Transparent border for consistent height (no text shift)
+                        borderBottom: expandedCategories[row.group.id]
+                          ? "1px solid transparent"
+                          : `1px solid ${borderColor}`,
+                        borderRadius: expandedCategories[row.group.id]
+                          ? "12px 12px 0 0"
+                          : "12px",
+                      }}
                     >
                       <div className={styles.categoryTitle}>
                         <h2
@@ -234,9 +240,7 @@ export default function CoinGallery({
                           <span className="text-gold">
                             {row.group.coins.length} coins
                           </span>
-                          <span
-                            className={`${styles.ownedInCategory} mobile-hidden`}
-                          >
+                          <span className={styles.ownedInCategory}>
                             • {row.group.coins.filter((c) => c.is_owned).length}{" "}
                             owned
                           </span>
@@ -254,7 +258,7 @@ export default function CoinGallery({
                 ) : row.type === "subheader" ? (
                   /* 2. PERIOD SUB-HEADER */
                   <div
-                    className={styles.periodRowTable} // Reuse styles
+                    className={styles.periodRowTable}
                     onClick={(e) => {
                       e.stopPropagation();
                       togglePeriod(row.groupId, row.periodId);

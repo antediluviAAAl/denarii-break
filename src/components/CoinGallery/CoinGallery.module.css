@@ -29,9 +29,10 @@
 /* --- CATEGORY SECTION --- */
 .categorySection {
   border-radius: var(--radius);
-  border: 1px solid; /* Color injected via style prop */
+  /* border: 1px solid; REMOVED to prevent double borders */
   overflow: hidden;
-  transition: all 0.3s;
+  /* FIX: Transition only colors/shadows to prevent layout "pop" with virtualizer */
+  transition: background-color 0.2s, box-shadow 0.2s, color 0.2s;
   box-shadow: var(--shadow);
   /* Default positioning */
   margin-top: 24px;
@@ -49,9 +50,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: background 0.2s;
+  /* FIX: Transition only colors/shadows */
+  transition: background-color 0.2s, color 0.2s;
   font-family: var(--font-cinzel), serif;
-  border-bottom: 1px solid transparent; /* Often overridden */
+  border-bottom: 1px solid transparent;
+  box-sizing: border-box; /* FIX: Ensure borders don't expand height unexpectedly */
 }
 
 .categoryHeader:hover {

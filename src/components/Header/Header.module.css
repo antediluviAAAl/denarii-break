@@ -5,22 +5,19 @@
   /* CHANGED: Blur increased to 12px for a richer 'glass' effect */
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(8px);
-  
+
   border-bottom: 1px solid var(--border);
   box-shadow: var(--shadow-sm);
   padding: 0.3rem 0;
   margin-bottom: 1rem;
   width: 100%;
-  
+
   position: sticky;
   top: 0;
   z-index: 100;
-  
+
   /* Smooth transitions for all changing properties */
-  transition: 
-    padding 0.3s ease, 
-    background 0.3s ease,
-    box-shadow 0.3s ease;
+  transition: padding 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* Optional: Add a stronger shadow when scrolled to separate it from content */
@@ -119,10 +116,11 @@
   display: flex;
   gap: 1rem;
   align-items: stretch;
-  
+
   /* Transitions for the hide effect on mobile */
-  transition: max-height 0.3s ease, opacity 0.3s ease, margin 0.3s ease, padding 0.3s ease;
-  overflow: hidden; /* Required for max-height animation */
+  transition: max-height 0.3s ease, opacity 0.3s ease, margin 0.3s ease,
+    padding 0.3s ease;
+  /*  overflow: hidden; */ /* Required for max-height animation */
 }
 
 .headerActionBtn {
@@ -217,7 +215,7 @@
   .appHeader {
     padding: 0.3rem 0;
   }
-  
+
   /* Reduce padding when scrolled to make it tighter */
   .appHeader.scrolled {
     padding: 0.3rem 0;
@@ -228,17 +226,17 @@
     gap: 0.5rem;
     align-items: center;
   }
-  
+
   /* When scrolled on mobile, remove the gap since stats are hidden */
   .scrolled .headerContent {
     gap: 0;
   }
-  
+
   .headerLeft {
-/*    flex-direction: column;   */ /* removed this attribute to make header more compact on mobile */ 
+    /*    flex-direction: column;   */ /* removed this attribute to make header more compact on mobile */
     text-align: center;
   }
-  
+
   .titleWrapper {
     align-items: center;
   }
@@ -250,7 +248,7 @@
     opacity: 1;
     margin-top: 0;
   }
-  
+
   /* When scrolled, collapse it completely */
   .scrolled .headerStats {
     max-height: 0;
@@ -267,7 +265,7 @@
   .mobileText {
     display: inline !important;
   }
-  
+
   /* --- MOBILE STYLING (Fonts/Icons) --- */
   .titleDenarii {
     font-size: 2rem;
@@ -281,16 +279,16 @@
   .ownedCount {
     font-size: 0.675rem;
   }
-  
+
   .headerActionBtn .statValue,
   .statBadge .statValue {
     font-size: 0.675rem;
   }
-  
+
   .statLabel {
     display: none;
   }
-  
+
   .appSubtitle > svg:first-of-type {
     width: 12px;
     height: 12px;
@@ -312,7 +310,7 @@
     padding: 0.3rem 0.5rem;
     min-width: auto;
   }
-  
+
   .statBadge {
     padding: 0.3rem 0.5rem;
     min-width: auto;
