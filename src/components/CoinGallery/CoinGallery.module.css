@@ -3,7 +3,7 @@
 .galleryContainer {
   display: flex;
   flex-direction: column;
-  padding-bottom: 2rem;
+  padding: 0px 10px 20px 10px;
   width: 100%;
 }
 
