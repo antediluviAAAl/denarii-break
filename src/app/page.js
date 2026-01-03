@@ -8,7 +8,7 @@ import FilterBar from "../components/FilterBar";
 import CoinGallery from "../components/CoinGallery";
 import AddCoinModal from "../components/AddCoinModal";
 import SilverChartModal from "../components/SilverChartModal";
-import Footer from "../components/Footer"; // <--- New Import
+import Footer from "../components/Footer";
 import { useCoins } from "../hooks/useCoins";
 
 export default function Home() {
@@ -56,17 +56,12 @@ export default function Home() {
     filters.showOwned === "all";
 
   return (
-    /* WRAPPER DIV:
-       This replaces the React Fragment (<>). 
-       It forces the page to be at least as tall as the screen (100vh).
-       Flex-column lays out Header -> Main -> Footer vertically.
-    */
     <div
       style={{
         minHeight: "100vh",
         display: "flex",
         flexDirection: "column",
-        backgroundColor: "var(--light-bg)", // Ensure background matches global
+        backgroundColor: "var(--light-bg)",
       }}
     >
       <Header
@@ -81,12 +76,9 @@ export default function Home() {
 
       <main
         style={{
-          /* Layout Strategy: */
-          flex: 1, // This pushes the footer to the bottom if content is short
+          flex: 1,
           display: "flex",
           flexDirection: "column",
-
-          /* Centering & Width */
           width: "100%",
           maxWidth: "1400px",
           margin: "0 auto",
@@ -127,10 +119,8 @@ export default function Home() {
         )}
       </main>
 
-      {/* FOOTER:
-          Placed here, it will sit at the bottom of the flex container.
-      */}
-      <Footer />
+      {/* FOOTER: Now receives props for Logic */}
+      <Footer session={session} onLogout={handleLogout} />
     </div>
   );
 }

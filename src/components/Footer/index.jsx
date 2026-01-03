@@ -2,7 +2,7 @@
 import Link from "next/link";
 import styles from "./Footer.module.css";
 
-export default function Footer() {
+export default function Footer({ session, onLogout }) {
   const currentYear = new Date().getFullYear();
 
   return (
@@ -21,9 +21,22 @@ export default function Footer() {
           <Link href="/" className={styles.link}>
             Home
           </Link>
-          <Link href="/login" className={styles.link}>
-            Login
-          </Link>
+
+          {/* SMART TOGGLE: Login vs Logout */}
+          {session ? (
+            <button 
+              onClick={onLogout} 
+              className={styles.logoutBtn}
+              title="Sign out of your account"
+            >
+              Logout
+            </button>
+          ) : (
+            <Link href="/login" className={styles.link}>
+              Login
+            </Link>
+          )}
+
           <a
             href="#"
             onClick={(e) => {
