@@ -57,6 +57,24 @@ export async function addCoinToCollection(formData) {
   const coinId = formData.get("coin_id");
   const obverseFile = formData.get("obverse");
   const reverseFile = formData.get("reverse");
+  
+  // NEW: Extract user-provided paths
+  const pathObverse = formData.get("path_obverse");
+  const pathReverse = formData.get("path_reverse");
+
+  // NEW: Validate Mandatory Fields (Reverse is now required)
+  if (!obverseFile || obverseFile.size === 0) {
+    return { success: false, error: "Obverse image is required." };
+  }
+  if (!reverseFile || reverseFile.size === 0) {
+    return { success: false, error: "Reverse image is required." };
+  }
+  if (!pathObverse || !pathObverse.trim()) {
+    return { success: false, error: "Original Path (Obverse) is required." };
+  }
+  if (!pathReverse || !pathReverse.trim()) {
+    return { success: false, error: "Original Path (Reverse) is required." };
+  }
 
   try {
     // B. Upload Images to ImgBB (Parallel)
@@ -71,15 +89,20 @@ export async function addCoinToCollection(formData) {
       .upsert({
         coin_id: coinId,
         user_id: user.id, // Explicitly link to you
+        
+        // Obverse Data
         url_obverse: obverseData?.url || null,
         medium_url_obverse: obverseData?.medium || obverseData?.url || null,
         thumb_url_obverse: obverseData?.thumb || obverseData?.url || null,
         delete_url_obverse: obverseData?.delete_url || null,
+        original_path_obverse: pathObverse.trim(), // Saving user input
 
+        // Reverse Data
         url_reverse: reverseData?.url || null,
         medium_url_reverse: reverseData?.medium || reverseData?.url || null,
         thumb_url_reverse: reverseData?.thumb || reverseData?.url || null,
         delete_url_reverse: reverseData?.delete_url || null,
+        original_path_reverse: pathReverse.trim(), // Saving user input
       });
 
     if (error) throw new Error(error.message);

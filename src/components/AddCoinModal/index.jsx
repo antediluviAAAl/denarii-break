@@ -2,7 +2,7 @@
 "use client";
 
 import React from "react";
-import { X, CheckCircle, Upload, Loader2 } from "lucide-react";
+import { X, CheckCircle, Upload, Loader2, FolderInput } from "lucide-react";
 import { useAddCoin } from "./useAddCoin";
 import styles from "./AddCoinModal.module.css";
 
@@ -43,7 +43,7 @@ export default function AddCoinModal({
         {/* HEADER */}
         <div className={styles.modalHeader}>
           <h3 className={styles.modalTitle}>
-            {step === 1 ? "Add to Collection" : "Add to Collection"}
+            {step === 1 ? "Add to Collection" : "Upload Details"}
           </h3>
           <button className={styles.modalClose} onClick={onClose}>
             <X size={24} />
@@ -79,7 +79,7 @@ export default function AddCoinModal({
 
               <div className={styles.coinList}>
                 {results.map((coin) => {
-                  // NEW: Check ownership locally using the passed Set
+                  // Check ownership locally using the passed Set
                   const isOwned = ownedIds && ownedIds.has(coin.coin_id);
 
                   return (
@@ -104,11 +104,9 @@ export default function AddCoinModal({
                         </div>
                       </div>
 
-                      {/* NEW: Green check if owned, Gray if not */}
                       <CheckCircle
                         size={18}
                         color={isOwned ? "var(--owned-green)" : "var(--border)"}
-                        // Fill effect for owned coins to make them pop even more
                         fill={isOwned ? "#dcfce7" : "none"}
                       />
                     </div>
@@ -129,7 +127,7 @@ export default function AddCoinModal({
               </div>
             </div>
           ) : (
-            /* --- STEP 2: UPLOAD --- */
+            /* --- STEP 2: UPLOAD & PATHS --- */
             <form onSubmit={handleSubmit} className={styles.uploadForm}>
               {/* Selected Coin Card */}
               <div className={styles.selectedCoinCard}>
@@ -159,7 +157,6 @@ export default function AddCoinModal({
                   {getCoinDescription(selectedCoin)}
                 </div>
 
-                {/* Only show 'Change Coin' if we didn't start with a fixed initialCoin */}
                 <button
                   type="button"
                   className={styles.changeLink}
@@ -169,28 +166,64 @@ export default function AddCoinModal({
                 </button>
               </div>
 
-              {/* Upload Fields */}
-              <div>
-                <label className={styles.fieldLabel}>
-                  Obverse Image (Required)
-                </label>
-                <input
-                  type="file"
-                  name="obverse"
-                  accept="image/*"
-                  required
-                  className={styles.fileInput}
-                />
+              {/* OBVERSE SECTION */}
+              <div className={styles.sectionGroup}>
+                <h4 className={styles.sectionTitle}>Obverse (Front)</h4>
+                
+                <div className={styles.inputGroup}>
+                  <label className={styles.fieldLabel}>Image File</label>
+                  <input
+                    type="file"
+                    name="obverse"
+                    accept="image/*"
+                    required
+                    className={styles.fileInput}
+                  />
+                </div>
+
+                <div className={styles.inputGroup}>
+                  <label className={styles.fieldLabel}>Original File Path</label>
+                  <div className="relative" style={{ position: 'relative' }}>
+                    <FolderInput size={16} className={styles.inputIcon} />
+                    <input
+                      type="text"
+                      name="path_obverse"
+                      placeholder="e.g. C:\MyCoins\Europe\1943_obv.jpg"
+                      required
+                      className={styles.textInput}
+                    />
+                  </div>
+                </div>
               </div>
 
-              <div>
-                <label className={styles.fieldLabel}>Reverse Image</label>
-                <input
-                  type="file"
-                  name="reverse"
-                  accept="image/*"
-                  className={styles.fileInput}
-                />
+              {/* REVERSE SECTION */}
+              <div className={styles.sectionGroup}>
+                <h4 className={styles.sectionTitle}>Reverse (Back)</h4>
+                
+                <div className={styles.inputGroup}>
+                  <label className={styles.fieldLabel}>Image File</label>
+                  <input
+                    type="file"
+                    name="reverse"
+                    accept="image/*"
+                    required
+                    className={styles.fileInput}
+                  />
+                </div>
+
+                <div className={styles.inputGroup}>
+                  <label className={styles.fieldLabel}>Original File Path</label>
+                  <div className="relative" style={{ position: 'relative' }}>
+                    <FolderInput size={16} className={styles.inputIcon} />
+                    <input
+                      type="text"
+                      name="path_reverse"
+                      placeholder="e.g. C:\MyCoins\Europe\1943_rev.jpg"
+                      required
+                      className={styles.textInput}
+                    />
+                  </div>
+                </div>
               </div>
 
               <button
@@ -203,7 +236,7 @@ export default function AddCoinModal({
                 ) : (
                   <Upload size={18} />
                 )}
-                {isSubmitting ? "Uploading to Vault..." : "Upload & Save"}
+                {isSubmitting ? "Uploading..." : "Upload & Save"}
               </button>
             </form>
           )}

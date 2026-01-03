@@ -45,6 +45,7 @@
   font-weight: 700;
   margin: 0;
   color: var(--text);
+  font-family: var(--font-cinzel), serif;
 }
 
 .modalClose {
@@ -78,12 +79,13 @@
   border-radius: var(--radius-sm);
   font-size: 1rem;
   transition: all 0.2s;
+  font-family: var(--font-cinzel), serif;
 }
 
 .searchBox:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.1);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
 }
 
 .coinList {
@@ -104,7 +106,6 @@
   background: white;
 }
 
-/* NEW: Owned Styling */
 .resultItem.owned {
   border: 1px solid var(--owned-green);
   background: var(--owned-green-light);
@@ -116,10 +117,9 @@
   transform: translateY(-1px);
 }
 
-/* Specific hover for owned items to maintain the green feel but show interaction */
 .resultItem.owned:hover {
   border-color: var(--owned-green-dark);
-  background: #dcfce7; /* slightly darker green tint */
+  background: #dcfce7;
 }
 
 .resultInfo {
@@ -162,7 +162,7 @@
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .selectedLabel {
@@ -193,10 +193,28 @@
   gap: 1.5rem;
 }
 
+.sectionGroup {
+  border-top: 1px solid var(--border-light);
+  padding-top: 1rem;
+}
+
+.sectionTitle {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-light);
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+.inputGroup {
+  margin-bottom: 1rem;
+}
+
 .fieldLabel {
   display: block;
-  margin-bottom: 0.5rem;
-  font-size: 0.9rem;
+  margin-bottom: 0.35rem;
+  font-size: 0.85rem;
   font-weight: 600;
   color: var(--text);
 }
@@ -207,7 +225,33 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   background: white;
+  font-size: 0.85rem;
+  color: var(--text-light);
+}
+
+.textInput {
+  width: 100%;
+  padding: 0.6rem 0.75rem 0.6rem 2.25rem; /* Left padding for icon */
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
   font-size: 0.9rem;
+  transition: all 0.2s;
+  color: var(--text);
+}
+
+.textInput:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+}
+
+.inputIcon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-light);
+  pointer-events: none;
 }
 
 .submitBtn {
@@ -226,6 +270,7 @@
   gap: 0.5rem;
   cursor: pointer;
   transition: opacity 0.2s;
+  font-family: var(--font-cinzel), serif;
 }
 
 .submitBtn:disabled {
@@ -234,20 +279,10 @@
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 @keyframes slideUp {
-  from {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
