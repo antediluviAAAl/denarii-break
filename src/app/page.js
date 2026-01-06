@@ -2,35 +2,35 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { supabase } from "../lib/supabaseClient";
 import Header from "../components/Header";
-import FilterBar from "../components/FilterBar";
-import CoinGallery from "../components/CoinGallery";
-import AddCoinModal from "../components/AddCoinModal";
-import SilverChartModal from "../components/SilverChartModal";
 import Footer from "../components/Footer";
+import PreviewCard from "../components/Hub/PreviewCard";
+import SelectionModal from "../components/Hub/SelectionModal";
+import SilverChartModal from "../components/SilverChartModal";
+import AddCoinModal from "../components/AddCoinModal";
 import { useCoins } from "../hooks/useCoins";
+import styles from "../components/Hub/Hub.module.css";
 
-export default function Home() {
+// --- LOCAL BACKGROUND IMAGES ---
+const IMG_EXPLORE = "/images/explore.webp";
+const IMG_REGIONS = "/images/regions.webp";
+const IMG_ERAS = "/images/eras.webp";
+
+export default function HubPage() {
+  const router = useRouter();
   const [session, setSession] = useState(null);
+  const [modalType, setModalType] = useState(null); // 'countries' | 'periods' | null
 
-  // Modal States
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  // Global Actions State
   const [isSilverModalOpen, setIsSilverModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-  const [viewMode, setViewMode] = useState("grid");
-
-  const {
-    coins,
-    loading,
-    filters,
-    setFilters,
-    metadata,
-    totalCoins,
-    ownedCount,
-    ownedIds, // NEW: Grab the set of owned IDs
-    refetch,
-  } = useCoins(session?.user?.id);
+  // Fetch metadata ONLY
+  const { metadata, totalCoins, refetch, ownedIds } = useCoins({
+    fetchCoins: false,
+  });
 
   useEffect(() => {
     supabase.auth
@@ -50,79 +50,70 @@ export default function Home() {
     window.location.reload();
   };
 
-  const isExploreMode =
-    !filters.search &&
-    !filters.country &&
-    !filters.period &&
-    filters.showOwned === "all";
-
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        backgroundColor: "var(--light-bg)",
-      }}
-    >
+    <div className={styles.hubContainer}>
       <Header
-        ownedCount={ownedCount}
-        displayCount={coins.length}
+        /* ownedCount omitted to hide the "n owned" subtitle on Hub */
         totalCoins={totalCoins}
-        onAddCoin={() => setIsAddModalOpen(true)}
         onOpenSilver={() => setIsSilverModalOpen(true)}
+        onAddCoin={() => setIsAddModalOpen(true)}
         session={session}
         onLogout={handleLogout}
       />
 
-      <main
-        style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          width: "100%",
-          maxWidth: "1400px",
-          margin: "0 auto",
-          padding: "0",
-        }}
-      >
-        <FilterBar
-          filters={filters}
-          setFilters={setFilters}
-          metadata={metadata}
-          viewMode={viewMode}
-          setViewMode={setViewMode}
-          isExploreMode={isExploreMode}
+      <main className={styles.hubContent}>
+        {/* 1. EXPLORE */}
+        <PreviewCard
+          title="EXPLORE"
+          subtitle="Full Collection & Search"
+          variant="straight"
+          bgImage={IMG_EXPLORE}
+          onClick={() => router.push("/gallery")}
         />
 
-        <CoinGallery
-          coins={coins}
-          loading={loading}
-          categories={metadata.categories}
-          viewMode={viewMode}
-          setViewMode={setViewMode}
-          sortBy={filters.sortBy}
+        {/* 2. REGIONS */}
+        <PreviewCard
+          title="REGIONS"
+          subtitle="Kingdoms · Empires · States"
+          variant="left"
+          bgImage={IMG_REGIONS}
+          onClick={() => setModalType("countries")}
         />
 
-        {/* Global Add Modal */}
-        {isAddModalOpen && session && (
-          <AddCoinModal
-            onClose={() => setIsAddModalOpen(false)}
-            onCoinAdded={refetch}
-            userId={session.user.id}
-            initialCoin={null}
-            ownedIds={ownedIds} // NEW: Pass the set to the modal
-          />
-        )}
-
-        {/* Silver Chart Modal */}
-        {isSilverModalOpen && (
-          <SilverChartModal onClose={() => setIsSilverModalOpen(false)} />
-        )}
+        {/* 3. ERAS */}
+        <PreviewCard
+          title="ERAS"
+          subtitle="Timelines of History"
+          variant="right"
+          bgImage={IMG_ERAS}
+          onClick={() => setModalType("periods")}
+        />
       </main>
 
-      {/* FOOTER */}
       <Footer session={session} onLogout={handleLogout} />
+
+      {/* MODALS */}
+      {modalType && (
+        <SelectionModal
+          type={modalType}
+          data={metadata}
+          onClose={() => setModalType(null)}
+        />
+      )}
+
+      {isSilverModalOpen && (
+        <SilverChartModal onClose={() => setIsSilverModalOpen(false)} />
+      )}
+
+      {isAddModalOpen && session && (
+        <AddCoinModal
+          onClose={() => setIsAddModalOpen(false)}
+          onCoinAdded={refetch}
+          userId={session.user.id}
+          initialCoin={null}
+          ownedIds={ownedIds}
+        />
+      )}
     </div>
   );
 }

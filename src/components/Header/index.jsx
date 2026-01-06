@@ -3,6 +3,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Database,
   CheckCircle,
@@ -11,6 +12,7 @@ import {
   LogOut,
   LineChart,
   Coins,
+  LayoutGrid,
 } from "lucide-react";
 import styles from "./Header.module.css";
 
@@ -23,18 +25,18 @@ export default function Header({
   session,
   onLogout,
 }) {
+  const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
 
-  // Handle scroll detection
   useEffect(() => {
     const handleScroll = () => {
-      // If user scrolls down more than 10px, trigger the 'scrolled' state
       setIsScrolled(window.scrollY > 10);
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const isGalleryPage = pathname === "/gallery";
 
   return (
     <header
@@ -43,7 +45,7 @@ export default function Header({
       <div className={styles.headerContent}>
         {/* LEFT: Branding */}
         <div className={styles.headerLeft}>
-          <div className={styles.appIcon}>
+          <Link href="/" className={styles.appIcon} title="Return to Hub">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/logo.svg"
@@ -52,20 +54,21 @@ export default function Header({
               alt="Logo"
               style={{ display: "block" }}
             />
-          </div>
+          </Link>
 
           <div className={styles.titleWrapper}>
-            <h1 className={styles.appTitle}>
-              <span className={styles.titleDenarii}>Denarii</span>
-              <span className={styles.titleDistrict}> District</span>
-            </h1>
+            <Link href="/" style={{ textDecoration: "none" }}>
+              <h1 className={styles.appTitle}>
+                <span className={styles.titleDenarii}>Denarii</span>
+                <span className={styles.titleDistrict}> District</span>
+              </h1>
+            </Link>
 
             <div className={styles.appSubtitle}>
               <Database size={16} className="text-gold" />
               <span style={{ fontWeight: 600 }}>
-                {totalCoins.toLocaleString()} coins in database
+                {totalCoins.toLocaleString()} coins
               </span>
-
               {ownedCount > 0 && (
                 <span className={styles.ownedCount}>
                   <CheckCircle size={14} />
@@ -78,7 +81,22 @@ export default function Header({
 
         {/* RIGHT: Actions & Stats */}
         <div className={styles.headerStats}>
-          {/* Silver Spot Button */}
+          {/* Gallery Link (Hidden on Gallery Page) */}
+          {!isGalleryPage && (
+            <Link
+              href="/gallery"
+              className={styles.headerActionBtn}
+              title="Open Gallery App"
+            >
+              <LayoutGrid size={20} className="text-gold" />
+              <span className={styles.statValue}>
+                <span className={styles.desktopText}>Gallery</span>
+                <span className={styles.mobileText}>Gallery</span>
+              </span>
+            </Link>
+          )}
+
+          {/* Silver Spot */}
           <button
             onClick={onOpenSilver}
             className={`${styles.headerActionBtn} ${styles.silverBtn}`}
@@ -93,7 +111,6 @@ export default function Header({
 
           {session ? (
             <>
-              {/* Add Coin Button */}
               {onAddCoin && (
                 <button
                   onClick={onAddCoin}
@@ -108,7 +125,6 @@ export default function Header({
                 </button>
               )}
 
-              {/* Sign Out Button */}
               <button
                 onClick={onLogout}
                 className={styles.headerActionBtn}
@@ -122,7 +138,6 @@ export default function Header({
               </button>
             </>
           ) : (
-            /* Sign In Button */
             <Link
               href="/login"
               className={styles.headerActionBtn}
@@ -133,16 +148,18 @@ export default function Header({
             </Link>
           )}
 
-          {/* Showing Count Badge */}
-          <div className={styles.statBadge}>
-            <span className={styles.statLabel}>Showing</span>
-            <div className={styles.statValueRow}>
-              <Coins size={20} className={styles.statIcon} />
-              <span className={styles.statValue}>
-                {(displayCount || 0).toLocaleString()}
-              </span>
+          {/* Showing Count Badge (Only visible when displayCount > 0) */}
+          {displayCount > 0 && (
+            <div className={styles.statBadge}>
+              <span className={styles.statLabel}>Showing</span>
+              <div className={styles.statValueRow}>
+                <Coins size={20} className={styles.statIcon} />
+                <span className={styles.statValue}>
+                  {displayCount.toLocaleString()}
+                </span>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </header>

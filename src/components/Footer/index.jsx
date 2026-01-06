@@ -19,13 +19,16 @@ export default function Footer({ session, onLogout }) {
         {/* Links Section */}
         <div className={styles.links}>
           <Link href="/" className={styles.link}>
-            Home
+            Hub
           </Link>
 
-          {/* SMART TOGGLE: Login vs Logout */}
+          <Link href="/gallery" className={styles.link}>
+            Gallery
+          </Link>
+
           {session ? (
-            <button 
-              onClick={onLogout} 
+            <button
+              onClick={onLogout}
               className={styles.logoutBtn}
               title="Sign out of your account"
             >

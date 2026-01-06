@@ -1,26 +1,20 @@
 /* src/components/Header/Header.module.css */
 
 .appHeader {
-  /* CHANGED: Opacity lowered to 0.8 to make the frost visible */
-  /* CHANGED: Blur increased to 12px for a richer 'glass' effect */
+  /* Restored original glass effect */
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(8px);
-
   border-bottom: 1px solid var(--border);
   box-shadow: var(--shadow-sm);
   padding: 0.3rem 0;
   margin-bottom: 1rem;
   width: 100%;
-
   position: sticky;
   top: 0;
   z-index: 100;
-
-  /* Smooth transitions for all changing properties */
   transition: padding 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Optional: Add a stronger shadow when scrolled to separate it from content */
 .appHeader.scrolled {
   box-shadow: var(--shadow-md);
   padding: 0.3rem 0;
@@ -51,6 +45,12 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.appIcon:hover {
+  transform: scale(1.05);
 }
 
 .titleWrapper {
@@ -68,8 +68,10 @@
   font-weight: 700;
   margin: 0;
   line-height: 1;
+  text-decoration: none;
 }
 
+/* Restored Original Sizes */
 .titleDenarii {
   font-size: 2.5rem;
   font-weight: 500;
@@ -107,26 +109,28 @@
   font-family: inherit;
 }
 
-.ownedCount svg {
-  color: var(--owned-green);
-}
-
 /* --- RIGHT SIDE (Stats/Buttons) --- */
 .headerStats {
   display: flex;
   gap: 1rem;
-  align-items: stretch;
+  align-items: stretch; /* Ensures items stretch to match height */
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+}
 
-  /* Transitions for the hide effect on mobile */
-  transition: max-height 0.3s ease, opacity 0.3s ease, margin 0.3s ease,
-    padding 0.3s ease;
-  /*  overflow: hidden; */ /* Required for max-height animation */
+/* UNIFORM HEIGHT FIX */
+.headerActionBtn,
+.statBadge {
+  /* This ensures buttons on Hub (no badge) are same height as Gallery (with badge) */
+  min-height: 57.6px;
+  box-sizing: border-box;
 }
 
 .headerActionBtn {
+  /* Restored Original Colors */
   background: #fffbeb;
   border: 1px solid var(--brand-gold);
   border-radius: var(--radius-sm);
+
   padding: 0.5rem 1rem;
   display: flex;
   flex-direction: row;
@@ -136,7 +140,6 @@
   min-width: 120px;
   cursor: pointer;
   transition: all 0.2s ease;
-  height: auto;
   text-decoration: none;
   color: var(--text);
   font: inherit;
@@ -210,55 +213,22 @@
   display: none !important;
 }
 
-/* --- RESPONSIVE MEDIA QUERIES --- */
+/* --- MEDIA QUERIES --- */
 @media (max-width: 768px) {
-  .appHeader {
-    padding: 0.3rem 0;
-  }
-
-  /* Reduce padding when scrolled to make it tighter */
-  .appHeader.scrolled {
-    padding: 0.3rem 0;
-  }
-
   .headerContent {
     flex-direction: column;
     gap: 0.5rem;
-    align-items: center;
   }
-
-  /* When scrolled on mobile, remove the gap since stats are hidden */
-  .scrolled .headerContent {
-    gap: 0;
-  }
-
-  .headerLeft {
-    /*    flex-direction: column;   */ /* removed this attribute to make header more compact on mobile */
-    text-align: center;
-  }
-
-  .titleWrapper {
-    align-items: center;
-  }
-
-  /* --- HIDE STATS ON SCROLL LOGIC --- */
-  /* By default on mobile, we give it a max-height to show content */
   .headerStats {
-    max-height: 200px; /* Arbitrary large number to fit content */
+    max-height: 200px;
     opacity: 1;
-    margin-top: 0;
   }
-
-  /* When scrolled, collapse it completely */
   .scrolled .headerStats {
     max-height: 0;
     opacity: 0;
-    margin: 0;
-    padding: 0;
-    pointer-events: none; /* Prevent clicks when hidden */
+    pointer-events: none;
   }
 
-  /* --- TEXT TOGGLES --- */
   .desktopText {
     display: none !important;
   }
@@ -266,61 +236,18 @@
     display: inline !important;
   }
 
-  /* --- MOBILE STYLING (Fonts/Icons) --- */
+  /* Mobile Font Sizes */
   .titleDenarii {
     font-size: 2rem;
   }
   .titleDistrict {
     font-size: 1.9rem;
   }
-  .appSubtitle {
-    font-size: 0.675rem;
-  }
-  .ownedCount {
-    font-size: 0.675rem;
-  }
 
-  .headerActionBtn .statValue,
-  .statBadge .statValue {
-    font-size: 0.675rem;
-  }
-
-  .statLabel {
-    display: none;
-  }
-
-  .appSubtitle > svg:first-of-type {
-    width: 12px;
-    height: 12px;
-  }
-  .ownedCount > svg {
-    width: 12px;
-    height: 12px;
-  }
-  .headerActionBtn > svg {
-    width: 14px;
-    height: 14px;
-  }
-  .statIcon {
-    width: 14px;
-    height: 14px;
-  }
-
-  .headerActionBtn {
-    padding: 0.3rem 0.5rem;
-    min-width: auto;
-  }
-
+  /* Reset height on mobile for compactness */
+  .headerActionBtn,
   .statBadge {
-    padding: 0.3rem 0.5rem;
-    min-width: auto;
-  }
-}
-
-@media (max-width: 480px) {
-  .headerStats {
-    width: 100%;
-    justify-content: center;
-    flex-wrap: wrap;
+    min-height: auto;
+    padding: 0.4rem 0.8rem;
   }
 }

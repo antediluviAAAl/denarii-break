@@ -3,17 +3,17 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "next/navigation";
 import { supabase } from "../lib/supabaseClient";
 
 // --- CONFIGURATION ---
-
 const EXPLORE_DISTRIBUTION = [
-  { typeId: 1, target: 60 }, // Circulation
-  { typeId: 2, target: 50 }, // Commemorative
-  { typeId: 3, target: 50 }, // Collector
-  { typeId: 4, target: 20 }, // Tokens
-  { typeId: 5, target: 10 }, // Notgelds
-  { typeId: 6, target: 10 }, // Notgelds (Probes)
+  { typeId: 1, target: 60 },
+  { typeId: 2, target: 50 },
+  { typeId: 3, target: 50 },
+  { typeId: 4, target: 20 },
+  { typeId: 5, target: 10 },
+  { typeId: 6, target: 10 },
 ];
 
 const SELECT_COINS_FIELDS = `
@@ -26,7 +26,6 @@ const SELECT_COINS_FIELDS = `
 `;
 
 // --- HELPERS ---
-
 const processCoinData = (coin, ownedCache) => {
   const ownedData = ownedCache[coin.coin_id];
   const getImages = (side) => {
@@ -57,8 +56,6 @@ const shuffleArray = (array) => {
 };
 
 // --- FETCHERS ---
-
-// 1. Fetch Metadata (Includes Hierarchy Processing)
 const fetchMetadata = async () => {
   const countPromises = EXPLORE_DISTRIBUTION.map(async (dist) => {
     const { count } = await supabase
@@ -81,7 +78,6 @@ const fetchMetadata = async () => {
     return acc;
   }, {});
 
-  // --- HIERARCHY PROCESSING ---
   const rawCountries = countries.data || [];
   const hierarchyMap = {};
 
@@ -91,26 +87,20 @@ const fetchMetadata = async () => {
       hierarchyMap[ultId] = {
         id: ultId,
         name: c.ultimate_entity_name,
-        isComposite: false, // Default
+        isComposite: false,
         children: [],
       };
     }
-
-    // Check user logic: if ultimate name matches parent name, it's a composite entity (e.g. German States)
-    // We check if THIS child implies the group is composite
     if (c.parent_name === c.ultimate_entity_name) {
       hierarchyMap[ultId].isComposite = true;
     }
-
     hierarchyMap[ultId].children.push(c);
   });
 
-  // Sort children alphabetically within each group
   Object.values(hierarchyMap).forEach((group) => {
     group.children.sort((a, b) => a.country_name.localeCompare(b.country_name));
   });
 
-  // Convert to array and sort by Ultimate Name
   const hierarchicalCountries = Object.values(hierarchyMap).sort((a, b) =>
     a.name.localeCompare(b.name)
   );
@@ -124,7 +114,6 @@ const fetchMetadata = async () => {
   };
 };
 
-// 2. Fetch Owned Coins
 const fetchOwnedCoins = async () => {
   const { data } = await supabase.from("d_coins_owned").select(`
       coin_id, 
@@ -133,14 +122,10 @@ const fetchOwnedCoins = async () => {
       thumb_url_obverse, thumb_url_reverse,
       f_coins!inner(period_id)
       `);
-
   const cache = {};
   const ownedPeriodIds = new Set();
-
   (data || []).forEach((c) => {
-    if (c.f_coins?.period_id) {
-      ownedPeriodIds.add(c.f_coins.period_id);
-    }
+    if (c.f_coins?.period_id) ownedPeriodIds.add(c.f_coins.period_id);
     cache[c.coin_id] = {
       full: { obverse: c.url_obverse, reverse: c.url_reverse },
       medium: { obverse: c.medium_url_obverse, reverse: c.medium_url_reverse },
@@ -150,25 +135,21 @@ const fetchOwnedCoins = async () => {
   return { cache, count: data?.length || 0, ownedPeriodIds };
 };
 
-// 3. Fetch Periods
 const fetchPeriods = async (countryId) => {
   if (!countryId) return [];
   const { data } = await supabase
     .from("b_periods_countries")
     .select(`period_id, d_period!inner(*)`)
     .eq("country_id", countryId);
-
   const periods = data?.map((d) => d.d_period) || [];
   return periods.sort(
     (a, b) => (b.period_start_year || 0) - (a.period_start_year || 0)
   );
 };
 
-// 4. Fetch Explore Coins
 const fetchExploreCoins = async ({ typeCounts, ownedCache }) => {
   const queries = EXPLORE_DISTRIBUTION.map(async ({ typeId, target }) => {
     const totalAvailable = typeCounts[typeId] || 0;
-
     if (totalAvailable <= target) {
       const { data } = await supabase
         .from("f_coins")
@@ -176,38 +157,28 @@ const fetchExploreCoins = async ({ typeCounts, ownedCache }) => {
         .eq("type_id", typeId);
       return data || [];
     }
-
     const maxOffset = totalAvailable - target;
     const offset = Math.floor(Math.random() * maxOffset);
-
     const { data } = await supabase
       .from("f_coins")
       .select(SELECT_COINS_FIELDS)
       .eq("type_id", typeId)
       .range(offset, offset + target - 1);
-
     return data || [];
   });
-
   const results = await Promise.all(queries);
   const flatCoins = results.flat();
   const shuffledCoins = shuffleArray(flatCoins);
-
   return shuffledCoins.map((coin) => processCoinData(coin, ownedCache));
 };
 
-// 5. Fetch Filtered Coins
 const fetchCoins = async ({ filters, ownedCache }) => {
   let filterPeriodIds = null;
   const ownedIds = Object.keys(ownedCache);
 
   if (filters.showOwned === "owned" && ownedIds.length === 0) return [];
-
-  // SAFETY: If we are in "Composite Pending" mode (Ultimate selected, but Country is null),
-  // we return empty because the user hasn't selected a specific child yet.
-  if (filters.ultimateEntity && !filters.country) {
-    return [];
-  }
+  // Safety: If ultimate selected but no child country yet, return empty
+  if (filters.ultimateEntity && !filters.country) return [];
 
   if (filters.country && !filters.period) {
     const { data } = await supabase
@@ -220,21 +191,14 @@ const fetchCoins = async ({ filters, ownedCache }) => {
 
   const buildQuery = () => {
     let query = supabase.from("f_coins").select(SELECT_COINS_FIELDS);
-
-    if (filters.showOwned === "owned") {
-      query = query.in("coin_id", ownedIds);
-    }
-    if (filters.search) {
+    if (filters.showOwned === "owned") query = query.in("coin_id", ownedIds);
+    if (filters.search)
       query = query.or(
         `name.ilike.%${filters.search}%,subject.ilike.%${filters.search}%,km.ilike.%${filters.search}%`
       );
-    }
-    if (filters.country && !filters.period && filterPeriodIds) {
+    if (filters.country && !filters.period && filterPeriodIds)
       query = query.in("period_id", filterPeriodIds);
-    }
-    if (filters.period) {
-      query = query.eq("period_id", filters.period);
-    }
+    if (filters.period) query = query.eq("period_id", filters.period);
 
     const sortMap = {
       year_desc: { col: "year", asc: false },
@@ -244,7 +208,6 @@ const fetchCoins = async ({ filters, ownedCache }) => {
     };
     const sort = sortMap[filters.sortBy] || sortMap.year_desc;
     query = query.order(sort.col, { ascending: sort.asc });
-
     return query;
   };
 
@@ -259,7 +222,6 @@ const fetchCoins = async ({ filters, ownedCache }) => {
       from + BATCH_SIZE - 1
     );
     if (error) throw error;
-
     if (data && data.length > 0) {
       rawData = [...rawData, ...data];
       if (data.length < BATCH_SIZE) fetching = false;
@@ -268,31 +230,31 @@ const fetchCoins = async ({ filters, ownedCache }) => {
       fetching = false;
     }
   }
-
   return rawData.map((coin) => processCoinData(coin, ownedCache));
 };
 
-// --- HOOK ---
+// --- MAIN HOOK (UPDATED) ---
 
-export function useCoins() {
+export function useCoins(options = { fetchCoins: true }) {
+  const searchParams = useSearchParams();
+
   const [filters, setFilters] = useState({
-    search: "",
-    ultimateEntity: "", // Level 1 ID
-    country: "", // Level 2 ID (Actual Country ID)
-    period: "",
+    search: searchParams.get("search") || "",
+    ultimateEntity: searchParams.get("ultimateEntity") || "",
+    country: searchParams.get("country") || "",
+    period: searchParams.get("period") || "",
     denomination: "",
     series: "",
-    showOwned: "all",
+    showOwned: searchParams.get("showOwned") || "all",
     sortBy: "year_desc",
   });
 
-  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState(filters.search);
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearch(filters.search), 300);
     return () => clearTimeout(timer);
   }, [filters.search]);
 
-  // Explore Mode: No search, no country (Ultimate or Specific), no period
   const isExploreMode =
     !filters.search &&
     !filters.ultimateEntity &&
@@ -300,14 +262,13 @@ export function useCoins() {
     !filters.period &&
     filters.showOwned === "all";
 
-  // Queries
   const { data: metaData } = useQuery({
     queryKey: ["metadata"],
     queryFn: fetchMetadata,
     staleTime: Infinity,
   });
 
-  const { data: ownedData } = useQuery({
+  const { data: ownedData, refetch: refetchOwned } = useQuery({
     queryKey: ["owned"],
     queryFn: fetchOwnedCoins,
     staleTime: 1000 * 60 * 5,
@@ -318,46 +279,33 @@ export function useCoins() {
     return new Set(Object.keys(ownedData.cache));
   }, [ownedData]);
 
-  // Valid IDs Calculation
   const validCountryIds = useMemo(() => {
     if (
       filters.showOwned !== "owned" ||
       !ownedData?.ownedPeriodIds ||
       !metaData?.periodLinks
-    ) {
+    )
       return null;
-    }
     const validIds = new Set();
     metaData.periodLinks.forEach((link) => {
-      if (ownedData.ownedPeriodIds.has(link.period_id)) {
+      if (ownedData.ownedPeriodIds.has(link.period_id))
         validIds.add(link.country_id);
-      }
     });
     return validIds;
   }, [filters.showOwned, ownedData, metaData]);
 
-  // Compute Displayed Hierarchy based on Valid IDs
   const displayedHierarchy = useMemo(() => {
     if (!metaData?.hierarchicalCountries) return [];
-
-    // If we are showing all, return everything
     if (!validCountryIds) return metaData.hierarchicalCountries;
-
-    // Filter Hierarchy for "Owned Only" view
     return metaData.hierarchicalCountries
       .map((group) => {
-        // Filter children
         const validChildren = group.children.filter((c) =>
           validCountryIds.has(c.country_id)
         );
         if (validChildren.length === 0) return null;
-
-        return {
-          ...group,
-          children: validChildren,
-        };
+        return { ...group, children: validChildren };
       })
-      .filter(Boolean); // Remove empty groups
+      .filter(Boolean);
   }, [metaData, validCountryIds]);
 
   const { data: periods } = useQuery({
@@ -371,6 +319,7 @@ export function useCoins() {
     data: coins,
     isLoading: coinsLoading,
     isFetching,
+    refetch: refetchCoins,
   } = useQuery({
     queryKey: [
       "coins",
@@ -392,10 +341,15 @@ export function useCoins() {
         ownedCache: ownedData?.cache || {},
       });
     },
-    enabled: !!ownedData && !!metaData,
+    // Only fetch if required by the page (options.fetchCoins)
+    enabled: !!ownedData && !!metaData && options.fetchCoins,
     keepPreviousData: true,
     staleTime: 1000 * 60 * 5,
   });
+
+  const refetch = async () => {
+    await Promise.all([refetchOwned(), refetchCoins()]);
+  };
 
   return {
     coins: coins || [],
@@ -404,13 +358,14 @@ export function useCoins() {
     setFilters,
     metadata: {
       countries: metaData?.countries || [],
-      hierarchicalCountries: displayedHierarchy, // EXPORTED FOR UI
+      hierarchicalCountries: displayedHierarchy,
       categories: metaData?.categories || [],
       periods: periods || [],
       validCountryIds,
     },
     ownedCount: ownedData?.count || 0,
     ownedIds,
+    refetch,
     isExploreMode,
   };
 }
