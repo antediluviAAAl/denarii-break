@@ -7,7 +7,8 @@ import { supabase } from "../lib/supabaseClient";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import PreviewCard from "../components/Hub/PreviewCard";
-import SelectionModal from "../components/Hub/SelectionModal";
+import RegionView from "../components/Hub/RegionView"; // NEW IMPORT
+import EraView from "../components/Hub/EraView"; // NEW IMPORT
 import SilverChartModal from "../components/SilverChartModal";
 import AddCoinModal from "../components/AddCoinModal";
 import { useCoins } from "../hooks/useCoins";
@@ -18,7 +19,6 @@ const IMG_EXPLORE = "/images/explore.webp";
 const IMG_REGIONS = "/images/regions.webp";
 const IMG_ERAS = "/images/eras.webp";
 
-// Internal component for the logic
 function HubContent() {
   const router = useRouter();
   const [session, setSession] = useState(null);
@@ -54,7 +54,6 @@ function HubContent() {
   return (
     <div className={styles.hubContainer}>
       <Header
-        /* ownedCount omitted to hide the "n owned" subtitle on Hub */
         totalCoins={totalCoins}
         onOpenSilver={() => setIsSilverModalOpen(true)}
         onAddCoin={() => setIsAddModalOpen(true)}
@@ -94,12 +93,13 @@ function HubContent() {
       <Footer session={session} onLogout={handleLogout} />
 
       {/* MODALS */}
-      {modalType && (
-        <SelectionModal
-          type={modalType}
-          data={metadata}
-          onClose={() => setModalType(null)}
-        />
+      {/* Conditionally Render the Specific View */}
+      {modalType === "countries" && (
+        <RegionView data={metadata} onClose={() => setModalType(null)} />
+      )}
+
+      {modalType === "periods" && (
+        <EraView data={metadata} onClose={() => setModalType(null)} />
       )}
 
       {isSilverModalOpen && (
@@ -119,7 +119,6 @@ function HubContent() {
   );
 }
 
-// Wrapper with Suspense
 export default function HubPage() {
   return (
     <Suspense
