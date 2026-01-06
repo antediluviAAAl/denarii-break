@@ -67,7 +67,7 @@ export const buildHierarchy = (rawCountries) => {
   );
 };
 
-// --- PERIOD HIERARCHY (UPDATED) ---
+// --- PERIOD HIERARCHY ---
 export const buildPeriodHierarchy = (rawPeriods) => {
   const map = {};
 
@@ -77,24 +77,20 @@ export const buildPeriodHierarchy = (rawPeriods) => {
       map[pId] = {
         id: pId,
         name: row.period_name,
-        // Fallback to name if shorthand is missing
         shorthand: row.period_shorthand || row.period_name,
         start_year: row.period_start_year,
-        // Fallback to start year if range is missing
         range: row.period_range || row.period_start_year,
         children: [],
         isComposite: false,
       };
     }
 
-    // Provide Flat list of connected countries from the bridge table
     if (row.b_periods_countries && Array.isArray(row.b_periods_countries)) {
       row.b_periods_countries.forEach((link) => {
         if (link.d_countries) {
           map[pId].children.push({
             country_id: link.country_id,
             country_name: link.d_countries.country_name,
-            // CAPTURE THE ULTIMATE ENTITY ID FOR DEEP LINKING
             ultimate_entity_id: link.d_countries.ultimate_entity_id,
           });
         }
@@ -104,23 +100,39 @@ export const buildPeriodHierarchy = (rawPeriods) => {
 
   const hierarchy = Object.values(map);
 
-  // Mark Composites & Sort Children
   hierarchy.forEach((h) => {
     if (h.children.length > 1) {
       h.isComposite = true;
     }
-    // Sort children alphabetically
     h.children.sort((a, b) => a.country_name.localeCompare(b.country_name));
   });
 
-  // SORT: Descending by Year (Newest First)
+  // Sort: Descending by Year (Newest First)
   return hierarchy.sort((a, b) => {
     const yearA = a.start_year || -9999;
     const yearB = b.start_year || -9999;
-
-    if (yearB !== yearA) {
-      return yearB - yearA;
-    }
+    if (yearB !== yearA) return yearB - yearA;
     return a.name.localeCompare(b.name);
   });
+};
+
+// --- TIMELINE GROUPING (NEW) ---
+export const groupPeriodsByYear = (periods) => {
+  const groups = [];
+  let currentYear = null;
+  let currentGroup = null;
+
+  periods.forEach((period) => {
+    // Handle periods with no start year
+    const pYear = period.start_year || "Unknown";
+
+    if (pYear !== currentYear) {
+      currentYear = pYear;
+      currentGroup = { year: currentYear, periods: [] };
+      groups.push(currentGroup);
+    }
+    currentGroup.periods.push(period);
+  });
+
+  return groups;
 };
