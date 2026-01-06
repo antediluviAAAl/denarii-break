@@ -15,7 +15,6 @@
   justify-content: center;
   padding: 1rem 1.6rem;
   gap: 3rem;
-  /* Removed Perspective since tilt is gone */
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
@@ -24,13 +23,8 @@
 /* --- CINEMATIC CARD --- */
 .cardWrapper {
   width: 100%;
-
-  /* MATCHES GALLERY WIDTH EXACTLY */
   max-width: 1400px;
-
-  /* INCREASED HEIGHT */
   height: 700px;
-
   position: relative;
   transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
   transform-style: preserve-3d;
@@ -39,7 +33,6 @@
   box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.25);
 }
 
-/* Hover Effect: Simple Scale Up (No Tilt) */
 .cardWrapper:hover {
   transform: scale(1.015) translateY(-5px) !important;
   box-shadow: 0 35px 70px -12px rgba(0, 0, 0, 0.3);
@@ -72,20 +65,20 @@
 }
 
 .cardWrapper:hover .cardBackground {
-  transform: scale(1.05); /* Gentle zoom */
+  transform: scale(1.05);
 }
 
 .cardContent {
   position: relative;
   z-index: 2;
-  padding: 5rem; /* Larger padding for larger card */
+  padding: 5rem;
   width: 100%;
   text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
 }
 
 .cardTitle {
   font-family: var(--font-cinzel);
-  font-size: 5.5rem; /* Massive Title */
+  font-size: 5.5rem;
   line-height: 1;
   color: #fff;
   margin-bottom: 0.5rem;
@@ -118,7 +111,6 @@
   background: var(--brand-gold);
 }
 
-/* --- TILT REMOVED --- */
 .angledLeft,
 .angledRight,
 .angledStraight {
@@ -146,7 +138,7 @@
   }
 }
 
-/* --- MODAL (Same as before) --- */
+/* --- MODAL --- */
 .modalOverlay {
   position: fixed;
   inset: 0;
@@ -254,24 +246,4 @@
   width: 100%;
   margin-bottom: 0.5rem;
   text-align: left;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideUp {
-  from {
-    transform: translateY(30px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
 }
