@@ -1,7 +1,7 @@
 /* src/app/gallery/page.js */
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { supabase } from "../../lib/supabaseClient";
 import Header from "../../components/Header";
 import FilterBar from "../../components/FilterBar";
@@ -12,7 +12,8 @@ import SilverChartModal from "../../components/SilverChartModal";
 import Footer from "../../components/Footer";
 import { useCoins } from "../../hooks/useCoins";
 
-export default function GalleryPage() {
+// This component contains all your original logic
+function GalleryContent() {
   const [session, setSession] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isSilverModalOpen, setIsSilverModalOpen] = useState(false);
@@ -127,5 +128,20 @@ export default function GalleryPage() {
 
       <Footer session={session} onLogout={handleLogout} />
     </div>
+  );
+}
+
+// The Main Page Component now just wraps the content in Suspense
+export default function GalleryPage() {
+  return (
+    <Suspense
+      fallback={
+        <div style={{ padding: "2rem", textAlign: "center" }}>
+          Loading Gallery...
+        </div>
+      }
+    >
+      <GalleryContent />
+    </Suspense>
   );
 }

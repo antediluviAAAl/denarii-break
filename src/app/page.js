@@ -1,7 +1,7 @@
 /* src/app/page.js */
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../lib/supabaseClient";
 import Header from "../components/Header";
@@ -18,7 +18,8 @@ const IMG_EXPLORE = "/images/explore.webp";
 const IMG_REGIONS = "/images/regions.webp";
 const IMG_ERAS = "/images/eras.webp";
 
-export default function HubPage() {
+// Internal component for the logic
+function HubContent() {
   const router = useRouter();
   const [session, setSession] = useState(null);
   const [modalType, setModalType] = useState(null); // 'countries' | 'periods' | null
@@ -115,5 +116,16 @@ export default function HubPage() {
         />
       )}
     </div>
+  );
+}
+
+// Wrapper with Suspense
+export default function HubPage() {
+  return (
+    <Suspense
+      fallback={<div style={{ minHeight: "100vh", backgroundColor: "#fff" }} />}
+    >
+      <HubContent />
+    </Suspense>
   );
 }
