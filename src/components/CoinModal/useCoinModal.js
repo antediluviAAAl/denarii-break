@@ -28,8 +28,10 @@ async function fetchCoinDetails(coinId) {
     .eq("coin_id", coinId)
     .maybeSingle();
 
-  // 3. Country Fetch
+  // 3. Country Fetch (Split Name Logic)
   let countryName = "Unknown";
+  let parentCountryName = null;
+
   if (coinData.period_id) {
     try {
       const { data: linkData } = await supabase
@@ -42,10 +44,21 @@ async function fetchCoinDetails(coinId) {
       if (linkData) {
         const { data: countryData } = await supabase
           .from("d_countries")
-          .select("country_name")
+          .select("country_name, parent_name")
           .eq("country_id", linkData.country_id)
           .single();
-        if (countryData) countryName = countryData.country_name;
+
+        if (countryData) {
+          countryName = countryData.country_name;
+
+          // Only set parent if it exists and is different from the country itself
+          if (
+            countryData.parent_name &&
+            countryData.parent_name !== countryData.country_name
+          ) {
+            parentCountryName = countryData.parent_name;
+          }
+        }
       }
     } catch (err) {
       console.error("Country fetch warning:", err);
@@ -70,11 +83,11 @@ async function fetchCoinDetails(coinId) {
       original: ownedData.original_path_reverse,
     };
   }
-  // NO 'else' block here.
 
   return {
     ...coinData,
-    countryName,
+    countryName, // "Prussia"
+    parentCountryName, // "German States" (or null)
     is_owned: !!ownedData,
     images: finalImages,
   };

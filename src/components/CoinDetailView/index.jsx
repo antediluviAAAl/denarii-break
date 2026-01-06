@@ -1,3 +1,4 @@
+/* src/components/CoinDetailView/index.jsx */
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -13,7 +14,7 @@ import {
 import { supabase } from "../../lib/supabaseClient";
 import { useCoinModal } from "../CoinModal/useCoinModal";
 import AddCoinModal from "../AddCoinModal";
-import HighResCoinImage from "./HighResCoinImage"; // New Component
+import HighResCoinImage from "./HighResCoinImage";
 import styles from "./CoinDetailView.module.css";
 
 export default function CoinDetailView({
@@ -62,7 +63,6 @@ export default function CoinDetailView({
 
   // --- IMAGES ---
   const images = displayData.images || {};
-  // Priority: Full/Original (for high res) vs Medium (for initial)
   const getOriginal = (side) => images[side]?.full || images[side]?.original;
   const getMedium = (side) =>
     images[side]?.medium || images[side]?.full || images[side]?.original;
@@ -156,7 +156,7 @@ export default function CoinDetailView({
           </div>
         )}
 
-        {/* RESTORED IMAGE GRID */}
+        {/* IMAGE GRID */}
         <div className={styles.coinImages}>
           <div className={styles.coinImageWrapper}>
             <HighResCoinImage
@@ -178,9 +178,9 @@ export default function CoinDetailView({
           </div>
         </div>
 
-        {/* RESTORED 3-COLUMN LAYOUT */}
+        {/* DETAILS GRID */}
         <div className={`${styles.coinDetailsGrid} ${styles.threeCol}`}>
-          {/* Column 1: Identification (0.8fr) */}
+          {/* Column 1: Identification */}
           <div className={styles.detailGroup}>
             <h3>Identification</h3>
             <div className={styles.detailItem}>
@@ -219,7 +219,7 @@ export default function CoinDetailView({
             </div>
           </div>
 
-          {/* Column 2: Groups (1.6fr) */}
+          {/* Column 2: Groups */}
           <div className={styles.detailGroup}>
             <h3>Groups</h3>
             <div className={styles.detailItem}>
@@ -236,19 +236,34 @@ export default function CoinDetailView({
                 displayData.d_period?.period_link
               )}
             </div>
+
+            {/* UPDATED COUNTRY DISPLAY */}
             <div className={styles.detailItem}>
               <strong>Country:</strong>
               <span className={styles.detailValue}>
                 {isLoading && !displayData.countryName ? (
                   <span className={`${styles.skeleton} ${styles.w40}`}></span>
                 ) : (
-                  displayData.countryName || "Unknown"
+                  <>
+                    {displayData.countryName || "Unknown"}
+                    {displayData.parentCountryName && (
+                      <span
+                        style={{
+                          color: "var(--text-light)",
+                          fontSize: "0.85em",
+                        }}
+                      >
+                        {" "}
+                        ({displayData.parentCountryName})
+                      </span>
+                    )}
+                  </>
                 )}
               </span>
             </div>
           </div>
 
-          {/* Column 3: Extra (0.8fr) */}
+          {/* Column 3: Extra */}
           <div className={styles.detailGroup}>
             <h3>Extra</h3>
             <div className={styles.detailItem}>

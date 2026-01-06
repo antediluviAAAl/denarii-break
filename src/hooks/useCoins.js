@@ -1,3 +1,4 @@
+/* src/hooks/useCoins.js */
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
@@ -15,7 +16,6 @@ const EXPLORE_DISTRIBUTION = [
   { typeId: 6, target: 10 }, // Notgelds (Probes)
 ];
 
-// UPDATED: Added denomination_shorthand
 const SELECT_COINS_FIELDS = `
   coin_id, name, year, price_usd, km, subject, 
   type_id, period_id, denomination_id, series_id,
@@ -27,7 +27,6 @@ const SELECT_COINS_FIELDS = `
 
 // --- HELPERS ---
 
-// Helper to attach images and ownership status (Shared by both fetchers)
 const processCoinData = (coin, ownedCache) => {
   const ownedData = ownedCache[coin.coin_id];
   const getImages = (side) => {
@@ -48,7 +47,6 @@ const processCoinData = (coin, ownedCache) => {
   };
 };
 
-// Shuffle Helper (Fisher-Yates)
 const shuffleArray = (array) => {
   const arr = [...array];
   for (let i = arr.length - 1; i > 0; i--) {
@@ -60,9 +58,8 @@ const shuffleArray = (array) => {
 
 // --- FETCHERS ---
 
-// 1. Fetch Metadata (Now includes Type Counts)
+// 1. Fetch Metadata (Includes Hierarchy Processing)
 const fetchMetadata = async () => {
-  // Fetch counts for explore mode distribution in parallel
   const countPromises = EXPLORE_DISTRIBUTION.map(async (dist) => {
     const { count } = await supabase
       .from("f_coins")
@@ -79,14 +76,48 @@ const fetchMetadata = async () => {
       ...countPromises,
     ]);
 
-  // Map counts for easy lookup: { 1: 150000, 2: 50000, ... }
   const typeCounts = typeCountsResults.reduce((acc, curr) => {
     acc[curr.typeId] = curr.count;
     return acc;
   }, {});
 
+  // --- HIERARCHY PROCESSING ---
+  const rawCountries = countries.data || [];
+  const hierarchyMap = {};
+
+  rawCountries.forEach((c) => {
+    const ultId = c.ultimate_entity_id;
+    if (!hierarchyMap[ultId]) {
+      hierarchyMap[ultId] = {
+        id: ultId,
+        name: c.ultimate_entity_name,
+        isComposite: false, // Default
+        children: [],
+      };
+    }
+
+    // Check user logic: if ultimate name matches parent name, it's a composite entity (e.g. German States)
+    // We check if THIS child implies the group is composite
+    if (c.parent_name === c.ultimate_entity_name) {
+      hierarchyMap[ultId].isComposite = true;
+    }
+
+    hierarchyMap[ultId].children.push(c);
+  });
+
+  // Sort children alphabetically within each group
+  Object.values(hierarchyMap).forEach((group) => {
+    group.children.sort((a, b) => a.country_name.localeCompare(b.country_name));
+  });
+
+  // Convert to array and sort by Ultimate Name
+  const hierarchicalCountries = Object.values(hierarchyMap).sort((a, b) =>
+    a.name.localeCompare(b.name)
+  );
+
   return {
-    countries: countries.data || [],
+    countries: rawCountries,
+    hierarchicalCountries,
     categories: categories.data || [],
     periodLinks: periodLinks.data || [],
     typeCounts,
@@ -133,13 +164,11 @@ const fetchPeriods = async (countryId) => {
   );
 };
 
-// 4. Fetch Explore Coins (Stratified Random Sampling)
+// 4. Fetch Explore Coins
 const fetchExploreCoins = async ({ typeCounts, ownedCache }) => {
-  // Execute parallel queries for each configured distribution
   const queries = EXPLORE_DISTRIBUTION.map(async ({ typeId, target }) => {
     const totalAvailable = typeCounts[typeId] || 0;
 
-    // Safety: If not enough coins, just get what we have
     if (totalAvailable <= target) {
       const { data } = await supabase
         .from("f_coins")
@@ -148,8 +177,6 @@ const fetchExploreCoins = async ({ typeCounts, ownedCache }) => {
       return data || [];
     }
 
-    // Performance: Random Offset Strategy
-    // We calculate a random starting point based on total count
     const maxOffset = totalAvailable - target;
     const offset = Math.floor(Math.random() * maxOffset);
 
@@ -163,22 +190,24 @@ const fetchExploreCoins = async ({ typeCounts, ownedCache }) => {
   });
 
   const results = await Promise.all(queries);
-
-  // Combine all groups into one array
   const flatCoins = results.flat();
-
-  // Shuffle them so the grid isn't striped by category
   const shuffledCoins = shuffleArray(flatCoins);
 
   return shuffledCoins.map((coin) => processCoinData(coin, ownedCache));
 };
 
-// 5. Fetch Filtered Coins (Standard Logic)
+// 5. Fetch Filtered Coins
 const fetchCoins = async ({ filters, ownedCache }) => {
   let filterPeriodIds = null;
   const ownedIds = Object.keys(ownedCache);
 
   if (filters.showOwned === "owned" && ownedIds.length === 0) return [];
+
+  // SAFETY: If we are in "Composite Pending" mode (Ultimate selected, but Country is null),
+  // we return empty because the user hasn't selected a specific child yet.
+  if (filters.ultimateEntity && !filters.country) {
+    return [];
+  }
 
   if (filters.country && !filters.period) {
     const { data } = await supabase
@@ -219,7 +248,6 @@ const fetchCoins = async ({ filters, ownedCache }) => {
     return query;
   };
 
-  // Standard Batch Fetching for Filtered View
   const BATCH_SIZE = 1000;
   let rawData = [];
   let from = 0;
@@ -249,7 +277,8 @@ const fetchCoins = async ({ filters, ownedCache }) => {
 export function useCoins() {
   const [filters, setFilters] = useState({
     search: "",
-    country: "",
+    ultimateEntity: "", // Level 1 ID
+    country: "", // Level 2 ID (Actual Country ID)
     period: "",
     denomination: "",
     series: "",
@@ -263,35 +292,33 @@ export function useCoins() {
     return () => clearTimeout(timer);
   }, [filters.search]);
 
-  // 1. Determine Explore Mode
-  // Defined as: No search, no country, no period, and viewing all coins
+  // Explore Mode: No search, no country (Ultimate or Specific), no period
   const isExploreMode =
     !filters.search &&
+    !filters.ultimateEntity &&
     !filters.country &&
     !filters.period &&
     filters.showOwned === "all";
 
-  // 2. Query: Metadata
+  // Queries
   const { data: metaData } = useQuery({
     queryKey: ["metadata"],
     queryFn: fetchMetadata,
     staleTime: Infinity,
   });
 
-  // 3. Query: Owned Coins
   const { data: ownedData } = useQuery({
     queryKey: ["owned"],
     queryFn: fetchOwnedCoins,
     staleTime: 1000 * 60 * 5,
   });
 
-  // NEW: Compute efficient lookup Set for the UI
   const ownedIds = useMemo(() => {
     if (!ownedData?.cache) return new Set();
     return new Set(Object.keys(ownedData.cache));
   }, [ownedData]);
 
-  // 4. Derived State: Valid Countries
+  // Valid IDs Calculation
   const validCountryIds = useMemo(() => {
     if (
       filters.showOwned !== "owned" ||
@@ -309,7 +336,30 @@ export function useCoins() {
     return validIds;
   }, [filters.showOwned, ownedData, metaData]);
 
-  // 5. Query: Periods
+  // Compute Displayed Hierarchy based on Valid IDs
+  const displayedHierarchy = useMemo(() => {
+    if (!metaData?.hierarchicalCountries) return [];
+
+    // If we are showing all, return everything
+    if (!validCountryIds) return metaData.hierarchicalCountries;
+
+    // Filter Hierarchy for "Owned Only" view
+    return metaData.hierarchicalCountries
+      .map((group) => {
+        // Filter children
+        const validChildren = group.children.filter((c) =>
+          validCountryIds.has(c.country_id)
+        );
+        if (validChildren.length === 0) return null;
+
+        return {
+          ...group,
+          children: validChildren,
+        };
+      })
+      .filter(Boolean); // Remove empty groups
+  }, [metaData, validCountryIds]);
+
   const { data: periods } = useQuery({
     queryKey: ["periods", filters.country],
     queryFn: () => fetchPeriods(filters.country),
@@ -317,13 +367,11 @@ export function useCoins() {
     staleTime: 1000 * 60 * 30,
   });
 
-  // 6. Query: Coins (Branches between Explore vs. Filtered)
   const {
     data: coins,
     isLoading: coinsLoading,
     isFetching,
   } = useQuery({
-    // We add 'explore' to the key so it resets when mode changes
     queryKey: [
       "coins",
       {
@@ -333,7 +381,6 @@ export function useCoins() {
       },
     ],
     queryFn: () => {
-      // Branch Logic: Explore Mode vs Standard Mode
       if (isExploreMode && metaData?.typeCounts) {
         return fetchExploreCoins({
           typeCounts: metaData.typeCounts,
@@ -345,7 +392,6 @@ export function useCoins() {
         ownedCache: ownedData?.cache || {},
       });
     },
-    // We wait for ownedData AND metaData (needed for typeCounts in explore mode)
     enabled: !!ownedData && !!metaData,
     keepPreviousData: true,
     staleTime: 1000 * 60 * 5,
@@ -358,12 +404,13 @@ export function useCoins() {
     setFilters,
     metadata: {
       countries: metaData?.countries || [],
+      hierarchicalCountries: displayedHierarchy, // EXPORTED FOR UI
       categories: metaData?.categories || [],
       periods: periods || [],
       validCountryIds,
     },
     ownedCount: ownedData?.count || 0,
-    ownedIds, // EXPORTED
+    ownedIds,
     isExploreMode,
   };
 }

@@ -1,3 +1,4 @@
+/* src/components/FilterBar/index.jsx */
 "use client";
 
 import { useEffect } from "react";
@@ -6,6 +7,7 @@ import {
   X,
   CheckCircle,
   Globe,
+  MapPin, // New Icon for Sub-Country
   Calendar,
   SortAsc,
   Tag,
@@ -26,15 +28,60 @@ export default function FilterBar({
   // --- Handlers ---
   const updateFilter = (key, value) => {
     setFilters((prev) => {
+      // Logic for Period: Reset if country changes (handled inside specific handlers below mostly)
       if (key === "country") return { ...prev, [key]: value, period: "" };
       return { ...prev, [key]: value };
     });
+  };
+
+  // --- SPECIAL HANDLER: Level 1 (Ultimate Entity) Selection ---
+  const handleUltimateChange = (e) => {
+    const selectedUltId = e.target.value;
+
+    if (!selectedUltId) {
+      // Reset everything
+      setFilters((prev) => ({
+        ...prev,
+        ultimateEntity: "",
+        country: "",
+        period: "",
+      }));
+      return;
+    }
+
+    // Find the group in metadata
+    const group = metadata.hierarchicalCountries.find(
+      (g) => String(g.id) === selectedUltId
+    );
+    if (!group) return;
+
+    if (group.isComposite) {
+      // Scenario: German States.
+      // Set Ultimate, CLEAR Country (forces lock), CLEAR Period.
+      setFilters((prev) => ({
+        ...prev,
+        ultimateEntity: selectedUltId,
+        country: "",
+        period: "",
+      }));
+    } else {
+      // Scenario: Romania (Singleton).
+      // Set Ultimate, AUTO-SELECT the one child as Country, CLEAR Period.
+      const childId = group.children[0]?.country_id || "";
+      setFilters((prev) => ({
+        ...prev,
+        ultimateEntity: selectedUltId,
+        country: childId,
+        period: "",
+      }));
+    }
   };
 
   const clearAllFilters = () => {
     setFilters((prev) => ({
       ...prev,
       search: "",
+      ultimateEntity: "",
       country: "",
       period: "",
       showOwned: "all",
@@ -65,16 +112,37 @@ export default function FilterBar({
         action: () => updateFilter("showOwned", "all"),
       });
     }
-    if (filters.country) {
-      const countryName =
-        metadata.countries.find((c) => c.country_id == filters.country)
-          ?.country_name || "Unknown Country";
+
+    // Country Tag Logic
+    if (filters.ultimateEntity) {
+      const group = metadata.hierarchicalCountries.find(
+        (g) => String(g.id) === String(filters.ultimateEntity)
+      );
+      let label = group ? group.name : "Unknown Region";
+
+      // If we have a specific country selected that is DIFFERENT from the group name (Composite), append it
+      if (filters.country) {
+        const country = metadata.countries.find(
+          (c) => String(c.country_id) === String(filters.country)
+        );
+        if (country && group?.isComposite) {
+          label = `${group.name}: ${country.country_name}`;
+        }
+      }
+
       tags.push({
         key: "country",
-        label: countryName,
-        action: () => updateFilter("country", ""),
+        label: label,
+        action: () =>
+          setFilters((prev) => ({
+            ...prev,
+            ultimateEntity: "",
+            country: "",
+            period: "",
+          })),
       });
     }
+
     if (filters.period) {
       const periodName =
         metadata.periods.find((p) => p.period_id == filters.period)
@@ -91,10 +159,12 @@ export default function FilterBar({
   const activeTags = getActiveTags();
   const hasFilters = activeTags.length > 0;
 
-  const displayedCountries = metadata.countries.filter((c) => {
-    if (!metadata.validCountryIds) return true;
-    return metadata.validCountryIds.has(c.country_id);
-  });
+  // Derive Current Selection for UI
+  const selectedGroup = metadata.hierarchicalCountries.find(
+    (g) => String(g.id) === String(filters.ultimateEntity)
+  );
+
+  const showSecondaryFilter = selectedGroup && selectedGroup.isComposite;
 
   return (
     <div className={styles.controlsContainer}>
@@ -123,7 +193,7 @@ export default function FilterBar({
           </div>
         </div>
 
-        {/* Filters */}
+        {/* Filter: Owned */}
         <div className={styles.filterGroup}>
           <label className={styles.filterLabel}>
             <CheckCircle size={16} /> Show
@@ -138,24 +208,47 @@ export default function FilterBar({
           </select>
         </div>
 
+        {/* Filter: Level 1 (Ultimate Entity) */}
         <div className={styles.filterGroup}>
           <label className={styles.filterLabel}>
-            <Globe size={16} /> Country
+            <Globe size={16} /> Region
           </label>
           <select
             className={styles.filterSelect}
-            value={filters.country}
-            onChange={(e) => updateFilter("country", e.target.value)}
+            value={filters.ultimateEntity}
+            onChange={handleUltimateChange}
           >
-            <option value="">All Countries</option>
-            {displayedCountries.map((c) => (
-              <option key={c.country_id} value={c.country_id}>
-                {c.country_name}
+            <option value="">All Regions</option>
+            {metadata.hierarchicalCountries.map((g) => (
+              <option key={g.id} value={g.id}>
+                {g.name}
               </option>
             ))}
           </select>
         </div>
 
+        {/* Filter: Level 2 (Specific Country) - CONDITIONAL */}
+        {showSecondaryFilter && (
+          <div className={`${styles.filterGroup} animate-fade-in`}>
+            <label className={styles.filterLabel}>
+              <MapPin size={16} /> State/City
+            </label>
+            <select
+              className={styles.filterSelect}
+              value={filters.country}
+              onChange={(e) => updateFilter("country", e.target.value)}
+            >
+              <option value="">Select State...</option>
+              {selectedGroup.children.map((c) => (
+                <option key={c.country_id} value={c.country_id}>
+                  {c.country_name}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
+        {/* Filter: Period (Locked until Country is valid) */}
         <div className={styles.filterGroup}>
           <label className={styles.filterLabel}>
             <Calendar size={16} /> Period
@@ -164,6 +257,8 @@ export default function FilterBar({
             className={styles.filterSelect}
             value={filters.period}
             onChange={(e) => updateFilter("period", e.target.value)}
+            // DISABLED if we have an Ultimate Entity but NO specific Country yet (Composite Pending state)
+            // OR if no Ultimate Entity selected at all (unless we want to allow period selection globally? Original code disallowed it)
             disabled={!filters.country}
           >
             <option value="">All Periods</option>
@@ -175,6 +270,7 @@ export default function FilterBar({
           </select>
         </div>
 
+        {/* Filter: Sort */}
         <div className={styles.filterGroup}>
           <label className={styles.filterLabel}>
             <SortAsc size={16} /> Sort By
