@@ -30,6 +30,10 @@
   cursor: pointer;
   border-radius: 20px;
   box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.25);
+  
+  /* FIX: Falling Text Issue */
+  /* transform-style: preserve-3d; <-- REMOVED (Causes pixel snapping) */
+  will-change: transform; /* <-- ADDED (Keeps layer promoted) */
 }
 
 .cardWrapper:hover {
@@ -92,7 +96,7 @@
 
 .cardSubtitle {
   color: rgba(255, 255, 255, 0.9);
-  font-size: 1.1rem; /* Updated Size */
+  font-size: 1.1rem;
   text-transform: uppercase;
   letter-spacing: 3px;
   font-weight: 500;
@@ -263,7 +267,7 @@
 .timelineNode {
   /* The Dot */
   position: absolute;
-  left: -2.95rem; /* Aligns with border-left */
+  left: -2.95rem; /* Desktop: Aligns with border-left (2.5 + 0.45) */
   top: 6px;
   width: 14px;
   height: 14px;
@@ -283,14 +287,19 @@
   font-weight: 700;
 }
 
-/* Hide timeline line on very small screens */
+/* --- FIX: MOBILE TIMELINE (Slim Mode) --- */
 @media (max-width: 640px) {
   .timelineContainer {
-    border-left: none;
-    margin-left: 0;
-    padding-left: 0;
+    /* Restore border, but tighter spacing */
+    border-left: 2px solid #e5e7eb; 
+    margin-left: 0; /* Flush to edge if needed, or small margin */
+    padding-left: 1.25rem; /* Reduced from 2.5rem */
   }
+  
   .timelineNode {
-    display: none;
+    /* Restore dot, adjust left position */
+    display: block; 
+    /* Math: -1.25 (padding) - 0.45 (original offset diff) = -1.7rem */
+    left: -1.7rem; 
   }
 }
