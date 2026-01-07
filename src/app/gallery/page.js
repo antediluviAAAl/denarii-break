@@ -2,18 +2,19 @@
 "use client";
 
 import { useState, useEffect, Suspense } from "react";
+import { useRouter } from "next/navigation"; // Added for navigation
 import { supabase } from "../../lib/supabaseClient";
 import Header from "../../components/Header";
 import FilterBar from "../../components/FilterBar";
 import CoinGallery from "../../components/CoinGallery";
-import CoinTable from "../../components/CoinTable";
+// CoinTable import removed (it is now handled internally by CoinGallery)
 import AddCoinModal from "../../components/AddCoinModal";
 import SilverChartModal from "../../components/SilverChartModal";
 import Footer from "../../components/Footer";
 import { useCoins } from "../../hooks/useCoins";
 
-// This component contains all your original logic
 function GalleryContent() {
+  const router = useRouter(); // Initialize router for navigation
   const [session, setSession] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isSilverModalOpen, setIsSilverModalOpen] = useState(false);
@@ -49,6 +50,11 @@ function GalleryContent() {
     await supabase.auth.signOut();
     setSession(null);
     window.location.reload();
+  };
+
+  // Handler for clicking a coin in any view (Grid/List/Table)
+  const handleCoinClick = (coinId) => {
+    router.push(`/coin/${coinId}`);
   };
 
   return (
@@ -91,24 +97,19 @@ function GalleryContent() {
         />
 
         <div style={{ padding: "0 1rem" }}>
-          {loading ? (
-            <div
-              style={{ textAlign: "center", padding: "2rem", color: "#666" }}
-            >
-              Polishing coins...
-            </div>
-          ) : viewMode === "table" ? (
-            <CoinTable coins={coins} />
-          ) : (
-            <CoinGallery
-              coins={coins}
-              loading={loading}
-              categories={metadata.categories}
-              viewMode={viewMode}
-              setViewMode={setViewMode}
-              sortBy={filters.sortBy}
-            />
-          )}
+          {/* FIX: We removed the conditional 'CoinTable' render.
+             CoinGallery now handles ALL view modes (Grid, List, Table),
+             ensuring headers are applied consistently.
+          */}
+          <CoinGallery
+            coins={coins}
+            loading={loading}
+            categories={metadata.categories}
+            viewMode={viewMode}
+            setViewMode={setViewMode}
+            sortBy={filters.sortBy}
+            onCoinClick={handleCoinClick}
+          />
         </div>
 
         {isAddModalOpen && session && (
