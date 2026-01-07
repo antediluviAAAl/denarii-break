@@ -165,3 +165,23 @@ export const fetchCoins = async ({ filters, ownedIds, filterPeriodIds }) => {
   }
   return rawData;
 };
+
+// --- NEW: STATS FETCHING (Server Side) ---
+export const getDenariiStats = async () => {
+  try {
+    const { data, error } = await supabase
+      .from("d_stats")
+      .select("*")
+      .eq("id", 1)
+      .single();
+
+    if (error) {
+      console.warn("Error fetching stats, defaulting to zero:", error.message);
+      return null;
+    }
+    return data;
+  } catch (err) {
+    console.error("Unexpected error in getDenariiStats:", err);
+    return null;
+  }
+};

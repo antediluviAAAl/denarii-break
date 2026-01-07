@@ -6,7 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Database,
-  CheckCircle,
+  CheckCircle, // Imported CheckCircle
   PlusCircle,
   LogIn,
   LogOut,
@@ -15,6 +15,7 @@ import {
   LayoutGrid,
 } from "lucide-react";
 import styles from "./Header.module.css";
+import { formatStatNumber } from "../../utils/dataUtils";
 
 export default function Header({
   ownedCount = 0,
@@ -66,14 +67,30 @@ export default function Header({
 
             <div className={styles.appSubtitle}>
               <Database size={16} className="text-gold" />
+              
+              {/* --- TOTAL COINS (Gold) --- */}
               <span style={{ fontWeight: 600 }}>
-                {totalCoins.toLocaleString()} coins
-              </span>
-              {ownedCount > 0 && (
-                <span className={styles.ownedCount}>
-                  <CheckCircle size={14} />
-                  {ownedCount} owned
+                <span className={styles.goldNumber}>
+                  {formatStatNumber(totalCoins)}
                 </span>
+                {" coins"}
+              </span>
+
+              {/* --- OWNED COINS (Green + Icon) --- */}
+              {ownedCount > 0 && (
+                <>
+                  <span className={styles.separator}>•</span>
+                  
+                  {/* The Checkmark Icon (Size 16, Green) */}
+                  <CheckCircle size={16} className={styles.iconGreen} />
+                  
+                  <span style={{ fontWeight: 600 }}>
+                    <span className={styles.greenNumber}>
+                      {formatStatNumber(ownedCount)}
+                    </span>
+                    {" owned"}
+                  </span>
+                </>
               )}
             </div>
           </div>

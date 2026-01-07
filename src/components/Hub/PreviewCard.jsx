@@ -2,10 +2,14 @@
 "use client";
 import React from "react";
 import styles from "./Hub.module.css";
+import { formatStatNumber } from "../../utils/dataUtils";
 
 export default function PreviewCard({
   title,
-  subtitle,
+  subtitle, // Legacy prop
+  subtitlePrefix,
+  statNumber,
+  subtitleSuffix,
   variant,
   onClick,
   bgImage,
@@ -34,7 +38,27 @@ export default function PreviewCard({
         />
         <div className={styles.cardContent}>
           <h2 className={styles.cardTitle}>{title}</h2>
-          <p className={styles.cardSubtitle}>{subtitle}</p>
+
+          <p className={styles.cardSubtitle}>
+            {/* FIX: We wrap the content in a <span>. 
+               This ensures the parent Flexbox (with gap: 1rem) treats the 
+               WHOLE sentence as 1 item, rather than gapping every text node.
+            */}
+            <span>
+              {subtitlePrefix && statNumber !== undefined ? (
+                <>
+                  {subtitlePrefix}&nbsp;
+                  <span className={styles.statHighlight}>
+                    {formatStatNumber(statNumber)}
+                  </span>
+                  &nbsp;{subtitleSuffix}
+                </>
+              ) : (
+                /* Fallback to standard subtitle string */
+                subtitle
+              )}
+            </span>
+          </p>
         </div>
       </div>
     </div>

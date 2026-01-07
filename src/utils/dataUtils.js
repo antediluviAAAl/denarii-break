@@ -136,3 +136,9 @@ export const groupPeriodsByYear = (periods) => {
 
   return groups;
 };
+
+// --- FORMATTER ---
+export const formatStatNumber = (num) => {
+  if (num === null || num === undefined) return "0";
+  return new Intl.NumberFormat("en-US").format(num);
+};
