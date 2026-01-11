@@ -9,6 +9,13 @@
   flex: 1;
   max-width: 100%;
   min-width: 0;
+  /* NEW: Smooth transition for the click effect */
+  transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* NEW: The Tactile Shrink Effect */
+.coinCard:active {
+  transform: scale(0.86);
 }
 
 /* Link Wrapper */

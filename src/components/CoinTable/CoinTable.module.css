@@ -127,6 +127,12 @@
   background-color: rgba(0, 0, 0, 0.05);
 }
 
+/* NEW: Tactile Click Effect */
+.coinItemWrapper:active {
+  transform: scale(0.86);
+  transition-duration: 0.1s;
+}
+
 .coinItemContent {
   display: flex;
   flex-direction: column;

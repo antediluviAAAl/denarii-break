@@ -15,6 +15,7 @@ import { supabase } from "../../lib/supabaseClient";
 import { useCoinModal } from "../CoinModal/useCoinModal";
 import AddCoinModal from "../AddCoinModal";
 import HighResCoinImage from "./HighResCoinImage";
+import CoinDetailSkeleton from "./CoinDetailSkeleton";
 import styles from "./CoinDetailView.module.css";
 
 export default function CoinDetailView({
@@ -31,6 +32,7 @@ export default function CoinDetailView({
   }, []);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  
   const {
     data: details,
     isLoading,
@@ -39,26 +41,23 @@ export default function CoinDetailView({
     refetch,
   } = useCoinModal(coinId);
 
+  // Merge initial data (from card) with full details (from DB)
   const displayData = details
     ? { ...initialData, ...details }
     : initialData || {};
 
+  // CHECK: Are we waiting for the first fetch?
   const isFetchingInitial = !displayData.coin_id && isLoading;
 
-  if (isFetchingInitial) {
-    return (
-      <div className="p-12 text-center text-gray-500">
-        Loading coin details...
-      </div>
-    );
-  }
-
-  if (
+  // CHECK: Do we have stale data from a previous open?
+  const isStaleData =
     displayData.coin_id &&
     String(displayData.coin_id) !== String(coinId) &&
-    !isLoading
-  ) {
-    return null;
+    !isLoading;
+
+  // RENDER SKELETON if loading or stale
+  if (isFetchingInitial || isStaleData) {
+    return <CoinDetailSkeleton onClose={onClose} showCloseBtn={showCloseBtn} />;
   }
 
   // --- IMAGES ---
@@ -78,8 +77,10 @@ export default function CoinDetailView({
   )}`;
 
   const renderLink = (text, url) => {
+    // If we are refreshing data but have the shell, show mini-skeletons for text
     if (isLoading && !text)
       return <span className={`${styles.skeleton} ${styles.w80}`}></span>;
+      
     if (!url) return <span>{text || "Unknown"}</span>;
     return (
       <a
@@ -237,7 +238,6 @@ export default function CoinDetailView({
               )}
             </div>
 
-            {/* UPDATED COUNTRY DISPLAY */}
             <div className={styles.detailItem}>
               <strong>Country:</strong>
               <span className={styles.detailValue}>

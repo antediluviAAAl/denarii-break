@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { ArrowUpDown } from "lucide-react";
 import SelectionModal from "./SelectionModal";
 import styles from "./Hub.module.css";
-import { groupPeriodsByYear } from "../../utils/dataUtils";
+import { groupPeriodsByYear, mergeSimilarPeriods } from "../../utils/dataUtils";
 
 export default function EraView({ data, onClose }) {
   const router = useRouter();
@@ -16,10 +16,13 @@ export default function EraView({ data, onClose }) {
   // LOGIC: Group and Sort Periods
   const groupedPeriods = useMemo(() => {
     if (data.hierarchicalPeriods) {
-      // 1. Group by Year
-      const groups = groupPeriodsByYear(data.hierarchicalPeriods);
+      // 1. Merge "Same Name + Same Start Year" periods into single entities
+      const mergedData = mergeSimilarPeriods(data.hierarchicalPeriods);
 
-      // 2. Handle Sort Toggle
+      // 2. Group by Year for the timeline view
+      const groups = groupPeriodsByYear(mergedData);
+
+      // 3. Handle Sort Toggle
       if (isAscending) {
         return [...groups].reverse();
       }
@@ -30,7 +33,11 @@ export default function EraView({ data, onClose }) {
 
   const handlePeriodDeepSelect = (periodId, countryId, ultimateEntityId) => {
     const params = new URLSearchParams();
+    
+    // We use the specific ID passed from the child (Country), 
+    // ensuring we filter for the correct Period instance in the DB.
     params.set("period", periodId);
+    
     if (countryId) params.set("country", countryId);
     if (ultimateEntityId) params.set("ultimateEntity", ultimateEntityId);
 
@@ -80,16 +87,20 @@ export default function EraView({ data, onClose }) {
               {group.periods.map((period) => {
                 const displayName = period.shorthand || period.name;
                 const displayRange = period.range ? `(${period.range})` : "";
+                
+                // Construct a unique key for the merged parent
+                const parentKey = `${period.name}-${period.start_year}`;
 
                 return (
-                  <div key={period.id}>
-                    {/* Static Header */}
+                  <div key={parentKey}>
+                    {/* Non-clickable Header */}
                     <h3
                       className={styles.groupHeader}
                       style={{
                         cursor: "default",
                         marginTop: "0.5rem",
                         pointerEvents: "none",
+                        userSelect: "none"
                       }}
                     >
                       {displayName}
@@ -105,16 +116,16 @@ export default function EraView({ data, onClose }) {
                       </span>
                     </h3>
 
-                    {/* Clickable Badges */}
+                    {/* Clickable Country Badges */}
                     <div className={styles.itemGrid}>
                       {period.children.map((child) => (
                         <button
-                          key={child.country_id}
+                          key={`${child.country_id}-${child.target_period_id}`}
                           className={styles.selectionItem}
                           onClick={(e) => {
                             e.stopPropagation();
                             handlePeriodDeepSelect(
-                              period.id,
+                              child.target_period_id, // Use the child's specific Period ID
                               child.country_id,
                               child.ultimate_entity_id
                             );

@@ -116,7 +116,51 @@ export const buildPeriodHierarchy = (rawPeriods) => {
   });
 };
 
-// --- TIMELINE GROUPING (NEW) ---
+// --- PERIOD MERGING (NEW) ---
+export const mergeSimilarPeriods = (periods) => {
+  const map = new Map();
+
+  periods.forEach((p) => {
+    // 1. Create a composite key to identify identical Eras
+    const key = `${p.name}|${p.start_year}`;
+
+    if (!map.has(key)) {
+      // Initialize the merged entry with data from the first instance found
+      map.set(key, {
+        ...p,
+        // Reset children, we will aggregate them manually
+        children: [], 
+      });
+    }
+
+    // 2. Aggregate children (Countries)
+    const parent = map.get(key);
+    
+    if (p.children && Array.isArray(p.children)) {
+      p.children.forEach((child) => {
+        // We push the child to the aggregated parent
+        // CRITICAL: We attach the 'target_period_id' to the child.
+        // This ensures that clicking 'Curacao' uses Curacao's specific period ID (e.g. 101),
+        // not the generic parent ID.
+        parent.children.push({
+          ...child,
+          target_period_id: p.id, 
+        });
+      });
+    }
+  });
+
+  const mergedList = Array.from(map.values());
+
+  // 3. Re-sort the aggregated children alphabetically
+  mergedList.forEach(p => {
+    p.children.sort((a, b) => a.country_name.localeCompare(b.country_name));
+  });
+
+  return mergedList;
+};
+
+// --- TIMELINE GROUPING ---
 export const groupPeriodsByYear = (periods) => {
   const groups = [];
   let currentYear = null;
