@@ -82,6 +82,7 @@
   font-family: var(--font-cinzel), serif;
   background: var(--bg-card);
   color: var(--text-main);
+  margin-bottom: 0.5rem;
 }
 
 .searchBox:focus {

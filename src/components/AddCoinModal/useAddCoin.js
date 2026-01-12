@@ -13,22 +13,38 @@ export function useAddCoin(onClose, onCoinAdded, userId, initialCoin = null) {
   const [searchQuery, setSearchQuery] = useState("");
   const [results, setResults] = useState([]);
   
+  // NEW: Store owned IDs in a Set for fast lookup (Fixes the crash)
+  const [ownedSet, setOwnedSet] = useState(new Set());
+  
   const [loading, setLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Reset state if modal is re-opened with different props (though usually unmounts)
+  // 1. Fetch Owned Coins (IDs only) to populate the Set
+  useEffect(() => {
+    if (!userId) return;
+
+    const fetchOwnedIDs = async () => {
+      const { data } = await supabase
+        .from("d_coins_owned")
+        .select("coin_id");
+
+      if (data) {
+        setOwnedSet(new Set(data.map(row => row.coin_id)));
+      }
+    };
+
+    fetchOwnedIDs();
+  }, [userId]);
+
+  // 2. Handle Initial Coin Prop
   useEffect(() => {
     if (initialCoin) {
       setSelectedCoin(initialCoin);
       setStep(2);
-    } else {
-      // If we are opening generic mode, ensure we are at step 1
-      // Note: This relies on the component unmounting/remounting for clean slate
-      // or this hook running again.
     }
   }, [initialCoin]);
 
-  // Search Logic
+  // 3. Search Logic
   useEffect(() => {
     const timer = setTimeout(async () => {
       if (searchQuery.length < 2) {
@@ -56,8 +72,6 @@ export function useAddCoin(onClose, onCoinAdded, userId, initialCoin = null) {
   };
 
   const handleBackToSearch = () => {
-    // If we were forced into this view by initialCoin, we might want to just close?
-    // But for now, allow searching for a DIFFERENT coin if they changed their mind.
     setStep(1);
     setSelectedCoin(null);
     setSearchQuery("");
@@ -76,6 +90,7 @@ export function useAddCoin(onClose, onCoinAdded, userId, initialCoin = null) {
 
       if (result.success) {
         if (onCoinAdded) onCoinAdded();
+        setOwnedSet(prev => new Set(prev).add(selectedCoin.coin_id));
         onClose();
       } else {
         alert("Error: " + result.error);
@@ -98,6 +113,7 @@ export function useAddCoin(onClose, onCoinAdded, userId, initialCoin = null) {
     handleSelectCoin,
     handleBackToSearch,
     handleSubmit,
-    isSubmitting
+    isSubmitting,
+    ownedSet // Exported for the View
   };
 }

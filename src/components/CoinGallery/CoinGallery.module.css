@@ -121,7 +121,6 @@
   cursor: pointer;
   background-color: var(--bg-card); /* Semantic Card */
   color: var(--text-period-header);
-  border-bottom: 1px solid var(--border-subtle);
 }
 
 .periodContentWrapper {
