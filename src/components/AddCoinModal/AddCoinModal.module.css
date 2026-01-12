@@ -20,7 +20,7 @@
   background: var(--bg-card); /* Semantic Card */
   border-radius: var(--radius);
   width: 100%;
-  max-width: 500px;
+  max-width: 700px;
   height: auto;
   max-height: 90vh;
   display: flex;

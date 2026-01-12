@@ -2,7 +2,7 @@
 "use client";
 
 import React from "react";
-import { X, CheckCircle } from "lucide-react"; // Removed 'Search' icon import
+import { X, CheckCircle } from "lucide-react";
 import { useAddCoin } from "./useAddCoin";
 import styles from "./AddCoinModal.module.css";
 
@@ -11,7 +11,7 @@ export default function AddCoinModal({
   onCoinAdded,
   userId,
   initialCoin,
-  ownedCoins = [], // Kept for prop safety, though unused
+  ownedCoins = [], 
 }) {
   const {
     step,
@@ -24,7 +24,7 @@ export default function AddCoinModal({
     handleBackToSearch,
     handleSubmit,
     isSubmitting,
-    ownedSet, // We use this Set now
+    ownedSet, 
   } = useAddCoin(onClose, onCoinAdded, userId, initialCoin);
 
   return (
@@ -44,11 +44,10 @@ export default function AddCoinModal({
           {/* STEP 1: SEARCH */}
           {step === 1 && (
             <div className={styles.searchContainer}>
-              {/* RESTORED: Simple input without the extra Search icon wrapper */}
               <input
                 type="text"
                 placeholder="Search by name, KM#, etc..."
-                className={styles.searchBox} // Using the original class name if it was searchBox
+                className={styles.searchBox} 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 autoFocus
@@ -58,7 +57,6 @@ export default function AddCoinModal({
 
               <div className={styles.coinList}>
                 {results.map((coin) => {
-                  // FIX: Use .has() on our new Set
                   const isOwned = ownedSet.has(coin.coin_id);
                   
                   return (
@@ -74,11 +72,12 @@ export default function AddCoinModal({
                             {coin.year}
                           </span>
                         </div>
+                        {/* RESTORED SUBJECT HERE */}
                         <div className={styles.resultDesc}>
                           {coin.d_denominations?.denomination_name} • {coin.d_period?.period_shorthand} • {coin.km}
+                          {coin.subject && ` • ${coin.subject}`}
                         </div>
                       </div>
-                      {/* Green Checkmark for Owned Coins */}
                       {isOwned && <CheckCircle size={18} style={{ color: "var(--status-green-text)" }} />}
                     </div>
                   );
@@ -101,8 +100,13 @@ export default function AddCoinModal({
                   <span className={styles.coinName}>{selectedCoin.name}</span>
                   <span className={styles.periodBadge}>{selectedCoin.year}</span>
                 </div>
+                {/* Also useful to see subject here for confirmation */}
+                {selectedCoin.subject && (
+                  <div className={styles.resultDesc} style={{ marginTop: '4px' }}>
+                    {selectedCoin.subject}
+                  </div>
+                )}
                 
-                {/* RESTORED: "Change Coin" button is now ALWAYS visible here */}
                 <button
                   type="button"
                   className={styles.changeLink}
