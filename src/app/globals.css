@@ -1,43 +1,138 @@
 /* src/app/globals.css */
 
 /* * GLOBAL VARIABLES & RESET 
- * Only universally applicable styles remain here.
+ * The single source of truth for the Denarii District theme.
  */
-:root {
-  /* Brand Colors */
-  --primary: #2563eb;
-  --primary-dark: #1d4ed8;
-  --secondary: #7c3aed;
-  --brand-gold: #d97706;
+ :root {
+  /* --- BRANDING --- */
+  /* The core identity colors. */
+  --primary: #2563eb;          /* Blue 600 */
+  --primary-dark: #1d4ed8;     /* Blue 700 */
+  --brand-gold: #d97706;       /* Amber 600 */
+  --brand-gold-dim: #b45309;   /* Amber 700 (Hover states) */
 
-  /* Backgrounds */
-  --light-bg: #f8fafc;
-  --card-bg: #ffffff;
+  /* --- SURFACES (Backgrounds) --- */
+  --bg-app: #f8fafc;           /* Slate 50: The main page background */
+  --bg-card: #ffffff;          /* White: Cards, Tables, Modals */
+  --bg-subtle: #f1f5f9;        /* Slate 100: Input fields, hovers, secondary headers */
+  --bg-overlay: rgba(255, 255, 255, 0.85); /* Glassy headers, image labels */
+  --bg-modal-overlay: rgba(0, 0, 0, 0.75); /* Dimming backdrop for modals */
 
-  /* Typography */
-  --text: #1f2937;
-  --text-light: #6b7280;
+  /* --- TYPOGRAPHY --- */
+  --text-main: #111827;        /* Gray 900: Headings, primary content */
+  --text-secondary: #4b5563;   /* Gray 600: Subtitles, labels */
+  --text-muted: #9ca3af;       /* Gray 400: Placeholders, metadata, footer */
+  --text-inverse: #ffffff;     /* White: Text on primary/dark buttons */
+  --text-period-header: #111827; /* Matches your current Light Mode text */
 
-  /* Borders & Shadows */
-  --border: #e5e7eb;
-  --border-light: #f1f5f9;
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  /* --- BORDERS --- */
+  --border: #e2e8f0;           /* Slate 200: Standard inputs, dividers */
+  --border-subtle: #f1f5f9;    /* Slate 100: Very light dividers */
+  --border-highlight: #cbd5e1; /* Slate 300: Active/Focus states */
 
-  /* UI Dimensions */
+  /* --- STATUS PALETTES (Bg / Border / Text) --- */
+  
+  /* Green: Owned items, Positive trends, Success messages */
+  --status-green-bg: #dcfce7;      /* Emerald 100 */
+  --status-green-border: #86efac;  /* Emerald 300 */
+  --status-green-text: #166534;    /* Emerald 800 */
+  
+  /* Red: Errors, Negative trends, Destructive actions */
+  --status-red-bg: #fee2e2;        /* Red 100 */
+  --status-red-border: #fca5a5;    /* Red 300 */
+  --status-red-text: #b91c1c;      /* Red 700 */
+
+  /* Yellow: Rare items, Highlights, Mixed status */
+  --status-yellow-bg: #fef9c3;     /* Yellow 100 */
+  --status-yellow-border: #facc15; /* Yellow 400 */
+  --status-yellow-text: #854d0e;   /* Yellow 800 */
+
+  /* Blue: Tags, Filters, Info badges */
+  --tag-blue-bg: #eff6ff;          /* Blue 50 */
+  --tag-blue-border: #bfdbfe;      /* Blue 200 */
+  --tag-blue-text: #2563eb;        /* Blue 600 */
+  --tag-blue-hover: #dbeafe;       /* Blue 100 */
+
+  /* --- UI DIMENSIONS & UTILITIES --- */
   --radius: 12px;
   --radius-sm: 8px;
   --radius-md: 10px;
+  
+  --skeleton-bg: #e2e8f0;      /* Slate 200 */
+  
+  /* Shadow Color: Allows shadows to adapt to dark mode (lighter/transparent) */
+  --shadow-color: rgba(0, 0, 0, 0.1); 
 
-  /* Ownership Theme */
-  --owned-green: #10b981;
-  --owned-green-light: #d1fae5;
-  --owned-green-dark: #065f46;
+  /* Shadows referencing the variable */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow: 0 1px 3px var(--shadow-color);
+  --shadow-md: 0 4px 6px -1px var(--shadow-color);
+  --shadow-lg: 0 10px 15px -3px var(--shadow-color);
+  --shadow-xl: 0 20px 25px -5px var(--shadow-color);
+
+  /* Gradients */
+  --owned-gradient-start: #ffffff;
+  --owned-gradient-end: #f0fdf4;
 }
 
+/* --- DARK MODE OVERRIDES --- */
+[data-theme='dark'] {
+  /* Branding: Adjusted for contrast against dark backgrounds */
+  --primary: #3b82f6;          /* Blue 500 */
+  --primary-dark: #60a5fa;     /* Blue 400 */
+  --brand-gold: #fbbf24;       /* Amber 400 */
+  --brand-gold-dim: #d97706;   /* Amber 600 */
+
+  /* Surfaces */
+  --bg-app: #0f172a;           /* Slate 900 */
+  --bg-card: #1e293b;          /* Slate 800 */
+  --bg-subtle: #334155;        /* Slate 700 */
+  --bg-overlay: rgba(15, 23, 42, 0.85); /* Slate 900 with opacity */
+  --bg-modal-overlay: rgba(0, 0, 0, 0.85);
+
+  /* Typography */
+  --text-main: #f8fafc;        /* Slate 50 */
+  --text-secondary: #cbd5e1;   /* Slate 300 */
+  --text-muted: #94a3b8;       /* Slate 400 */
+  --text-inverse: #0f172a;     /* Slate 900 (for text on bright buttons) */
+  --text-period-header: #f8fafc; /* Forces White in Dark Mode */
+
+  /* Borders */
+  --border: #334155;           /* Slate 700 */
+  --border-subtle: #1e293b;    /* Slate 800 */
+  --border-highlight: #475569; /* Slate 600 */
+
+  /* Status Palettes (Dark) */
+  /* Green */
+  --status-green-bg: #064e3b;      /* Emerald 900 */
+  --status-green-border: #065f46;  /* Emerald 800 */
+  --status-green-text: #6ee7b7;    /* Emerald 300 */
+  
+  /* Red */
+  --status-red-bg: #7f1d1d;        /* Red 900 */
+  --status-red-border: #991b1b;    /* Red 800 */
+  --status-red-text: #fca5a5;      /* Red 300 */
+
+  /* Yellow */
+  --status-yellow-bg: #451a03;     /* Amber 950 */
+  --status-yellow-border: #78350f; /* Amber 900 */
+  --status-yellow-text: #fcd34d;   /* Amber 300 */
+
+  /* Blue */
+  --tag-blue-bg: #172554;          /* Blue 950 */
+  --tag-blue-border: #1e40af;      /* Blue 800 */
+  --tag-blue-text: #93c5fd;        /* Blue 300 */
+  --tag-blue-hover: #1e3a8a;       /* Blue 900 */
+
+  /* Utilities */
+  --skeleton-bg: #334155;          /* Slate 700 */
+  --shadow-color: rgba(0, 0, 0, 0.5); /* Darker shadows for depth */
+
+  --owned-gradient-start: #1e293b;
+  --owned-gradient-end: #064e3b;
+}
+
+/* --- GLOBAL RESETS & BASE --- */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -46,9 +141,10 @@
 
 body {
   font-family: var(--font-montserrat), sans-serif;
-  background: var(--light-bg);
-  color: var(--text);
+  background-color: var(--bg-app);
+  color: var(--text-main);
   line-height: 1.5;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 input,
@@ -56,10 +152,10 @@ button,
 select,
 textarea {
   font-family: inherit;
+  color: inherit;
 }
 
-/* --- GLOBAL UTILITIES --- */
-/* Used across multiple components for quick styling */
+/* --- UTILITIES --- */
 .text-gold {
   color: var(--brand-gold) !important;
 }
@@ -75,68 +171,34 @@ textarea {
 }
 
 /* --- RESPONSIVE HELPERS --- */
-/* Shared logic for desktop/mobile label switching */
-.denom-label-desktop {
-  display: inline;
-}
-.denom-label-mobile {
-  display: none;
-}
-.mobile-hidden {
-  display: inline;
-}
+.denom-label-desktop { display: inline; }
+.denom-label-mobile { display: none; }
+.mobile-hidden { display: inline; }
 
 @media (max-width: 768px) {
-  .denom-label-desktop {
-    display: none;
-  }
-  .denom-label-mobile {
-    display: inline;
-  }
-  .mobile-hidden {
-    display: none;
-  }
+  .denom-label-desktop { display: none; }
+  .denom-label-mobile { display: inline; }
+  .mobile-hidden { display: none; }
 }
 
 /* --- ANIMATIONS --- */
-/* Shared animations */
 @keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 @keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 @keyframes slideUp {
-  from {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
-/* Utility class for spinners */
 .animate-spin {
   animation: spin 1s linear infinite;
 }

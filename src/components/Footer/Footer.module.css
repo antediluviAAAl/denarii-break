@@ -1,6 +1,6 @@
 /* src/components/Footer/Footer.module.css */
 .footer {
-  background-color: var(--card-bg);
+  background-color: var(--bg-card); /* Semantic Card */
   border-top: 1px solid var(--border);
   margin-top: auto;
   width: 100%;
@@ -20,7 +20,7 @@
   justify-content: space-between;
   gap: 1.5rem;
   
-  color: var(--text-light);
+  color: var(--text-secondary); /* Updated */
   font-size: 0.9rem;
   text-align: left;
 }
@@ -45,7 +45,7 @@
 }
 
 .district {
-  color: var(--text);
+  color: var(--text-main); /* Updated */
   font-size: 1.35rem;
 }
 
@@ -57,7 +57,7 @@
 }
 
 .link {
-  color: var(--text-light);
+  color: var(--text-secondary); /* Updated */
   text-decoration: none;
   transition: color 0.2s ease;
   cursor: pointer;
@@ -74,7 +74,7 @@
   padding: 0;
   margin: 0;
   font: inherit;
-  color: var(--text-light);
+  color: var(--text-secondary); /* Updated */
   cursor: pointer;
   transition: color 0.2s ease;
   text-decoration: none;
@@ -86,7 +86,7 @@
 
 .copyright {
   font-size: 0.8rem;
-  color: #9ca3af;
+  color: var(--text-muted); /* Updated */
 }
 
 /* --- MOBILE OVERRIDES --- */

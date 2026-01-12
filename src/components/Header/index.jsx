@@ -6,7 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Database,
-  CheckCircle, // Imported CheckCircle
+  CheckCircle,
   PlusCircle,
   LogIn,
   LogOut,
@@ -14,6 +14,7 @@ import {
   Coins,
   LayoutGrid,
 } from "lucide-react";
+import ThemeToggle from "../ThemeToggle";
 import styles from "./Header.module.css";
 import { formatStatNumber } from "../../utils/dataUtils";
 
@@ -68,7 +69,6 @@ export default function Header({
             <div className={styles.appSubtitle}>
               <Database size={16} className="text-gold" />
               
-              {/* --- TOTAL COINS (Gold) --- */}
               <span style={{ fontWeight: 600 }}>
                 <span className={styles.goldNumber}>
                   {formatStatNumber(totalCoins)}
@@ -76,14 +76,10 @@ export default function Header({
                 {" coins"}
               </span>
 
-              {/* --- OWNED COINS (Green + Icon) --- */}
               {ownedCount > 0 && (
                 <>
                   <span className={styles.separator}>•</span>
-                  
-                  {/* The Checkmark Icon (Size 16, Green) */}
                   <CheckCircle size={16} className={styles.iconGreen} />
-                  
                   <span style={{ fontWeight: 600 }}>
                     <span className={styles.greenNumber}>
                       {formatStatNumber(ownedCount)}
@@ -98,7 +94,8 @@ export default function Header({
 
         {/* RIGHT: Actions & Stats */}
         <div className={styles.headerStats}>
-          {/* Gallery Link (Hidden on Gallery Page) */}
+          
+          {/* 1. Gallery Link */}
           {!isGalleryPage && (
             <Link
               href="/gallery"
@@ -113,7 +110,7 @@ export default function Header({
             </Link>
           )}
 
-          {/* Silver Spot */}
+          {/* 2. Silver Spot */}
           <button
             onClick={onOpenSilver}
             className={`${styles.headerActionBtn} ${styles.silverBtn}`}
@@ -126,6 +123,7 @@ export default function Header({
             </span>
           </button>
 
+          {/* 3. Auth Actions */}
           {session ? (
             <>
               {onAddCoin && (
@@ -165,7 +163,7 @@ export default function Header({
             </Link>
           )}
 
-          {/* Showing Count Badge (Only visible when displayCount > 0) */}
+          {/* 4. Count Badge */}
           {displayCount > 0 && (
             <div className={styles.statBadge}>
               <span className={styles.statLabel}>Showing</span>
@@ -177,6 +175,10 @@ export default function Header({
               </div>
             </div>
           )}
+
+          {/* 5. Theme Toggle (Moved to End) */}
+          <ThemeToggle className={styles.themeToggleBtn} />
+          
         </div>
       </div>
     </header>

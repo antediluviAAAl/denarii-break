@@ -6,7 +6,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: var(--bg-modal-overlay); /* Semantic Overlay */
   backdrop-filter: blur(2px);
   display: flex;
   align-items: center;
@@ -17,7 +17,7 @@
 }
 
 .modalContent {
-  background: white;
+  background: var(--bg-card); /* Semantic Card */
   border-radius: var(--radius);
   width: 100%;
   max-width: 500px;
@@ -36,7 +36,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: white;
+  background: var(--bg-card);
   border-radius: var(--radius) var(--radius) 0 0;
 }
 
@@ -44,7 +44,7 @@
   font-size: 1.25rem;
   font-weight: 700;
   margin: 0;
-  color: var(--text);
+  color: var(--text-main); /* Semantic Text */
   font-family: var(--font-cinzel), serif;
 }
 
@@ -52,12 +52,12 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  color: var(--text-light);
+  color: var(--text-muted); /* Semantic Muted */
   padding: 0.25rem;
   transition: color 0.2s;
 }
 .modalClose:hover {
-  color: var(--text);
+  color: var(--text-main);
 }
 
 .modalBody {
@@ -80,6 +80,8 @@
   font-size: 1rem;
   transition: all 0.2s;
   font-family: var(--font-cinzel), serif;
+  background: var(--bg-card);
+  color: var(--text-main);
 }
 
 .searchBox:focus {
@@ -103,23 +105,23 @@
   justify-content: space-between;
   align-items: center;
   transition: all 0.2s;
-  background: white;
+  background: var(--bg-card); /* Semantic Card */
 }
 
 .resultItem.owned {
-  border: 1px solid var(--owned-green);
-  background: var(--owned-green-light);
+  border: 1px solid var(--status-green-border); /* Semantic Green */
+  background: var(--status-green-bg);
 }
 
 .resultItem:hover {
   border-color: var(--primary);
-  background: #f8fafc;
+  background: var(--bg-subtle); /* Semantic Subtle */
   transform: translateY(-1px);
 }
 
 .resultItem.owned:hover {
-  border-color: var(--owned-green-dark);
-  background: #dcfce7;
+  border-color: var(--status-green-text);
+  filter: brightness(0.95);
 }
 
 .resultInfo {
@@ -138,18 +140,18 @@
 .coinName {
   font-weight: 600;
   font-size: 0.95rem;
-  color: var(--text);
+  color: var(--text-main);
 }
 
 .periodBadge {
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--text-secondary);
   font-weight: 400;
 }
 
 .resultDesc {
   font-size: 0.8rem;
-  color: var(--text-light);
+  color: var(--text-muted);
   margin-top: 2px;
   white-space: nowrap;
   overflow: hidden;
@@ -158,7 +160,7 @@
 
 /* --- STEP 2: UPLOAD --- */
 .selectedCoinCard {
-  background: #f8fafc;
+  background: var(--bg-subtle); /* Semantic Subtle */
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 1rem;
@@ -167,7 +169,7 @@
 
 .selectedLabel {
   font-size: 0.7rem;
-  color: #64748b;
+  color: var(--text-muted);
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -194,14 +196,14 @@
 }
 
 .sectionGroup {
-  border-top: 1px solid var(--border-light);
+  border-top: 1px solid var(--border-subtle);
   padding-top: 1rem;
 }
 
 .sectionTitle {
   font-size: 0.85rem;
   font-weight: 700;
-  color: var(--text-light);
+  color: var(--text-secondary);
   text-transform: uppercase;
   margin-bottom: 0.75rem;
   letter-spacing: 0.05em;
@@ -216,7 +218,7 @@
   margin-bottom: 0.35rem;
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--text);
+  color: var(--text-main);
 }
 
 .fileInput {
@@ -224,19 +226,20 @@
   padding: 0.5rem;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  background: white;
+  background: var(--bg-card);
   font-size: 0.85rem;
-  color: var(--text-light);
+  color: var(--text-secondary);
 }
 
 .textInput {
   width: 100%;
-  padding: 0.6rem 0.75rem 0.6rem 2.25rem; /* Left padding for icon */
+  padding: 0.6rem 0.75rem 0.6rem 2.25rem;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   font-size: 0.9rem;
   transition: all 0.2s;
-  color: var(--text);
+  color: var(--text-main);
+  background: var(--bg-card);
 }
 
 .textInput:focus {
@@ -250,7 +253,7 @@
   left: 0.75rem;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--text-light);
+  color: var(--text-muted);
   pointer-events: none;
 }
 
@@ -258,8 +261,8 @@
   width: 100%;
   margin-top: 0.5rem;
   padding: 1rem;
-  background: var(--text);
-  color: white;
+  background: var(--text-main);
+  color: var(--bg-card); /* Inverted */
   border: none;
   border-radius: var(--radius-sm);
   font-size: 1rem;

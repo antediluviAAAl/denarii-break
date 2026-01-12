@@ -1,7 +1,7 @@
 /* src/components/Header/Header.module.css */
 
 .appHeader {
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--bg-overlay);
   backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--border);
   box-shadow: var(--shadow-sm);
@@ -80,7 +80,7 @@
 .titleDistrict {
   font-size: 2.2rem;
   font-weight: 500;
-  color: #111827;
+  color: var(--text-main);
 }
 
 .appSubtitle {
@@ -88,7 +88,7 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.875rem;
-  color: var(--text-light);
+  color: var(--text-secondary);
   font-family: var(--font-cinzel), serif;
   font-weight: 600;
   flex-wrap: wrap;
@@ -99,17 +99,16 @@
   color: var(--brand-gold);
 }
 
-/* Green Color for Number AND Icon */
 .greenNumber {
-  color: #059669; /* Emerald Green */
+  color: var(--status-green-text);
 }
 
 .iconGreen {
-  color: #059669; /* Matches the number */
+  color: var(--status-green-text);
 }
 
 .separator {
-  color: #d1d5db; /* Light Grey */
+  color: var(--text-muted);
   margin: 0 0.2rem;
 }
 
@@ -128,7 +127,7 @@
 }
 
 .headerActionBtn {
-  background: #fffbeb;
+  background: var(--status-yellow-bg);
   border: 1px solid var(--brand-gold);
   border-radius: var(--radius-sm);
   padding: 0.5rem 1rem;
@@ -141,31 +140,56 @@
   cursor: pointer;
   transition: all 0.2s ease;
   text-decoration: none;
-  color: var(--text);
+  color: var(--text-main);
   font: inherit;
 }
 
 .headerActionBtn:hover {
-  background: #fef3c7;
+  filter: brightness(0.95);
   transform: translateY(-1px);
   box-shadow: var(--shadow-sm);
 }
 
+/* NEW: Specific styles for the Theme Toggle to match height */
+.themeToggleBtn {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--brand-gold);
+  
+  /* Dimensions to match headerActionBtn */
+  min-height: 57.6px;
+  width: 57.6px; /* Square ratio */
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.themeToggleBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+  border-color: var(--brand-gold);
+}
+
 .silverBtn {
-  background: #eff6ff;
-  border-color: #3b82f6;
+  background: var(--tag-blue-bg);
+  border-color: var(--primary);
 }
 
 .silverBtn:hover {
-  background: #dbeafe;
+  background: var(--tag-blue-hover);
 }
 
 .silverBtn .statValue {
-  color: #6b7280;
+  color: var(--text-secondary);
 }
 
 .statBadge {
-  background: var(--light-bg);
+  background: var(--bg-app);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: 0.5rem 1rem;
@@ -178,7 +202,7 @@
 
 .statLabel {
   font-size: 0.75rem;
-  color: var(--text-light);
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-family: var(--font-cinzel), serif;
@@ -236,7 +260,6 @@
     display: inline !important;
   }
 
-  /* Mobile Font Sizes */
   .titleDenarii {
     font-size: 2rem;
   }
@@ -246,8 +269,13 @@
 
   /* Reset height on mobile for compactness */
   .headerActionBtn,
-  .statBadge {
+  .statBadge,
+  .themeToggleBtn { /* Added Toggle here */
     min-height: auto;
     padding: 0.4rem 0.8rem;
+  }
+  
+  .themeToggleBtn {
+    width: auto; /* Flexible width on mobile */
   }
 }

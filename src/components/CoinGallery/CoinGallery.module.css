@@ -15,7 +15,7 @@
   justify-content: center;
   padding: 4rem 2rem;
   text-align: center;
-  color: var(--text-light);
+  color: var(--text-muted); /* Semantic Muted */
   margin-top: 1.5rem;
 }
 
@@ -29,17 +29,14 @@
 /* --- CATEGORY SECTION --- */
 .categorySection {
   border-radius: var(--radius);
-  /* border: 1px solid; REMOVED to prevent double borders */
   overflow: hidden;
-  /* FIX: Transition only colors/shadows to prevent layout "pop" with virtualizer */
   transition: background-color 0.2s, box-shadow 0.2s, color 0.2s;
   box-shadow: var(--shadow);
-  /* Default positioning */
   margin-top: 24px;
   margin-bottom: 0;
   min-height: 70px;
   box-sizing: border-box;
-  background: white;
+  background: var(--bg-card); /* Semantic Card */
 }
 
 .categoryHeader {
@@ -50,11 +47,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  /* FIX: Transition only colors/shadows */
   transition: background-color 0.2s, color 0.2s;
   font-family: var(--font-cinzel), serif;
   border-bottom: 1px solid transparent;
-  box-sizing: border-box; /* FIX: Ensure borders don't expand height unexpectedly */
+  box-sizing: border-box; 
+  color: var(--text-main); /* Semantic Text */
 }
 
 .categoryHeader:hover {
@@ -70,12 +67,11 @@
 .categoryName {
   font-size: 1.125rem;
   font-weight: 600;
-  /* Color injected via inline style */
 }
 
 .categoryCount {
   font-size: 0.875rem;
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-subtle); /* Semantic Subtle */
   padding: 0.25rem 0.75rem;
   border-radius: 20px;
   font-weight: 600;
@@ -86,7 +82,7 @@
 }
 
 .ownedInCategory {
-  color: var(--owned-green-dark);
+  color: var(--status-green-text); /* Semantic Green */
   font-weight: 600;
   margin-left: 0.5rem;
 }
@@ -104,10 +100,9 @@
 }
 
 /* --- TABLE MODE CONTENT --- */
-/* When a category expands in table mode */
 .categoryContentTable {
   padding: 0;
-  background: white;
+  background: var(--bg-card); /* Semantic Card */
   border-top: none;
   border-radius: 0 0 12px 12px;
   overflow: hidden;
@@ -124,7 +119,9 @@
   display: flex;
   align-items: center;
   cursor: pointer;
-  background-color: white;
+  background-color: var(--bg-card); /* Semantic Card */
+  color: var(--text-period-header);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .periodContentWrapper {
@@ -134,7 +131,7 @@
 
 /* --- VIRTUAL ROWS (Grid/List Mode) --- */
 .virtualRowContainer {
-  background-color: rgb(255, 255, 255);
+  background-color: var(--bg-card); /* Semantic Card */
   padding: 0 1.5rem;
   min-height: 80px;
   height: auto;
@@ -143,11 +140,11 @@
   box-sizing: border-box;
   cursor: pointer;
   position: relative;
-  z-index: 0; /* Base stacking context */
+  z-index: 0; 
 }
 
 .virtualRowContainer:hover {
-  background-color: rgb(255, 255, 255);
+  background-color: var(--bg-card);
 }
 
 .virtualRow {

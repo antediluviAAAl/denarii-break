@@ -118,7 +118,6 @@ export default function HighResCoinImage({
             style={{
               width: "100%",
               height: "100%",
-              background: "#f3f4f6", // Light Gray (Neutral)
               borderRadius: "50%", // Circular Planchet
             }}
           />

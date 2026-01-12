@@ -3,7 +3,7 @@
 .coinListItem {
   display: flex;
   align-items: center;
-  background: white;
+  background: var(--bg-card); /* Semantic Card */
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: 0.5rem;
@@ -22,17 +22,16 @@
   transform: translateY(-1px);
 }
 
-/* NEW: Tactile Click Effect */
 .coinListItem:active {
   transform: scale(0.86);
-  /* Optional: Speed up the press transition for snappiness */
   transition-duration: 0.1s;
 }
 
 /* Owned Status Styling */
 .owned {
-  background: linear-gradient(to right, #ffffff, #f0fdf4);
-  border-left: 4px solid var(--owned-green);
+  /* Semantic Gradient */
+  background: linear-gradient(to right, var(--owned-gradient-start), var(--owned-gradient-end));
+  border-left: 4px solid var(--status-green-text); /* Strong Green Indicator */
 }
 
 /* --- IMAGES --- */
@@ -45,11 +44,11 @@
 .listImgWrapper {
   width: 70px;
   height: 70px;
-  background: var(--border-light);
+  background: var(--bg-subtle); /* Semantic Subtle */
   border-radius: 4px;
   overflow: hidden;
   position: relative;
-  border: 1px solid var(--border-light);
+  border: 1px solid var(--border-subtle);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -57,7 +56,7 @@
 
 .listItemPlaceholder {
   font-size: 0.6rem;
-  color: var(--text-light);
+  color: var(--text-muted);
   text-transform: uppercase;
 }
 
@@ -79,7 +78,7 @@
 .listItemTitle {
   font-size: 0.8rem;
   font-weight: 600;
-  color: var(--text);
+  color: var(--text-main); /* Semantic Text */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -87,10 +86,10 @@
 
 .listItemDenom {
   font-size: 0.75rem;
-  background: var(--border-light);
+  background: var(--bg-subtle); /* Semantic Subtle */
   padding: 2px 6px;
   border-radius: 4px;
-  color: var(--text-light);
+  color: var(--text-secondary);
   white-space: nowrap;
 }
 
@@ -99,7 +98,7 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  color: var(--text-light);
+  color: var(--text-secondary); /* Semantic Secondary */
 }
 
 .metaTag {
@@ -123,14 +122,14 @@
   display: flex;
   align-items: center;
   gap: 0.25rem;
-  color: var(--owned-green);
+  color: var(--status-green-text); /* Semantic Green */
   font-weight: 600;
   font-size: 0.75rem;
 }
 
 .listPrice {
   font-weight: 700;
-  color: var(--text);
+  color: var(--text-main);
   font-size: 0.8rem;
   display: flex;
   align-items: center;
@@ -150,7 +149,6 @@
   }
 
   .coinListItem {
-    /* Increased touch target and visual separation */
     padding: 0.5rem 0.5rem !important;
     gap: 0.75rem !important;
     min-height: 80px;

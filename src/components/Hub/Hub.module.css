@@ -2,7 +2,7 @@
 
 .hubContainer {
   min-height: 100vh;
-  background-color: var(--light-bg, #ffffff);
+  background-color: var(--bg-app); /* Semantic App Background */
   display: flex;
   flex-direction: column;
 }
@@ -21,6 +21,8 @@
 }
 
 /* --- CINEMATIC CARD --- */
+/* Note: We keep hardcoded dark colors here to preserve the "Cinematic" look
+   regardless of light/dark mode. */
 .cardWrapper {
   width: 100%;
   max-width: 1400px;
@@ -30,10 +32,7 @@
   cursor: pointer;
   border-radius: 20px;
   box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.25);
-  
-  /* FIX: Falling Text Issue */
-  /* transform-style: preserve-3d; <-- REMOVED (Causes pixel snapping) */
-  will-change: transform; /* <-- ADDED (Keeps layer promoted) */
+  will-change: transform; 
 }
 
 .cardWrapper:hover {
@@ -51,7 +50,7 @@
   display: flex;
   align-items: flex-end;
   justify-content: flex-start;
-  background: #111;
+  background: #111; /* Keep Dark */
 }
 
 .cardBackground {
@@ -83,7 +82,7 @@
   font-family: var(--font-cinzel);
   font-size: 5.5rem;
   line-height: 1;
-  color: #fff;
+  color: #fff; /* Keep White */
   margin-bottom: 0.5rem;
   letter-spacing: -2px;
   font-weight: 700;
@@ -107,7 +106,7 @@
 }
 
 .statHighlight {
-  color: var(--brand-gold, #d4af37);
+  color: var(--brand-gold);
   font-weight: 800;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
@@ -147,11 +146,11 @@
   }
 }
 
-/* --- MODAL --- */
+/* --- MODAL (Selection) --- */
 .modalOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: var(--bg-modal-overlay); /* Semantic Overlay */
   backdrop-filter: blur(4px);
   z-index: 2000;
   display: flex;
@@ -165,8 +164,8 @@
   width: 100%;
   max-width: 1000px;
   height: 85vh;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
+  background: var(--bg-card); /* Semantic Card */
+  border: 1px solid var(--border);
   border-radius: 12px;
   display: flex;
   flex-direction: column;
@@ -177,45 +176,45 @@
 
 .modalHeader {
   padding: 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #f9fafb;
+  background: var(--bg-subtle); /* Semantic Subtle Header */
 }
 
 .modalTitle {
   font-family: var(--font-cinzel);
   font-size: 1.8rem;
-  color: #111827;
+  color: var(--text-main); /* Semantic Text */
 }
 
 .closeBtn {
   background: none;
   border: none;
-  color: #6b7280;
+  color: var(--text-muted); /* Semantic Muted */
   cursor: pointer;
   transition: color 0.2s;
 }
 
 .closeBtn:hover {
-  color: #000;
+  color: var(--text-main);
 }
 
 .modalBody {
   flex: 1;
   overflow-y: auto;
   padding: 2rem;
-  background: #fff;
+  background: var(--bg-card); /* Semantic Body */
 }
 
 .groupHeader {
   font-family: var(--font-cinzel);
   font-size: 1.4rem;
-  color: #374151;
+  color: var(--text-secondary); /* Semantic Secondary */
   margin-top: 2rem;
   margin-bottom: 1rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border);
   padding-bottom: 0.5rem;
   transition: color 0.2s;
 }
@@ -232,11 +231,11 @@
 }
 
 .selectionItem {
-  background: #f3f4f6;
-  border: 1px solid #e5e7eb;
+  background: var(--bg-subtle); /* Semantic Input/Item bg */
+  border: 1px solid var(--border);
   padding: 0.6rem 1.2rem;
   border-radius: 6px;
-  color: #374151;
+  color: var(--text-secondary); /* Semantic Secondary */
   cursor: pointer;
   transition: all 0.2s;
   font-size: 0.95rem;
@@ -244,7 +243,7 @@
 
 .selectionItem:hover {
   background: var(--brand-gold);
-  color: #000;
+  color: var(--text-inverse); /* Text becomes white on gold */
   border-color: var(--brand-gold);
   transform: translateY(-2px);
 }
@@ -252,7 +251,7 @@
 /* --- TIMELINE VIEW --- */
 .timelineContainer {
   /* The Spine */
-  border-left: 2px solid #e5e7eb;
+  border-left: 2px solid var(--border); /* Semantic Border */
   margin-left: 1rem;
   padding-left: 2.5rem;
   padding-top: 1rem;
@@ -267,21 +266,21 @@
 .timelineNode {
   /* The Dot */
   position: absolute;
-  left: -2.95rem; /* Desktop: Aligns with border-left (2.5 + 0.45) */
+  left: -2.95rem; /* Desktop: Aligns with border-left */
   top: 6px;
   width: 14px;
   height: 14px;
   background: var(--brand-gold);
-  border: 2px solid #fff;
+  border: 2px solid var(--bg-card); /* Border matches Card BG */
   border-radius: 50%;
-  box-shadow: 0 0 0 1px #e5e7eb; /* Subtle ring */
+  box-shadow: 0 0 0 1px var(--border); /* Subtle ring */
   z-index: 2;
 }
 
 .timelineYear {
   font-family: var(--font-cinzel);
   font-size: 1.8rem;
-  color: #111827;
+  color: var(--text-main); /* Semantic Text */
   line-height: 1;
   margin-bottom: 1.5rem;
   font-weight: 700;
@@ -290,16 +289,13 @@
 /* --- FIX: MOBILE TIMELINE (Slim Mode) --- */
 @media (max-width: 640px) {
   .timelineContainer {
-    /* Restore border, but tighter spacing */
-    border-left: 2px solid #e5e7eb; 
-    margin-left: 0; /* Flush to edge if needed, or small margin */
-    padding-left: 1.25rem; /* Reduced from 2.5rem */
+    border-left: 2px solid var(--border); 
+    margin-left: 0; 
+    padding-left: 1.25rem; 
   }
   
   .timelineNode {
-    /* Restore dot, adjust left position */
     display: block; 
-    /* Math: -1.25 (padding) - 0.45 (original offset diff) = -1.7rem */
     left: -1.7rem; 
   }
 }

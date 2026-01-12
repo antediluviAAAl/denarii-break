@@ -43,7 +43,8 @@
   font-size: 0.875rem;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  background: white;
+  background: var(--bg-card); /* Semantic Card */
+  color: var(--text-main);    /* Semantic Text */
   transition: all 0.2s;
   font-family: var(--font-cinzel), serif;
   font-weight: 500;
@@ -52,6 +53,7 @@
 .searchInput::placeholder {
   font-family: var(--font-cinzel), serif;
   opacity: 0.7;
+  color: var(--text-muted);
 }
 
 .searchInput:focus {
@@ -65,7 +67,7 @@
   right: 0.75rem;
   background: none;
   border: none;
-  color: var(--text-light);
+  color: var(--text-muted); /* Semantic Muted */
   cursor: pointer;
   padding: 0.25rem;
   border-radius: 4px;
@@ -87,7 +89,7 @@
   gap: 0.5rem;
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--text-light);
+  color: var(--text-secondary); /* Semantic Secondary */
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 0.5rem;
@@ -110,8 +112,8 @@
   font-size: 0.875rem;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  background: white;
-  color: var(--text);
+  background: var(--bg-card); /* Semantic Card */
+  color: var(--text-main);    /* Semantic Text */
   cursor: pointer;
   transition: all 0.2s;
   font-family: var(--font-cinzel), serif;
@@ -125,8 +127,8 @@
 }
 
 .filterSelect:disabled {
-  background: var(--border-light);
-  color: var(--text-light);
+  background: var(--bg-subtle); /* Semantic Subtle */
+  color: var(--text-muted);
   cursor: not-allowed;
   opacity: 0.7;
 }
@@ -138,7 +140,7 @@
   flex-wrap: nowrap;
   gap: 1rem;
   flex: 1;
-  background-color: white;
+  background-color: var(--bg-card); /* Semantic Card */
   border: 1px solid var(--border);
   border-radius: 8px;
   box-shadow: var(--shadow-sm);
@@ -151,14 +153,14 @@
 .activeFiltersLabel {
   font-size: 0.75rem;
   font-weight: 700;
-  color: var(--text);
+  color: var(--text-main); /* Semantic Text */
   display: flex;
   align-items: center;
   gap: 0.5rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   padding-right: 1rem;
-  border-right: 1px solid var(--border-light);
+  border-right: 1px solid var(--border-subtle);
   flex-shrink: 0;
   height: 100%;
   font-family: var(--font-cinzel), serif;
@@ -181,15 +183,16 @@
   display: none;
 }
 
+/* Semantic Tag Colors */
 .filterTag {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   padding: 0.2rem 0.75rem;
-  background-color: #eff6ff;
-  border: 1px solid #bfdbfe;
+  background-color: var(--tag-blue-bg);      /* Semantic Blue BG */
+  border: 1px solid var(--tag-blue-border);  /* Semantic Blue Border */
   border-radius: 20px;
-  color: var(--primary);
+  color: var(--tag-blue-text);               /* Semantic Blue Text */
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
@@ -200,8 +203,7 @@
 }
 
 .filterTag:hover {
-  background-color: #dbeafe;
-  border-color: #93c5fd;
+  background-color: var(--tag-blue-hover);
   color: var(--primary-dark);
   box-shadow: 0 2px 4px rgba(37, 99, 235, 0.1);
   transform: translateY(-1px);
@@ -210,7 +212,7 @@
 .clearAllTags {
   background: none;
   border: none;
-  color: var(--text-light);
+  color: var(--text-muted);
   font-size: 0.8rem;
   text-decoration: underline;
   cursor: pointer;
@@ -223,17 +225,17 @@
 }
 
 .clearAllTags:hover {
-  color: #ef4444;
+  color: var(--status-red-text); /* Semantic Red */
 }
 
 /* --- VIEW MODE TOGGLES --- */
 .viewToggles {
   display: flex;
   gap: 4px;
-  background: white;
+  background: var(--bg-card); /* Semantic Card */
   padding: 4px;
   border-radius: 8px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border);
   height: 46px;
   align-items: center;
   flex-shrink: 0;
@@ -245,7 +247,7 @@
   border-radius: 6px;
   cursor: pointer;
   background: transparent;
-  color: #64748b;
+  color: var(--text-muted);
   transition: all 0.2s;
   height: 100%;
   display: flex;
@@ -254,13 +256,13 @@
 }
 
 .toggleBtn.active {
-  background: #f1f5f9;
+  background: var(--bg-subtle); /* Semantic Subtle */
   color: var(--brand-gold);
   font-weight: bold;
 }
 
 .toggleBtn:hover {
-  background: #f1f5f9;
+  background: var(--bg-subtle);
 }
 
 /* --- RESPONSIVE --- */
@@ -292,7 +294,7 @@
 
   .activeFiltersLabel {
     border-right: none;
-    border-bottom: 1px solid var(--border-light);
+    border-bottom: 1px solid var(--border-subtle);
     width: 100%;
     padding-bottom: 0.5rem;
     margin-bottom: 0;

@@ -1,3 +1,4 @@
+/* src/app/layout.js */
 import { Inter, Cinzel } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
@@ -10,10 +11,10 @@ export const metadata = {
   description: "A digital collection of ancient and modern coins",
 };
 
-// Note the 'modal' prop here
 export default function RootLayout({ children, modal }) {
   return (
-    <html lang="en">
+    // Add suppressHydrationWarning here
+    <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} ${cinzel.variable}`}>
         <Providers>
           {children}

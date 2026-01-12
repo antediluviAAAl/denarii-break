@@ -6,7 +6,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: var(--bg-modal-overlay); /* Semantic Overlay */
   backdrop-filter: blur(2px);
   display: flex;
   align-items: center;
@@ -17,7 +17,7 @@
 }
 
 .modalContent {
-  background: white;
+  background: var(--bg-card); /* Semantic Card */
   border-radius: var(--radius);
   width: 100%;
   max-width: 700px;
@@ -32,7 +32,7 @@
 .modalHeader {
   padding: 1.25rem 1.5rem;
   border-bottom: 1px solid var(--border);
-  background: white;
+  background: var(--bg-card);
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -51,7 +51,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--text-light);
+  color: var(--text-secondary); /* Semantic Secondary */
   font-family: var(--font-cinzel), serif;
   margin: 0;
 }
@@ -83,7 +83,7 @@
 
 .selectionLabel {
   font-size: 0.7rem;
-  color: var(--text-light);
+  color: var(--text-secondary);
   margin-bottom: 0.25rem;
   font-weight: 600;
 }
@@ -98,7 +98,7 @@
 .currentPrice {
   font-size: 2rem;
   font-weight: 700;
-  color: var(--text);
+  color: var(--text-main); /* Semantic Text */
   font-family: var(--font-cinzel), serif;
   line-height: 1;
 }
@@ -106,7 +106,7 @@
 .selectionPrice {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--text);
+  color: var(--text-main);
   font-family: var(--font-cinzel), serif;
   line-height: 1;
 }
@@ -122,13 +122,13 @@
 }
 
 .positive {
-  color: #059669;
-  background: #d1fae5;
+  color: var(--status-green-text); /* Semantic Green */
+  background: var(--status-green-bg);
 }
 
 .negative {
-  color: #e11d48;
-  background: #ffe4e6;
+  color: var(--status-red-text); /* Semantic Red */
+  background: var(--status-red-bg);
 }
 
 /* --- CHART BODY --- */
@@ -146,14 +146,14 @@
   align-items: center;
   justify-content: center;
   height: 100%;
-  color: var(--text-light);
+  color: var(--text-muted);
   gap: 0.5rem;
 }
 
 .skeletonPrice {
   height: 32px;
   width: 120px;
-  background: #f1f5f9;
+  background: var(--skeleton-bg); /* Semantic Skeleton */
   border-radius: 4px;
   animation: pulse 1.5s infinite;
 }
@@ -162,23 +162,23 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  color: var(--text-light);
+  color: var(--text-muted);
   padding: 0.25rem;
   transition: color 0.2s;
 }
 .modalClose:hover {
-  color: var(--text);
+  color: var(--text-main);
 }
 
 /* --- FOOTER --- */
 .modalFooter {
   padding: 1rem;
-  background: var(--light-bg);
+  background: var(--bg-subtle); /* Semantic Subtle */
   border-top: 1px solid var(--border);
   display: flex;
   justify-content: center;
   gap: 0.5rem;
-  flex-wrap: wrap; /* NEW: Ensures buttons wrap on mobile */
+  flex-wrap: wrap; 
 }
 
 .rangeBtn {
@@ -186,7 +186,7 @@
   border-radius: 20px;
   border: 1px solid transparent;
   background: transparent;
-  color: var(--text-light);
+  color: var(--text-secondary);
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
@@ -195,43 +195,27 @@
 }
 
 .rangeBtn:hover {
-  background: white;
+  background: var(--bg-card);
   border-color: var(--border);
-  color: var(--text);
+  color: var(--text-main);
 }
 .rangeBtn.active {
-  background: white;
+  background: var(--bg-card);
   border-color: var(--border);
   color: var(--brand-gold);
   box-shadow: var(--shadow-sm);
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 @keyframes slideUp {
-  from {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 @keyframes pulse {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-  100% {
-    opacity: 1;
-  }
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
 }
