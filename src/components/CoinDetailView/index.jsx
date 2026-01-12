@@ -210,7 +210,7 @@ export default function CoinDetailView({
                 {displayData.year || "?"}
                 {displayData.d_series?.series_range && (
                   <span
-                    style={{ color: "var(--text-light)", fontSize: "0.85em" }}
+                    style={{ color: "var(--text-secondary)", fontSize: "0.85em" }}
                   >
                     {" "}
                     ({displayData.d_series.series_range})
