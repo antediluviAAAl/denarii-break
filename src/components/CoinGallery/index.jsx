@@ -1,12 +1,15 @@
+/* src/components/CoinGallery/index.jsx */
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import { ChevronDown, ChevronUp, Loader2 } from "lucide-react";
 import CoinCard from "../CoinCard";
 import CoinTable from "../CoinTable";
 import CoinListItem from "../CoinListItem";
 import PeriodHeader from "./PeriodHeader";
 import { useCoinGallery } from "./useCoinGallery";
+import { useGalleryNavigation } from "./useGalleryNavigation"; // NEW
+import GalleryNavigation from "./GalleryNavigation";           // NEW
 import styles from "./CoinGallery.module.css";
 
 export default function CoinGallery({
@@ -23,13 +26,31 @@ export default function CoinGallery({
     columns,
     groupedCoins,
     expandedCategories,
+    setExpandedCategories, // NEW: Needed for Nav
     collapsedPeriods,
+    setCollapsedPeriods,   // NEW: Needed for Nav
     virtualRows,
     rowVirtualizer,
     toggleCategory,
     togglePeriod,
     getCoinsByPeriod,
   } = useCoinGallery({ coins, categories, loading, viewMode, sortBy });
+
+  // --- NEW: Navigation Setup ---
+  const tocRefs = useRef({});
+  
+  const { handleScrollTo } = useGalleryNavigation({
+    viewMode,
+    loading,
+    virtualRows,
+    rowVirtualizer,
+    expandedCategories,
+    setExpandedCategories,
+    collapsedPeriods,
+    setCollapsedPeriods,
+    tocRefs,
+  });
+  // -----------------------------
 
   const handleRowBackgroundClick = (e, groupId) => {
     // Only toggle if clicking background, not interactive elements
@@ -74,6 +95,8 @@ export default function CoinGallery({
                   border: "none",
                   overflow: "visible",
                 }}
+                // --- NEW: Ref for Table Nav ---
+                ref={(el) => (tocRefs.current[`group-${group.id}`] = el)}
               >
                 <div
                   className={styles.categoryHeader}
@@ -135,6 +158,12 @@ export default function CoinGallery({
                         <div
                           key={periodGroup.id}
                           className={styles.periodGroupTable}
+                          // --- NEW: Ref for Table Nav ---
+                          ref={(el) =>
+                            (tocRefs.current[
+                              `period-${group.id}-${periodGroup.id}`
+                            ] = el)
+                          }
                         >
                           <div
                             className={styles.periodRowTable}
@@ -332,6 +361,13 @@ export default function CoinGallery({
           })}
         </div>
       )}
+
+      {/* --- NEW: Floating Navigation --- */}
+      <GalleryNavigation
+        groupedCoins={groupedCoins}
+        getCoinsByPeriod={getCoinsByPeriod}
+        onScrollTo={handleScrollTo}
+      />
     </div>
   );
 }

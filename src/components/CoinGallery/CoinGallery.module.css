@@ -5,6 +5,7 @@
   flex-direction: column;
   padding: 0px 10px 20px 10px;
   width: 100%;
+  position: relative; /* Added for relative positioning context */
 }
 
 /* --- LOADING STATE --- */
@@ -37,6 +38,9 @@
   min-height: 70px;
   box-sizing: border-box;
   background: var(--bg-card); /* Semantic Card */
+  
+  /* --- NEW: SCROLL OFFSET --- */
+  scroll-margin-top: 80px; 
 }
 
 .categoryHeader {
@@ -111,6 +115,9 @@
 
 .periodGroupTable {
   cursor: default;
+  
+  /* --- NEW: SCROLL OFFSET --- */
+  scroll-margin-top: 80px;
 }
 
 .periodRowTable {

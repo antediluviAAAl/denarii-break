@@ -1,3 +1,4 @@
+/* src/components/CoinGallery/useCoinGallery.js */
 "use client";
 
 import { useState, useEffect, useRef, useMemo } from "react";
@@ -85,7 +86,7 @@ export function useCoinGallery({
     setCollapsedPeriods((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  // --- 4. PERIOD GROUPING (Unified Sorting) ---
+  // --- 4. PERIOD GROUPING ---
   const getCoinsByPeriod = (categoryCoins) => {
     const periodMap = {};
     const noPeriodKey = "no_period";
@@ -110,7 +111,7 @@ export function useCoinGallery({
       const group = periodMap[pid];
       group.coins.push(c);
 
-      // Collect stats for "Bubble Up" sorting
+      // Collect stats
       const y = c.year || 0;
       const p = c.price_usd || 0;
       if (y < group.stats.minYear) group.stats.minYear = y;
@@ -119,38 +120,29 @@ export function useCoinGallery({
       if (p < group.stats.minPrice) group.stats.minPrice = p;
     });
 
-    // B. Sort Periods (Unified Logic)
+    // B. Sort Periods
     const sortedPeriods = Object.values(periodMap).sort((a, b) => {
-      // 1. Sort by Price
       if (sortBy === "price_desc") {
         const valA = a.stats.maxPrice;
         const valB = b.stats.maxPrice;
-        if (valA !== valB) return valB - valA; // High price first
+        if (valA !== valB) return valB - valA;
       } else if (sortBy === "price_asc") {
         const valA = a.stats.minPrice === 9999999 ? 0 : a.stats.minPrice;
         const valB = b.stats.minPrice === 9999999 ? 0 : b.stats.minPrice;
-        if (valA !== valB) return valA - valB; // Low price first
-      } 
-      
-      // 2. Sort by Year (Default or Fallback)
-      // "Bubble Up" strategy: Use the min/max year of ACTUAL coins in the group
-      // This matches Grid view behavior.
-      else if (sortBy === "year_asc") {
+        if (valA !== valB) return valA - valB;
+      } else if (sortBy === "year_asc") {
         const valA = a.stats.minYear;
         const valB = b.stats.minYear;
         if (valA !== valB) return valA - valB;
       } else {
-        // year_desc (default)
         const valA = a.stats.maxYear;
         const valB = b.stats.maxYear;
         if (valA !== valB) return valB - valA;
       }
-
-      // 3. Fallback to Period Start Year if stats are identical
       return b.startYear - a.startYear;
     });
 
-    // C. Sort Coins inside each Period
+    // C. Sort Coins
     sortedPeriods.forEach((p) => {
       p.coins.sort((coinA, coinB) => {
         const yearA = coinA.year || 0;
@@ -178,7 +170,6 @@ export function useCoinGallery({
       rows.push({ type: "header", group });
 
       if (expandedCategories[group.id]) {
-        // Pass only the coins, simplified flag no longer needed as logic is unified
         const periodGroups = getCoinsByPeriod(group.coins);
 
         periodGroups.forEach((period, pIndex) => {
@@ -234,6 +225,13 @@ export function useCoinGallery({
     },
     overscan: 5,
     scrollMargin: offsetTop,
+    // --- NEW: Custom Scroll Function (The "Bespoke Logic") ---
+    scrollToFn: (offset, canSmooth, instance) => {
+      window.scrollTo({
+        top: offset - 80, // Subtract Header Height
+        behavior: canSmooth ? "smooth" : "auto",
+      });
+    },
   });
 
   return {
@@ -241,7 +239,9 @@ export function useCoinGallery({
     columns,
     groupedCoins,
     expandedCategories,
+    setExpandedCategories, // Exported for Nav
     collapsedPeriods,
+    setCollapsedPeriods,   // Exported for Nav
     virtualRows,
     rowVirtualizer,
     toggleCategory,
