@@ -24,10 +24,13 @@ import styles from "./MarketModal.module.css";
 const RANGES = ["7D", "1M", "3M", "1Y", "3Y", "5Y"];
 const POSITIVE_COLOR = "#10b981";
 const NEGATIVE_COLOR = "#e11d48";
+const GRAMS_PER_OUNCE = 31.1035;
 
 export default function MarketModal({ onClose }) {
   const [range, setRange] = useState("3M");
   const [symbol, setSymbol] = useState("XAG");
+  // UPDATED: Default to Grams ('g')
+  const [unit, setUnit] = useState("g"); 
 
   // DRAG STATE
   const [refAreaLeft, setRefAreaLeft] = useState("");
@@ -38,12 +41,26 @@ export default function MarketModal({ onClose }) {
   const {
     data,
     loading,
-    currentPrice,
-    minPrice,
-    maxPrice,
+    currentPrice: rawCurrentPrice,
+    minPrice: rawMinPrice,
+    maxPrice: rawMaxPrice,
     percentChange,
     isPositive,
   } = useMetalHistory(symbol, range, true);
+
+  // --- UNIT CONVERSION LOGIC ---
+  const convert = (val) => (unit === "g" ? val / GRAMS_PER_OUNCE : val);
+
+  // Apply conversion to aggregate stats
+  const currentPrice = convert(rawCurrentPrice);
+  const minPrice = convert(rawMinPrice);
+  const maxPrice = convert(rawMaxPrice);
+
+  // Helper: Dynamic Precision for Grams (Silver < $1 needs 3 decimals)
+  const formatCurrency = (val) => {
+    if (unit === "g" && val < 10) return `$${val.toFixed(3)}`;
+    return `$${val.toFixed(2)}`;
+  };
 
   const mainColor = isPositive ? POSITIVE_COLOR : NEGATIVE_COLOR;
   
@@ -52,11 +69,17 @@ export default function MarketModal({ onClose }) {
 
   // --- SELECTION LOGIC ---
   let selectionStats = null;
-  let chartData = data;
+  let chartData = [];
   let selectionColor = mainColor;
 
-  const indexLeft = data.findIndex((d) => d.date === refAreaLeft);
-  const indexRight = data.findIndex((d) => d.date === refAreaRight);
+  // Apply conversion to the full dataset on every render
+  chartData = data.map((d) => ({
+    ...d,
+    price: convert(d.price),
+  }));
+
+  const indexLeft = chartData.findIndex((d) => d.date === refAreaLeft);
+  const indexRight = chartData.findIndex((d) => d.date === refAreaRight);
   const hasSelection =
     indexLeft !== -1 && indexRight !== -1 && refAreaLeft !== refAreaRight;
 
@@ -64,8 +87,8 @@ export default function MarketModal({ onClose }) {
     const minIdx = Math.min(indexLeft, indexRight);
     const maxIdx = Math.max(indexLeft, indexRight);
 
-    const selStart = data[minIdx].price;
-    const selEnd = data[maxIdx].price;
+    const selStart = chartData[minIdx].price;
+    const selEnd = chartData[maxIdx].price;
     const selChange = ((selEnd - selStart) / selStart) * 100;
     const selPositive = selChange >= 0;
 
@@ -76,12 +99,12 @@ export default function MarketModal({ onClose }) {
       end: selEnd,
       change: selChange,
       isPos: selPositive,
-      startDate: data[minIdx].date,
-      endDate: data[maxIdx].date,
+      startDate: chartData[minIdx].date,
+      endDate: chartData[maxIdx].date,
     };
 
     // Overlay Data
-    chartData = data.map((d, i) => ({
+    chartData = chartData.map((d, i) => ({
       ...d,
       selectionPrice: i >= minIdx && i <= maxIdx ? d.price : null,
     }));
@@ -111,8 +134,8 @@ export default function MarketModal({ onClose }) {
   };
 
   const titleMap = {
-    XAG: "Silver Spot Price (XAG/USD)",
-    XAU: "Gold Spot Price (XAU/USD)",
+    XAG: "Silver Spot Price",
+    XAU: "Gold Spot Price",
   };
 
   return (
@@ -122,27 +145,52 @@ export default function MarketModal({ onClose }) {
         <div className={styles.modalHeader}>
           <div className={styles.headerMain}>
             
-            {/* TOGGLE SWITCH */}
-            <div className={styles.toggleContainer}>
-              <button
-                onClick={() => setSymbol("XAG")}
-                className={`${styles.toggleBtn} ${
-                  symbol === "XAG" ? styles.activeSilver : ""
-                }`}
-              >
-                SILVER
-              </button>
-              <button
-                onClick={() => setSymbol("XAU")}
-                className={`${styles.toggleBtn} ${
-                  symbol === "XAU" ? styles.activeGold : ""
-                }`}
-              >
-                GOLD
-              </button>
+            <div className={styles.controlsRow}>
+              {/* METAL TOGGLE */}
+              <div className={styles.toggleContainer}>
+                <button
+                  onClick={() => setSymbol("XAG")}
+                  className={`${styles.toggleBtn} ${
+                    symbol === "XAG" ? styles.activeSilver : ""
+                  }`}
+                >
+                  SILVER
+                </button>
+                <button
+                  onClick={() => setSymbol("XAU")}
+                  className={`${styles.toggleBtn} ${
+                    symbol === "XAU" ? styles.activeGold : ""
+                  }`}
+                >
+                  GOLD
+                </button>
+              </div>
+
+              {/* UNIT TOGGLE */}
+              <div className={styles.toggleContainer}>
+                <button
+                  onClick={() => setUnit("oz")}
+                  className={`${styles.toggleBtn} ${
+                    unit === "oz" ? styles.activeUnit : ""
+                  }`}
+                >
+                  OUNCE
+                </button>
+                <button
+                  onClick={() => setUnit("g")}
+                  className={`${styles.toggleBtn} ${
+                    unit === "g" ? styles.activeUnit : ""
+                  }`}
+                >
+                  GRAM
+                </button>
+              </div>
             </div>
 
-            <h3 className={styles.modalTitle}>{titleMap[symbol]}</h3>
+            {/* FIXED TITLE: Always shows (Symbol/USD) regardless of Gram selection */}
+            <h3 className={styles.modalTitle}>
+              {titleMap[symbol]} ({symbol}/USD)
+            </h3>
 
             <div className={styles.statsRow}>
               {/* GLOBAL STATS */}
@@ -152,7 +200,7 @@ export default function MarketModal({ onClose }) {
                 ) : (
                   <>
                     <span className={styles.currentPrice}>
-                      ${currentPrice.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      {formatCurrency(currentPrice)}
                     </span>
                     <span
                       className={`${styles.percentBadge} ${
@@ -260,13 +308,13 @@ export default function MarketModal({ onClose }) {
                     backgroundColor: "#fff",
                   }}
                   itemStyle={{ fontWeight: 600, color: "#1f2937" }}
-                  // --- FIX 1: Explicit Grey for Date Label (Dark Mode Fix) ---
+                  // Grey text for Dark Mode date visibility
                   labelStyle={{ 
                     color: "#6b7280", 
                     fontSize: "0.75rem", 
                     marginBottom: "0.25rem" 
                   }}
-                  formatter={(value) => [`$${value.toFixed(2)}`]}
+                  formatter={(value) => [formatCurrency(value)]}
                   cursor={{
                     stroke: "#9ca3af",
                     strokeWidth: 1,
@@ -293,8 +341,7 @@ export default function MarketModal({ onClose }) {
                   fill="url(#colorSelection)"
                   animationDuration={300}
                   connectNulls
-                  // --- FIX 2: Hide this layer from Tooltip to prevent duplicate price ---
-                  tooltipType="none" 
+                  tooltipType="none" // Prevent duplicate tooltip entry
                 />
 
                 {refAreaLeft && refAreaRight && (

@@ -23,7 +23,7 @@ export default function Header({
   displayCount = 0,
   totalCoins = 264962,
   onAddCoin,
-  onOpenMarket, // <--- UPDATED PROP NAME
+  onOpenMarket,
   session,
   onLogout,
 }) {
@@ -110,15 +110,15 @@ export default function Header({
             </Link>
           )}
 
-          {/* 2. Market Spot (UPDATED) */}
+          {/* 2. Metal Spot (RENAMED) */}
           <button
             onClick={onOpenMarket}
             className={`${styles.headerActionBtn} ${styles.silverBtn}`}
-            title="View Market Prices"
+            title="View Metal Prices"
           >
             <LineChart size={20} style={{ color: "#3b82f6" }} />
             <span className={styles.statValue}>
-              <span className={styles.desktopText}>Market Spot</span>
+              <span className={styles.desktopText}>Metal Spot</span>
               <span className={styles.mobileText}>Spot</span>
             </span>
           </button>

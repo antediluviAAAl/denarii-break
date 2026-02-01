@@ -2,22 +2,22 @@
 "use client";
 
 import { useState, useEffect, Suspense } from "react";
-import { useRouter } from "next/navigation"; // Added for navigation
+import { useRouter } from "next/navigation";
 import { supabase } from "../../lib/supabaseClient";
 import Header from "../../components/Header";
 import FilterBar from "../../components/FilterBar";
 import CoinGallery from "../../components/CoinGallery";
-// CoinTable import removed (it is now handled internally by CoinGallery)
 import AddCoinModal from "../../components/AddCoinModal";
-import SilverChartModal from "../../components/SilverChartModal";
+import MarketModal from "../../components/MarketModal"; // <--- FIXED IMPORT
 import Footer from "../../components/Footer";
 import { useCoins } from "../../hooks/useCoins";
 
 function GalleryContent() {
-  const router = useRouter(); // Initialize router for navigation
+  const router = useRouter();
   const [session, setSession] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isSilverModalOpen, setIsSilverModalOpen] = useState(false);
+  // RENAMED STATE: Tracks the unified Market/Metal modal
+  const [isMarketModalOpen, setIsMarketModalOpen] = useState(false); 
   const [viewMode, setViewMode] = useState("grid");
 
   // Fetch coins: TRUE (We want data here)
@@ -71,7 +71,8 @@ function GalleryContent() {
         displayCount={coins.length}
         totalCoins={totalCoins}
         onAddCoin={() => setIsAddModalOpen(true)}
-        onOpenSilver={() => setIsSilverModalOpen(true)}
+        // UPDATED PROP: Matches the new Header API
+        onOpenMarket={() => setIsMarketModalOpen(true)}
         session={session}
         onLogout={handleLogout}
       />
@@ -97,10 +98,6 @@ function GalleryContent() {
         />
 
         <div style={{ padding: "0 1rem" }}>
-          {/* FIX: We removed the conditional 'CoinTable' render.
-             CoinGallery now handles ALL view modes (Grid, List, Table),
-             ensuring headers are applied consistently.
-          */}
           <CoinGallery
             coins={coins}
             loading={loading}
@@ -122,8 +119,9 @@ function GalleryContent() {
           />
         )}
 
-        {isSilverModalOpen && (
-          <SilverChartModal onClose={() => setIsSilverModalOpen(false)} />
+        {/* REPLACED COMPONENT: The new Metal Spot Modal */}
+        {isMarketModalOpen && (
+          <MarketModal onClose={() => setIsMarketModalOpen(false)} />
         )}
       </main>
 
@@ -132,7 +130,7 @@ function GalleryContent() {
   );
 }
 
-// The Main Page Component now just wraps the content in Suspense
+// The Main Page Component wraps the content in Suspense
 export default function GalleryPage() {
   return (
     <Suspense
