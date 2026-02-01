@@ -72,7 +72,6 @@ export default function AddCoinModal({
                             {coin.year}
                           </span>
                         </div>
-                        {/* RESTORED SUBJECT HERE */}
                         <div className={styles.resultDesc}>
                           {coin.d_denominations?.denomination_name} • {coin.d_period?.period_shorthand} • {coin.km}
                           {coin.subject && ` • ${coin.subject}`}
@@ -93,14 +92,12 @@ export default function AddCoinModal({
           {/* STEP 2: CONFIRM & UPLOAD */}
           {step === 2 && selectedCoin && (
             <form onSubmit={handleSubmit} className={styles.uploadForm}>
-              {/* Selected Coin Summary */}
               <div className={styles.selectedCoinCard}>
                 <span className={styles.selectedLabel}>Selected Coin</span>
                 <div className={styles.resultHeader}>
                   <span className={styles.coinName}>{selectedCoin.name}</span>
                   <span className={styles.periodBadge}>{selectedCoin.year}</span>
                 </div>
-                {/* Also useful to see subject here for confirmation */}
                 {selectedCoin.subject && (
                   <div className={styles.resultDesc} style={{ marginTop: '4px' }}>
                     {selectedCoin.subject}
@@ -116,15 +113,15 @@ export default function AddCoinModal({
                 </button>
               </div>
 
-              {/* Upload Fields */}
               <div className={styles.sectionGroup}>
                 <h4 className={styles.sectionTitle}>Your Collection Data</h4>
                 
                 <div className={styles.inputGroup}>
                   <label className={styles.fieldLabel}>Obverse Image</label>
+                  {/* FIX: Name is now 'obverse' */}
                   <input
                     type="file"
-                    name="image_obverse"
+                    name="obverse"
                     accept="image/*"
                     className={styles.fileInput}
                   />
@@ -132,9 +129,10 @@ export default function AddCoinModal({
 
                 <div className={styles.inputGroup}>
                   <label className={styles.fieldLabel}>Reverse Image</label>
+                  {/* FIX: Name is now 'reverse' */}
                   <input
                     type="file"
-                    name="image_reverse"
+                    name="reverse"
                     accept="image/*"
                     className={styles.fileInput}
                   />

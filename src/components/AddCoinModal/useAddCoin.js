@@ -6,20 +6,17 @@ import { supabase } from "../../lib/supabaseClient";
 import { addCoinToCollection } from "../../app/actions";
 
 export function useAddCoin(onClose, onCoinAdded, userId, initialCoin = null) {
-  // If initialCoin exists, start at Step 2 (Upload), else Step 1 (Search)
   const [step, setStep] = useState(initialCoin ? 2 : 1);
   const [selectedCoin, setSelectedCoin] = useState(initialCoin);
   
   const [searchQuery, setSearchQuery] = useState("");
   const [results, setResults] = useState([]);
   
-  // NEW: Store owned IDs in a Set for fast lookup (Fixes the crash)
   const [ownedSet, setOwnedSet] = useState(new Set());
   
   const [loading, setLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // 1. Fetch Owned Coins (IDs only) to populate the Set
   useEffect(() => {
     if (!userId) return;
 
@@ -36,7 +33,6 @@ export function useAddCoin(onClose, onCoinAdded, userId, initialCoin = null) {
     fetchOwnedIDs();
   }, [userId]);
 
-  // 2. Handle Initial Coin Prop
   useEffect(() => {
     if (initialCoin) {
       setSelectedCoin(initialCoin);
@@ -44,7 +40,6 @@ export function useAddCoin(onClose, onCoinAdded, userId, initialCoin = null) {
     }
   }, [initialCoin]);
 
-  // 3. Search Logic
   useEffect(() => {
     const timer = setTimeout(async () => {
       if (searchQuery.length < 2) {
@@ -86,6 +81,16 @@ export function useAddCoin(onClose, onCoinAdded, userId, initialCoin = null) {
       const formData = new FormData(e.target);
       formData.append("coin_id", selectedCoin.coin_id);
 
+      // --- INJECTION FIX ---
+      const fileObverse = formData.get("obverse");
+      const fileReverse = formData.get("reverse");
+      
+      const nameObverse = fileObverse?.name || "";
+      const nameReverse = fileReverse?.name || "";
+
+      formData.append("path_obverse", nameObverse);
+      formData.append("path_reverse", nameReverse);
+
       const result = await addCoinToCollection(formData);
 
       if (result.success) {
@@ -114,6 +119,6 @@ export function useAddCoin(onClose, onCoinAdded, userId, initialCoin = null) {
     handleBackToSearch,
     handleSubmit,
     isSubmitting,
-    ownedSet // Exported for the View
+    ownedSet 
   };
 }
