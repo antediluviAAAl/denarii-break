@@ -1,4 +1,4 @@
-/* src/components/SilverChartModal/index.jsx */
+/* src/components/MarketModal/index.jsx */
 "use client";
 
 import React, { useState } from "react";
@@ -18,23 +18,23 @@ import {
   ResponsiveContainer,
   ReferenceArea,
 } from "recharts";
-import { useSilverHistory } from "../../hooks/useSilverHistory";
-import styles from "./SilverChartModal.module.css";
+import { useMetalHistory } from "../../hooks/useMetalHistory";
+import styles from "./MarketModal.module.css";
 
-// Updated Ranges (Removed 10Y and ALL)
 const RANGES = ["7D", "1M", "3M", "1Y", "3Y", "5Y"];
-
 const POSITIVE_COLOR = "#10b981";
 const NEGATIVE_COLOR = "#e11d48";
 
-export default function SilverChartModal({ onClose }) {
+export default function MarketModal({ onClose }) {
   const [range, setRange] = useState("3M");
+  const [symbol, setSymbol] = useState("XAG");
 
   // DRAG STATE
   const [refAreaLeft, setRefAreaLeft] = useState("");
   const [refAreaRight, setRefAreaRight] = useState("");
   const [isSelecting, setIsSelecting] = useState(false);
 
+  // DATA FETCHING
   const {
     data,
     loading,
@@ -43,12 +43,14 @@ export default function SilverChartModal({ onClose }) {
     maxPrice,
     percentChange,
     isPositive,
-  } = useSilverHistory(range, true);
+  } = useMetalHistory(symbol, range, true);
 
   const mainColor = isPositive ? POSITIVE_COLOR : NEGATIVE_COLOR;
+  
+  // Padding prevents line from hitting top/bottom edge
   const padding = (maxPrice - minPrice) * 0.1;
 
-  // --- SELECTION CALCULATIONS ---
+  // --- SELECTION LOGIC ---
   let selectionStats = null;
   let chartData = data;
   let selectionColor = mainColor;
@@ -78,7 +80,7 @@ export default function SilverChartModal({ onClose }) {
       endDate: data[maxIdx].date,
     };
 
-    // Prepare Data for "Selection Line Overlay"
+    // Overlay Data
     chartData = data.map((d, i) => ({
       ...d,
       selectionPrice: i >= minIdx && i <= maxIdx ? d.price : null,
@@ -108,23 +110,49 @@ export default function SilverChartModal({ onClose }) {
     }
   };
 
+  const titleMap = {
+    XAG: "Silver Spot Price (XAG/USD)",
+    XAU: "Gold Spot Price (XAU/USD)",
+  };
+
   return (
     <div className={styles.modalOverlay} onClick={onClose}>
       <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
         {/* HEADER */}
         <div className={styles.modalHeader}>
           <div className={styles.headerMain}>
-            <h3 className={styles.modalTitle}>Silver Spot Price (XAG/USD)</h3>
+            
+            {/* TOGGLE SWITCH */}
+            <div className={styles.toggleContainer}>
+              <button
+                onClick={() => setSymbol("XAG")}
+                className={`${styles.toggleBtn} ${
+                  symbol === "XAG" ? styles.activeSilver : ""
+                }`}
+              >
+                SILVER
+              </button>
+              <button
+                onClick={() => setSymbol("XAU")}
+                className={`${styles.toggleBtn} ${
+                  symbol === "XAU" ? styles.activeGold : ""
+                }`}
+              >
+                GOLD
+              </button>
+            </div>
+
+            <h3 className={styles.modalTitle}>{titleMap[symbol]}</h3>
 
             <div className={styles.statsRow}>
-              {/* 1. LEFT: GLOBAL STATS */}
+              {/* GLOBAL STATS */}
               <div className={styles.globalStats}>
                 {loading && data.length === 0 ? (
-                  <div className={styles.skeletonPrice} />
+                  <div className="animate-pulse h-8 w-32 bg-gray-200 rounded" />
                 ) : (
                   <>
                     <span className={styles.currentPrice}>
-                      ${currentPrice.toFixed(2)}
+                      ${currentPrice.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </span>
                     <span
                       className={`${styles.percentBadge} ${
@@ -142,7 +170,7 @@ export default function SilverChartModal({ onClose }) {
                 )}
               </div>
 
-              {/* 2. RIGHT: SELECTION STATS */}
+              {/* SELECTION STATS */}
               {selectionStats ? (
                 <div className={styles.selectionStats}>
                   <div className={styles.selectionLabel}>
@@ -180,16 +208,25 @@ export default function SilverChartModal({ onClose }) {
 
         {/* CHART BODY */}
         <div className={styles.modalBody}>
-          {loading && data.length === 0 ? (
+          {loading && data.length === 0 && (
             <div className={styles.loaderContainer}>
               <Loader2 className="animate-spin" size={32} />
               <span>Fetching market data...</span>
             </div>
-          ) : (
+          )}
+
+          {/* Faint overlay when switching metals */}
+          {loading && data.length > 0 && (
+            <div className={styles.loadingOverlay}>
+              <Loader2 className="animate-spin text-gray-500" size={24} />
+            </div>
+          )}
+
+          {data.length > 0 && (
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart
                 data={chartData}
-                margin={{ top: 20, right: 15, left: 15, bottom: 5 }}
+                margin={{ top: 20, right: 0, left: 0, bottom: 5 }}
                 onMouseDown={handleMouseDown}
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUp}
@@ -197,36 +234,23 @@ export default function SilverChartModal({ onClose }) {
               >
                 <defs>
                   <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
-                    <stop
-                      offset="5%"
-                      stopColor={mainColor}
-                      stopOpacity={0.15}
-                    />
+                    <stop offset="5%" stopColor={mainColor} stopOpacity={0.15} />
                     <stop offset="95%" stopColor={mainColor} stopOpacity={0} />
                   </linearGradient>
 
-                  <linearGradient
-                    id="colorSelection"
-                    x1="0"
-                    y1="0"
-                    x2="0"
-                    y2="1"
-                  >
-                    <stop
-                      offset="5%"
-                      stopColor={selectionColor}
-                      stopOpacity={0.4}
-                    />
-                    <stop
-                      offset="95%"
-                      stopColor={selectionColor}
-                      stopOpacity={0}
-                    />
+                  <linearGradient id="colorSelection" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={selectionColor} stopOpacity={0.4} />
+                    <stop offset="95%" stopColor={selectionColor} stopOpacity={0} />
                   </linearGradient>
                 </defs>
 
                 <XAxis dataKey="date" hide />
-                <YAxis hide domain={[minPrice - padding, maxPrice + padding]} />
+                
+                {/* Auto-Scale YAxis */}
+                <YAxis 
+                  hide 
+                  domain={[minPrice - padding, maxPrice + padding]} 
+                />
 
                 <Tooltip
                   contentStyle={{
@@ -236,11 +260,11 @@ export default function SilverChartModal({ onClose }) {
                     backgroundColor: "#fff",
                   }}
                   itemStyle={{ fontWeight: 600, color: "#1f2937" }}
-                  labelStyle={{
-                    fontSize: "0.75rem",
-                    color: "#6b7280",
-                    fontFamily: "var(--font-cinzel)",
-                    marginBottom: "0.25rem",
+                  // --- FIX 1: Explicit Grey for Date Label (Dark Mode Fix) ---
+                  labelStyle={{ 
+                    color: "#6b7280", 
+                    fontSize: "0.75rem", 
+                    marginBottom: "0.25rem" 
                   }}
                   formatter={(value) => [`$${value.toFixed(2)}`]}
                   cursor={{
@@ -250,7 +274,6 @@ export default function SilverChartModal({ onClose }) {
                   }}
                 />
 
-                {/* LAYER 1: Base Chart */}
                 <Area
                   type="monotone"
                   dataKey="price"
@@ -261,7 +284,6 @@ export default function SilverChartModal({ onClose }) {
                   animationDuration={500}
                 />
 
-                {/* LAYER 2: Selection Overlay */}
                 <Area
                   type="monotone"
                   dataKey="selectionPrice"
@@ -271,10 +293,10 @@ export default function SilverChartModal({ onClose }) {
                   fill="url(#colorSelection)"
                   animationDuration={300}
                   connectNulls
-                  tooltipType="none"
+                  // --- FIX 2: Hide this layer from Tooltip to prevent duplicate price ---
+                  tooltipType="none" 
                 />
 
-                {/* LAYER 3: The "Curtain" */}
                 {refAreaLeft && refAreaRight && (
                   <ReferenceArea
                     x1={refAreaLeft}

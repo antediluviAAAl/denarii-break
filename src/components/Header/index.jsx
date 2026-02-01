@@ -23,7 +23,7 @@ export default function Header({
   displayCount = 0,
   totalCoins = 264962,
   onAddCoin,
-  onOpenSilver,
+  onOpenMarket, // <--- UPDATED PROP NAME
   session,
   onLogout,
 }) {
@@ -110,16 +110,16 @@ export default function Header({
             </Link>
           )}
 
-          {/* 2. Silver Spot */}
+          {/* 2. Market Spot (UPDATED) */}
           <button
-            onClick={onOpenSilver}
+            onClick={onOpenMarket}
             className={`${styles.headerActionBtn} ${styles.silverBtn}`}
-            title="View Silver Price"
+            title="View Market Prices"
           >
             <LineChart size={20} style={{ color: "#3b82f6" }} />
             <span className={styles.statValue}>
-              <span className={styles.desktopText}>Silver Spot</span>
-              <span className={styles.mobileText}>Silver</span>
+              <span className={styles.desktopText}>Market Spot</span>
+              <span className={styles.mobileText}>Spot</span>
             </span>
           </button>
 
@@ -176,7 +176,7 @@ export default function Header({
             </div>
           )}
 
-          {/* 5. Theme Toggle (Moved to End) */}
+          {/* 5. Theme Toggle */}
           <ThemeToggle className={styles.themeToggleBtn} />
           
         </div>

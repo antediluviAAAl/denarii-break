@@ -9,7 +9,7 @@ import Footer from "../Footer";
 import PreviewCard from "./PreviewCard";
 import RegionView from "./RegionView";
 import EraView from "./EraView";
-import SilverChartModal from "../SilverChartModal";
+import MarketModal from "../MarketModal"; // <--- UPDATED IMPORT
 import AddCoinModal from "../AddCoinModal";
 import { useCoins } from "../../hooks/useCoins";
 import styles from "./Hub.module.css";
@@ -25,7 +25,7 @@ export default function HubClient({ stats }) {
   const [modalType, setModalType] = useState(null);
 
   // Global Actions State
-  const [isSilverModalOpen, setIsSilverModalOpen] = useState(false);
+  const [isMarketModalOpen, setIsMarketModalOpen] = useState(false); // <--- RENAMED STATE
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   // Fetch metadata ONLY for the selection modals
@@ -38,7 +38,7 @@ export default function HubClient({ stats }) {
     total_coins: 0,
     total_countries: 0,
     total_periods: 0,
-    total_owned_coins: 0, // Ensure this field defaults safely
+    total_owned_coins: 0,
   };
 
   useEffect(() => {
@@ -63,8 +63,8 @@ export default function HubClient({ stats }) {
     <div className={styles.hubContainer}>
       <Header
         totalCoins={safeStats.total_coins}
-        ownedCount={safeStats.total_owned_coins} // --- UPDATED: Passing from Stats Table ---
-        onOpenSilver={() => setIsSilverModalOpen(true)}
+        ownedCount={safeStats.total_owned_coins}
+        onOpenMarket={() => setIsMarketModalOpen(true)} // <--- UPDATED PROP
         onAddCoin={() => setIsAddModalOpen(true)}
         session={session}
         onLogout={handleLogout}
@@ -116,8 +116,9 @@ export default function HubClient({ stats }) {
         <EraView data={metadata} onClose={() => setModalType(null)} />
       )}
 
-      {isSilverModalOpen && (
-        <SilverChartModal onClose={() => setIsSilverModalOpen(false)} />
+      {/* UPDATED MODAL COMPONENT */}
+      {isMarketModalOpen && (
+        <MarketModal onClose={() => setIsMarketModalOpen(false)} />
       )}
 
       {isAddModalOpen && session && (
