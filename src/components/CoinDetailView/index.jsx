@@ -10,12 +10,14 @@ import {
   Search,
   AlertTriangle,
   XCircle,
+  Activity, // <-- 1. Added Activity icon
 } from "lucide-react";
 import { supabase } from "../../lib/supabaseClient";
 import { useCoinModal } from "../CoinModal/useCoinModal";
 import AddCoinModal from "../AddCoinModal";
 import HighResCoinImage from "./HighResCoinImage";
 import CoinDetailSkeleton from "./CoinDetailSkeleton";
+import MarketAnalysisModal from "../MarketAnalysisModal"; // <-- 2. Imported the new modal
 import styles from "./CoinDetailView.module.css";
 
 export default function CoinDetailView({
@@ -32,6 +34,7 @@ export default function CoinDetailView({
   }, []);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isMarketModalOpen, setIsMarketModalOpen] = useState(false); // <-- 3. Added state for Market Modal
   
   const {
     data: details,
@@ -114,6 +117,21 @@ export default function CoinDetailView({
                 <CheckCircle size={20} />
               </div>
             )}
+            
+            {/* 4. Added the Market Analysis Button */}
+            <button
+              onClick={() => setIsMarketModalOpen(true)}
+              className={styles.actionBtn}
+              style={{
+                background: "#f3e8ff",
+                border: "1px solid #a855f7",
+                color: "#7e22ce",
+              }}
+              title="Market Analysis"
+            >
+              <Activity size={20} />
+            </button>
+
             <a
               href={searchUrl}
               target="_blank"
@@ -124,9 +142,11 @@ export default function CoinDetailView({
                 border: "1px solid var(--primary)",
                 color: "var(--primary)",
               }}
+              title="Google Search"
             >
               <Search size={20} />
             </a>
+            
             {session && !displayData.is_owned && (
               <button
                 onClick={() => setIsAddModalOpen(true)}
@@ -136,6 +156,7 @@ export default function CoinDetailView({
                   border: "1px solid var(--brand-gold)",
                   color: "#d97706",
                 }}
+                title="Add to Collection"
               >
                 <PlusCircle size={20} />
               </button>
@@ -306,6 +327,22 @@ export default function CoinDetailView({
           }}
           userId={session.user.id}
           initialCoin={displayData}
+        />
+      )}
+
+      {/* 5. Render the Market Analysis Modal */}
+      {isMarketModalOpen && (
+        <MarketAnalysisModal
+          isOpen={isMarketModalOpen}
+          onClose={() => setIsMarketModalOpen(false)}
+          coinData={{
+            coin_id: displayData.coin_id,
+            country: displayData.countryName || "Unknown",
+            km: displayData.km || "",
+            // Quick clean up: strip the year out of the name to pass just the nominal
+            nominal: displayData.name ? displayData.name.replace(displayData.year, "").trim() : "",
+            year: displayData.year
+          }}
         />
       )}
     </>
