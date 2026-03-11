@@ -339,8 +339,14 @@ export default function CoinDetailView({
             coin_id: displayData.coin_id,
             country: displayData.countryName || "Unknown",
             km: displayData.km || "",
-            // Quick clean up: strip the year out of the name to pass just the nominal
-            nominal: displayData.name ? displayData.name.replace(displayData.year, "").trim() : "",
+            // Proper Chunking: strip country and year to get just the face value (e.g. "5 Lei")
+            nominal: displayData.name 
+              ? displayData.name
+                  .replace(displayData.countryName, "")
+                  .replace(displayData.parentCountryName, "")
+                  .replace(displayData.year, "")
+                  .trim() 
+              : "",
             year: displayData.year
           }}
         />
