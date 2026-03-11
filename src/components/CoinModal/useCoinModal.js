@@ -28,35 +28,46 @@ async function fetchCoinDetails(coinId) {
     .eq("coin_id", coinId)
     .maybeSingle();
 
-  // 3. Country Fetch (Split Name Logic)
+  // 3. Country Fetch (Smart Hierarchy Resolution)
   let countryName = "Unknown";
   let parentCountryName = null;
+  let secondaryCountryName = null;
 
   if (coinData.period_id) {
     try {
-      const { data: linkData } = await supabase
+      // Fetch all countries linked to this period (handles overlaps like Prussia/Empire)
+      const { data: links } = await supabase
         .from("b_periods_countries")
         .select("country_id")
-        .eq("period_id", coinData.period_id)
-        .limit(1)
-        .maybeSingle();
+        .eq("period_id", coinData.period_id);
 
-      if (linkData) {
-        const { data: countryData } = await supabase
+      if (links && links.length > 0) {
+        const countryIds = links.map(l => l.country_id);
+        const { data: countries } = await supabase
           .from("d_countries")
           .select("country_name, parent_name")
-          .eq("country_id", linkData.country_id)
-          .single();
+          .in("country_id", countryIds);
 
-        if (countryData) {
-          countryName = countryData.country_name;
+        if (countries && countries.length > 0) {
+          // Clean period name: "Prussia (1871-1918)" -> "Prussia"
+          const cleanPeriod = coinData.d_period?.period_name
+            ? coinData.d_period.period_name.split('(')[0].trim().toLowerCase()
+            : "";
 
-          // Only set parent if it exists and is different from the country itself
-          if (
-            countryData.parent_name &&
-            countryData.parent_name !== countryData.country_name
-          ) {
-            parentCountryName = countryData.parent_name;
+          // Find the country that explicitly matches the period identity
+          const identityMatch = countries.find(c => 
+            c.country_name?.toLowerCase() === cleanPeriod
+          );
+
+          let mainCountry = identityMatch || countries[0];
+          
+          countryName = mainCountry.country_name;
+          parentCountryName = mainCountry.parent_name !== countryName ? mainCountry.parent_name : null;
+
+          // If there's an overlap (multiple countries), set the other as secondary
+          if (countries.length > 1) {
+            const secondary = countries.find(c => c.country_name !== countryName);
+            if (secondary) secondaryCountryName = secondary.country_name;
           }
         }
       }
@@ -88,6 +99,7 @@ async function fetchCoinDetails(coinId) {
     ...coinData,
     countryName, // "Prussia"
     parentCountryName, // "German States" (or null)
+    secondaryCountryName, // "German Empire" (or null)
     is_owned: !!ownedData,
     images: finalImages,
   };

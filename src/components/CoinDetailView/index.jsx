@@ -267,15 +267,15 @@ export default function CoinDetailView({
                 ) : (
                   <>
                     {displayData.countryName || "Unknown"}
-                    {displayData.parentCountryName && (
+                    {(displayData.secondaryCountryName || displayData.parentCountryName) && (
                       <span
                         style={{
-                          color: "var(--text-light)",
+                          color: "var(--text-secondary)",
                           fontSize: "0.85em",
                         }}
                       >
                         {" "}
-                        ({displayData.parentCountryName})
+                        ({displayData.secondaryCountryName || displayData.parentCountryName})
                       </span>
                     )}
                   </>
@@ -343,6 +343,7 @@ export default function CoinDetailView({
             nominal: displayData.name 
               ? displayData.name
                   .replace(displayData.countryName, "")
+                  .replace(displayData.secondaryCountryName, "")
                   .replace(displayData.parentCountryName, "")
                   .replace(displayData.year, "")
                   .trim() 
