@@ -17,7 +17,9 @@ import { useCoinModal } from "../CoinModal/useCoinModal";
 import AddCoinModal from "../AddCoinModal";
 import HighResCoinImage from "./HighResCoinImage";
 import CoinDetailSkeleton from "./CoinDetailSkeleton";
-import MarketAnalysisModal from "../MarketAnalysisModal"; // <-- 2. Imported the new modal
+import MarketAnalysisModal from "../MarketAnalysisModal";
+import GatheringDataModal from "../GatheringDataModal";
+import { useMarketStatus } from "../../hooks/useMarketAnalysis";
 import styles from "./CoinDetailView.module.css";
 
 export default function CoinDetailView({
@@ -34,7 +36,37 @@ export default function CoinDetailView({
   }, []);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isMarketModalOpen, setIsMarketModalOpen] = useState(false); // <-- 3. Added state for Market Modal
+  const [isMarketModalOpen, setIsMarketModalOpen] = useState(false); 
+  const [showGatheringModal, setShowGatheringModal] = useState(false);
+  const [isScanning, setIsScanning] = useState(false);
+
+  // 1. Check if market data already exists
+  const { hasData, checking: isCheckingCache } = useMarketStatus(coinId);
+  
+  // 2. Local state to track if we found data during this session
+  const [sessionHasData, setSessionHasData] = useState(false);
+  const finalHasData = hasData || sessionHasData;
+
+  // 3. Polling for background scan completion
+  useEffect(() => {
+    let pollInterval;
+    if (isScanning && !finalHasData) {
+      pollInterval = setInterval(async () => {
+        const { data: cacheData } = await supabase
+          .from('d_price_analysis')
+          .select('id')
+          .eq('coin_id', coinId)
+          .single();
+        
+        if (cacheData) {
+          setIsScanning(false);
+          setSessionHasData(true);
+          clearInterval(pollInterval);
+        }
+      }, 5000);
+    }
+    return () => clearInterval(pollInterval);
+  }, [isScanning, finalHasData, coinId]);
   
   const {
     data: details,
@@ -118,18 +150,63 @@ export default function CoinDetailView({
               </div>
             )}
             
-            {/* 4. Added the Market Analysis Button */}
+            {/* 4. The Market Analysis Button */}
             <button
-              onClick={() => setIsMarketModalOpen(true)}
-              className={styles.actionBtn}
-              style={{
+              onClick={async () => {
+                if (finalHasData) {
+                  setIsMarketModalOpen(true);
+                } else if (!isScanning) {
+                  // Trigger background scrape
+                  setShowGatheringModal(true);
+                  setIsScanning(true);
+                  try {
+                    await fetch('/api/market-analysis', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        coin_id: coinId,
+                        country: displayData.countryName || "Unknown",
+                        km: displayData.km || "",
+                        nominal: displayData.name 
+                          ? displayData.name
+                              .replace(displayData.countryName, "")
+                              .replace(displayData.secondaryCountryName || "", "")
+                              .replace(displayData.parentCountryName || "", "")
+                              .replace(displayData.year, "")
+                              .trim() 
+                          : "",
+                        year: displayData.year
+                      })
+                    });
+                  } catch (err) {
+                    console.error("Failed to trigger background scan", err);
+                    setIsScanning(false);
+                  }
+                } else {
+                  // Already scanning, just show the message again
+                  setShowGatheringModal(true);
+                }
+              }}
+              className={`
+                ${styles.actionBtn} 
+                ${!finalHasData && !isScanning ? styles.actionBtnGrey : ''} 
+                ${isScanning ? styles.actionBtnScanning : ''}
+              `}
+              style={finalHasData ? {
                 background: "#f3e8ff",
                 border: "1px solid #a855f7",
                 color: "#7e22ce",
-              }}
-              title="Market Analysis"
+              } : {}}
+              title={finalHasData 
+                ? "Market Analysis" 
+                : (isScanning ? "Scraping in progress..." : "No analysis yet - Click to scan")
+              }
             >
-              <Activity size={20} />
+              {isScanning ? (
+                <div className={styles.spinner} />
+              ) : (
+                <Activity size={20} />
+              )}
             </button>
 
             <a
@@ -330,8 +407,8 @@ export default function CoinDetailView({
         />
       )}
 
-      {/* 5. Render the Market Analysis Modal */}
-      {isMarketModalOpen && (
+      {/* 5. Render the Market Analysis Modals */}
+      {isMarketModalOpen && finalHasData && (
         <MarketAnalysisModal
           isOpen={isMarketModalOpen}
           onClose={() => setIsMarketModalOpen(false)}
@@ -339,17 +416,23 @@ export default function CoinDetailView({
             coin_id: displayData.coin_id,
             country: displayData.countryName || "Unknown",
             km: displayData.km || "",
-            // Proper Chunking: strip country and year to get just the face value (e.g. "5 Lei")
             nominal: displayData.name 
               ? displayData.name
                   .replace(displayData.countryName, "")
-                  .replace(displayData.secondaryCountryName, "")
-                  .replace(displayData.parentCountryName, "")
+                  .replace(displayData.secondaryCountryName || "", "")
+                  .replace(displayData.parentCountryName || "", "")
                   .replace(displayData.year, "")
                   .trim() 
               : "",
             year: displayData.year
           }}
+        />
+      )}
+
+      {showGatheringModal && (
+        <GatheringDataModal 
+          isOpen={showGatheringModal}
+          onClose={() => setShowGatheringModal(false)}
         />
       )}
     </>

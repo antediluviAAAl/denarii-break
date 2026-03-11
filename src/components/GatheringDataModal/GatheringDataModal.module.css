@@ -1,0 +1,83 @@
+.modalOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    padding: 1rem;
+}
+
+.modalContent {
+    background: var(--bg-card, #121212);
+    border: 1px solid var(--border, #333);
+    border-radius: 12px;
+    width: 100%;
+    max-width: 450px;
+    padding: 2rem;
+    color: var(--text-main, #fff);
+    position: relative;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.closeButton {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted, #aaa);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+
+.closeButton:hover {
+    background: var(--bg-subtle, #222);
+    color: var(--text-main, #fff);
+}
+
+.iconWrapper {
+    margin-bottom: 1.5rem;
+    color: var(--brand-gold, #f59e0b);
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(245, 158, 11, 0.1);
+    border-top-color: var(--brand-gold, #f59e0b);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.description {
+    font-size: 0.95rem;
+    color: var(--text-secondary, #aaa);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.hint {
+    font-size: 0.85rem;
+    color: var(--text-muted, #888);
+    font-style: italic;
+}

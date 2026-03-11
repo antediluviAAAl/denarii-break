@@ -1,6 +1,38 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabaseClient';
 
+export function useMarketStatus(coinId) {
+  const [hasData, setHasData] = useState(false);
+  const [checking, setChecking] = useState(true);
+
+  useEffect(() => {
+    if (!coinId) {
+      setChecking(false);
+      return;
+    }
+
+    const check = async () => {
+      try {
+        const { count, error } = await supabase
+          .from('d_price_analysis')
+          .select('*', { count: 'exact', head: true })
+          .eq('coin_id', coinId);
+
+        if (error) throw error;
+        setHasData(count > 0);
+      } catch (err) {
+        console.error('Error checking market status:', err);
+      } finally {
+        setChecking(false);
+      }
+    };
+
+    check();
+  }, [coinId]);
+
+  return { hasData, checking };
+}
+
 export function useMarketAnalysis(coinData, isOpen) {
   // status can be: 'idle', 'loading_cache', 'polling', 'success', 'error'
   const [status, setStatus] = useState('idle'); 
