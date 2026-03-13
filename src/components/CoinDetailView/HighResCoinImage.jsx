@@ -74,7 +74,7 @@ export default function HighResCoinImage({
         {!showImage && (
           <Circle
             size={16}
-            color="#ef4444" // Red (Tailwind red-500 equivalent)
+            color="var(--market-down)" // Red
             strokeWidth={2.5}
             style={{
               display: "inline-block",

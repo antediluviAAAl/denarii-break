@@ -214,7 +214,7 @@ export default function CoinGallery({
               row.type === "header"
                 ? row.group.color
                 : groupedCoins.find((g) => g.id === row.groupId)?.color;
-            const borderColor = groupColor ? groupColor.border : "#e5e7eb";
+            const borderColor = groupColor ? groupColor.border : "var(--border)";
 
             return (
               <div

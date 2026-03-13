@@ -53,7 +53,7 @@ export default function RegionView({ data, onClose }) {
         alignItems: "center",
         gap: "6px",
         minWidth: "auto",
-        border: "1px solid #e5e7eb",
+        border: "1px solid var(--border)",
       }}
       onClick={() => setIsAscending(!isAscending)}
       title={isAscending ? "Switch to Z-A" : "Switch to A-Z"}
@@ -86,7 +86,7 @@ export default function RegionView({ data, onClose }) {
                   <span
                     style={{
                       fontSize: "0.8em",
-                      color: "#9ca3af",
+                      color: "var(--text-muted)",
                       fontWeight: "400",
                       marginLeft: "6px",
                     }}
@@ -107,7 +107,7 @@ export default function RegionView({ data, onClose }) {
                       <span
                         style={{
                           fontSize: "0.85em",
-                          color: "#6b7280",
+                          color: "var(--text-secondary)",
                           marginLeft: "4px",
                         }}
                       >
@@ -140,7 +140,7 @@ export default function RegionView({ data, onClose }) {
                   <span
                     style={{
                       fontSize: "0.8em",
-                      color: "#9ca3af",
+                      color: "var(--text-muted)",
                       fontWeight: "400",
                       marginLeft: "6px",
                     }}

@@ -57,7 +57,7 @@ export default function EraView({ data, onClose }) {
         alignItems: "center",
         gap: "6px",
         minWidth: "auto",
-        border: "1px solid #e5e7eb",
+        border: "1px solid var(--border)",
       }}
       onClick={() => setIsAscending(!isAscending)}
       title={isAscending ? "Switch to Newest First" : "Switch to Oldest First"}
@@ -107,7 +107,7 @@ export default function EraView({ data, onClose }) {
                       <span
                         style={{
                           fontSize: "0.8em",
-                          color: "#9ca3af",
+                          color: "var(--text-muted)",
                           fontWeight: "400",
                           marginLeft: "6px",
                         }}
@@ -145,7 +145,7 @@ export default function EraView({ data, onClose }) {
 
         {(!groupedPeriods || groupedPeriods.length === 0) && (
           <div
-            style={{ padding: "2rem", textAlign: "center", color: "#6b7280" }}
+            style={{ padding: "2rem", textAlign: "center", color: "var(--text-secondary)" }}
           >
             Loading eras...
           </div>

@@ -11,7 +11,7 @@ export default function CoinPage({ params }) {
     <main
       style={{
         minHeight: "100vh",
-        background: "#f1f5f9",
+        background: "var(--bg-main)",
         padding: "2rem 1rem",
       }}
     >
@@ -22,7 +22,7 @@ export default function CoinPage({ params }) {
             href="/"
             style={{
               textDecoration: "none",
-              color: "#64748b",
+              color: "var(--text-secondary)",
               fontWeight: 600,
             }}
           >
@@ -33,7 +33,7 @@ export default function CoinPage({ params }) {
         {/* The Detail Card */}
         <div
           style={{
-            background: "white",
+            background: "var(--bg-card)",
             borderRadius: "var(--radius)",
             boxShadow: "var(--shadow-xl)",
             overflow: "hidden",

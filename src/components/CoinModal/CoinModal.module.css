@@ -24,7 +24,7 @@
   max-height: 90vh;
   overflow-y: auto;
   position: relative;
-  box-shadow: var(--shadow-xl);
+  box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
   animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -84,7 +84,7 @@
 
 .actionBtn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
   background: var(--bg-subtle);
   color: var(--text-main);
 }
@@ -140,7 +140,7 @@
   font-size: 0.8rem;
   font-weight: 600;
   z-index: 5;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
   color: var(--text-main);
 }
 

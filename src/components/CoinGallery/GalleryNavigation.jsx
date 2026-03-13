@@ -37,7 +37,7 @@ export default function GalleryNavigation({
           borderRadius: "50%",
           backgroundColor: "var(--brand-gold)",
           color: "var(--text-inverse)",
-          boxShadow: "0 4px 12px rgba(217, 119, 6, 0.4)",
+          boxShadow: "var(--shadow-lg)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",

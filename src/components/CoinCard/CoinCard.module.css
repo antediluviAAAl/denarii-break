@@ -96,7 +96,7 @@
   letter-spacing: 0.05em;
   pointer-events: none;
   backdrop-filter: blur(4px);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 .badgeRare {
@@ -108,9 +108,9 @@
 
 .badgeDenom {
   right: 10px;
-  background: hsla(0,1%,50%,.55); /* Keep semi-transparent dark */
+  background: var(--tag-denom-bg); /* Restored neutral balance */
   color: white;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border);
   max-width: 120px;
   white-space: nowrap;
   overflow: hidden;
@@ -132,7 +132,7 @@
 }
 
 .owned .coinImageContainer {
-  background: rgba(16, 185, 129, 0.05); /* Slight tint overlay for owned */
+  background: var(--surface-overlay); /* Standardized overlay */
 }
 
 /* Placeholder (Empty) */
@@ -189,6 +189,7 @@
   margin-top: auto;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -215,7 +216,7 @@
   /* Default Blue Gradient - Kept as is for branding */
   background: linear-gradient(
     to top,
-    rgba(37, 99, 235, 0.9) 0%,
+    var(--primary) 0%,
     transparent 100%
   );
   color: white;
@@ -239,7 +240,7 @@
 .coinCard.owned .cardBackOverlay {
   background: linear-gradient(
     to top,
-    rgba(16, 185, 129, 0.95) 0%,
+    var(--market-up) 0%,
     transparent 100%
   ) !important;
 }

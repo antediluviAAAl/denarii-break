@@ -22,8 +22,8 @@ import { useMetalHistory } from "../../hooks/useMetalHistory";
 import styles from "./MarketModal.module.css";
 
 const RANGES = ["7D", "1M", "3M", "1Y", "3Y", "5Y"];
-const POSITIVE_COLOR = "#10b981";
-const NEGATIVE_COLOR = "#e11d48";
+const POSITIVE_COLOR = "var(--market-up)";
+const NEGATIVE_COLOR = "var(--market-down)";
 const GRAMS_PER_OUNCE = 31.1035;
 
 export default function MarketModal({ onClose }) {
@@ -304,19 +304,19 @@ export default function MarketModal({ onClose }) {
                   contentStyle={{
                     borderRadius: "8px",
                     border: "none",
-                    boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-                    backgroundColor: "#fff",
+                    boxShadow: "var(--shadow-lg)",
+                    backgroundColor: "var(--bg-card)",
                   }}
-                  itemStyle={{ fontWeight: 600, color: "#1f2937" }}
+                  itemStyle={{ fontWeight: 600, color: "var(--text-main)" }}
                   // Grey text for Dark Mode date visibility
                   labelStyle={{ 
-                    color: "#6b7280", 
+                    color: "var(--text-secondary)", 
                     fontSize: "0.75rem", 
                     marginBottom: "0.25rem" 
                   }}
                   formatter={(value) => [formatCurrency(value)]}
                   cursor={{
-                    stroke: "#9ca3af",
+                    stroke: "var(--border)",
                     strokeWidth: 1,
                     strokeDasharray: "4 4",
                   }}

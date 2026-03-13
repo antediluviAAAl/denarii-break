@@ -54,7 +54,7 @@
 
 .actionBtn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
   background: var(--bg-subtle);
   color: var(--text-main);
 }
@@ -133,7 +133,7 @@
   font-size: 0.8rem;
   font-weight: 600;
   z-index: 5;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -266,7 +266,7 @@
 .spinner {
   width: 18px;
   height: 18px;
-  border: 2px solid rgba(245, 158, 11, 0.2);
+  border: 2px solid var(--border);
   border-top-color: var(--brand-gold);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;

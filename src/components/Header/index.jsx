@@ -21,7 +21,7 @@ import { formatStatNumber } from "../../utils/dataUtils";
 export default function Header({
   ownedCount = 0,
   displayCount = 0,
-  totalCoins = 264962,
+  totalCoins = 0,
   onAddCoin,
   onOpenMarket,
   session,
@@ -67,14 +67,17 @@ export default function Header({
             </Link>
 
             <div className={styles.appSubtitle}>
-              <Database size={16} className="text-gold" />
-              
-              <span style={{ fontWeight: 600 }}>
-                <span className={styles.goldNumber}>
-                  {formatStatNumber(totalCoins)}
-                </span>
-                {" coins"}
-              </span>
+              {totalCoins > 0 && (
+                <>
+                  <Database size={16} className="text-gold" />
+                  <span style={{ fontWeight: 600 }}>
+                    <span className={styles.goldNumber}>
+                      {formatStatNumber(totalCoins)}
+                    </span>
+                    {" coins"}
+                  </span>
+                </>
+              )}
 
               {ownedCount > 0 && (
                 <>
@@ -116,7 +119,7 @@ export default function Header({
             className={`${styles.headerActionBtn} ${styles.silverBtn}`}
             title="View Metal Prices"
           >
-            <LineChart size={20} style={{ color: "#3b82f6" }} />
+            <LineChart size={20} style={{ color: "var(--primary)" }} />
             <span className={styles.statValue}>
               <span className={styles.desktopText}>Metal Spot</span>
               <span className={styles.mobileText}>Spot</span>

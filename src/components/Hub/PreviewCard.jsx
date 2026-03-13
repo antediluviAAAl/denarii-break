@@ -31,7 +31,7 @@ export default function PreviewCard({
             // The Scrim: Linear gradient from transparent to black-ish
             // combined with the image URL
             backgroundImage: `
-                  linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.9) 100%),
+                  var(--hub-card-scrim),
                   url('${bgImage}')
                 `,
           }}

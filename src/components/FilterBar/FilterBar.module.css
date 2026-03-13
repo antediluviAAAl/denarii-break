@@ -59,7 +59,8 @@
 .searchInput:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  box-shadow: 0 0 0 3px var(--tag-blue-bg);
+  /* Or use a more specific ring variable if it's for focus */
 }
 
 .clearSearch {
@@ -98,7 +99,7 @@
 
 .filterLabel svg {
   color: var(--brand-gold);
-  filter: drop-shadow(0 1px 1px rgba(217, 119, 6, 0.2));
+  filter: drop-shadow(0 1px 1px var(--shadow-color));
   transition: color 0.2s ease;
 }
 
@@ -123,7 +124,7 @@
 .filterSelect:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+  box-shadow: 0 0 0 2px var(--tag-blue-bg);
 }
 
 .filterSelect:disabled {
@@ -205,7 +206,7 @@
 .filterTag:hover {
   background-color: var(--tag-blue-hover);
   color: var(--primary-dark);
-  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.1);
+  box-shadow: var(--shadow-sm);
   transform: translateY(-1px);
 }
 

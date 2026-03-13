@@ -15,7 +15,7 @@ export default async function HubPage() {
 
   return (
     <Suspense
-      fallback={<div style={{ minHeight: "100vh", backgroundColor: "#fff" }} />}
+      fallback={<div style={{ minHeight: "100vh", backgroundColor: "var(--bg-main)" }} />}
     >
       <HubClient stats={stats} />
     </Suspense>

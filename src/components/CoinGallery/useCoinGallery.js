@@ -6,12 +6,12 @@ import { useWindowVirtualizer } from "@tanstack/react-virtual";
 import { useWindowSize } from "../../hooks/useWindowSize";
 
 const CATEGORY_COLORS = [
-  { bg: "#fef3c7", border: "#f59e0b", text: "#92400e" },
-  { bg: "#fee2e2", border: "#ef4444", text: "#991b1b" },
-  { bg: "#dbeafe", border: "#3b82f6", text: "#1e40af" },
-  { bg: "#d1fae5", border: "#10b981", text: "#065f46" },
-  { bg: "#f3e8ff", border: "#8b5cf6", text: "#5b21b6" },
-  { bg: "#f1f5f9", border: "#94a3b8", text: "#475569" },
+  { bg: "var(--status-yellow-bg)", border: "var(--status-yellow-border)", text: "var(--status-yellow-text)" },
+  { bg: "var(--status-red-bg)", border: "var(--status-red-border)", text: "var(--status-red-text)" },
+  { bg: "var(--tag-blue-bg)", border: "var(--tag-blue-border)", text: "var(--tag-blue-text)" },
+  { bg: "var(--status-green-bg)", border: "var(--status-green-border)", text: "var(--status-green-text)" },
+  { bg: "var(--tag-purple-bg)", border: "var(--tag-purple-border)", text: "var(--tag-purple-text)" },
+  { bg: "var(--bg-subtle)", border: "var(--border-highlight)", text: "var(--text-secondary)" },
 ];
 
 export function useCoinGallery({

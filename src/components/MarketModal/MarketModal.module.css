@@ -84,40 +84,40 @@
 
 /* Metal States */
 .activeSilver {
-  background: #e2e8f0;
-  color: #334155;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  background: var(--skeleton-bg);
+  color: var(--text-secondary);
+  box-shadow: 0 1px 2px var(--shadow-color);
 }
 
 .activeGold {
-  background: #fef3c7;
-  color: #b45309;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  background: var(--status-yellow-bg);
+  color: var(--status-yellow-text);
+  box-shadow: 0 1px 2px var(--shadow-color);
 }
 
 /* Unit States (New) */
 .activeUnit {
   background: var(--bg-card);
   color: var(--text-main);
-  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 2px var(--shadow-color);
 }
 
 /* Dark Mode Overrides */
 @media (prefers-color-scheme: dark) {
   .toggleContainer {
-    background: rgba(255,255,255,0.05);
+    background: var(--bg-subtle);
   }
   .activeSilver {
-    background: #334155;
-    color: #f1f5f9;
+    background: var(--bg-subtle);
+    color: var(--text-secondary);
   }
   .activeGold {
-    background: #451a03;
-    color: #fbbf24;
+    background: var(--status-yellow-bg);
+    color: var(--status-yellow-text);
   }
   .activeUnit {
-    background: #334155; /* Slate 700 */
-    color: #f1f5f9;
+    background: var(--bg-subtle);
+    color: var(--text-secondary);
   }
 }
 
@@ -214,7 +214,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(255,255,255,0.5);
+  background: var(--surface-overlay);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -223,7 +223,7 @@
 }
 @media (prefers-color-scheme: dark) {
   .loadingOverlay {
-    background: rgba(0,0,0,0.5);
+    background: var(--surface-overlay);
   }
 }
 

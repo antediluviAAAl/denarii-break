@@ -29,12 +29,13 @@ export const fetchMetadata = async () => {
     return { typeId: dist.typeId, count: count || 0 };
   });
 
-  // Fetch Countries (now with coin_count column)
-  const [countries, categories, periodLinks, ...typeCountsResults] =
+  // Fetch Metadata & Stats
+  const [countries, categories, periodLinks, stats, ...typeCountsResults] =
     await Promise.all([
       supabase.from("d_countries").select("*").order("country_name"),
       supabase.from("d_categories").select("*").order("type_name"),
       supabase.from("b_periods_countries").select("period_id, country_id"),
+      supabase.from("d_stats").select("*").eq("id", 1).single(),
       ...countPromises,
     ]);
 
@@ -47,6 +48,7 @@ export const fetchMetadata = async () => {
     countries: countries.data || [],
     categories: categories.data || [],
     periodLinks: periodLinks.data || [],
+    stats: stats.data || null,
     typeCounts,
   };
 };

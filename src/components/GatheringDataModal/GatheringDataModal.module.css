@@ -1,7 +1,7 @@
 .modalOverlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.6);
+    background: var(--bg-modal-overlay);
     backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
@@ -11,15 +11,15 @@
 }
 
 .modalContent {
-    background: var(--bg-card, #121212);
-    border: 1px solid var(--border, #333);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
     border-radius: 12px;
     width: 100%;
     max-width: 450px;
     padding: 2rem;
-    color: var(--text-main, #fff);
+    color: var(--text-main);
     position: relative;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 20px 25px -5px var(--shadow-color);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -32,7 +32,7 @@
     right: 12px;
     background: transparent;
     border: none;
-    color: var(--text-muted, #aaa);
+    color: var(--text-muted);
     cursor: pointer;
     padding: 4px;
     border-radius: 50%;
@@ -40,20 +40,20 @@
 }
 
 .closeButton:hover {
-    background: var(--bg-subtle, #222);
-    color: var(--text-main, #fff);
+    background: var(--bg-subtle);
+    color: var(--text-main);
 }
 
 .iconWrapper {
     margin-bottom: 1.5rem;
-    color: var(--brand-gold, #f59e0b);
+    color: var(--brand-gold);
 }
 
 .spinner {
     width: 40px;
     height: 40px;
-    border: 3px solid rgba(245, 158, 11, 0.1);
-    border-top-color: var(--brand-gold, #f59e0b);
+    border: 3px solid var(--border);
+    border-top-color: var(--brand-gold);
     border-radius: 50%;
     animation: spin 1s linear infinite;
     margin-bottom: 1rem;
@@ -71,13 +71,13 @@
 
 .description {
     font-size: 0.95rem;
-    color: var(--text-secondary, #aaa);
+    color: var(--text-secondary);
     line-height: 1.6;
     margin-bottom: 1.5rem;
 }
 
 .hint {
     font-size: 0.85rem;
-    color: var(--text-muted, #888);
+    color: var(--text-muted);
     font-style: italic;
 }

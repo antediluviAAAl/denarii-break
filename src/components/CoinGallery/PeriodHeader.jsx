@@ -61,7 +61,7 @@ export default function PeriodHeader({
           fontSize: "0.85rem",
           // Suggestion: Use a variable for this background too if you want it dark in dark mode
           // e.g. background: "var(--bg-subtle)", 
-          background: "#f1f5f9", 
+          background: "var(--bg-main)", 
           marginLeft: "auto",
           padding: "0.25rem 0.5rem",
           whiteSpace: "nowrap",

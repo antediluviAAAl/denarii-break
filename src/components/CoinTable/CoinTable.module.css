@@ -110,7 +110,7 @@
 }
 
 .coinItemWrapper:not(:last-child) {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid var(--border);
 }
 
 .coinItemWrapper.highlight {
@@ -124,7 +124,7 @@
 }
 
 .coinItemWrapper:hover {
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: var(--bg-subtle);
 }
 
 .coinItemWrapper:active {

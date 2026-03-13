@@ -140,9 +140,9 @@ export default function CoinDetailView({
               <div
                 className={styles.actionBtn}
                 style={{
-                  background: "#d1fae5",
-                  border: "1px solid #10b981",
-                  color: "#065f46",
+                  background: "var(--status-green-bg)",
+                  border: "1px solid var(--status-green-border)",
+                  color: "var(--status-green-text)",
                   cursor: "default",
                 }}
               >
@@ -193,9 +193,9 @@ export default function CoinDetailView({
                 ${isScanning ? styles.actionBtnScanning : ''}
               `}
               style={finalHasData ? {
-                background: "#f3e8ff",
-                border: "1px solid #a855f7",
-                color: "#7e22ce",
+                background: "var(--tag-purple-bg)",
+                border: "1px solid var(--tag-purple-border)",
+                color: "var(--tag-purple-text)",
               } : {}}
               title={finalHasData 
                 ? "Market Analysis" 
@@ -215,9 +215,9 @@ export default function CoinDetailView({
               rel="noopener noreferrer"
               className={styles.actionBtn}
               style={{
-                background: "#eff6ff",
-                border: "1px solid var(--primary)",
-                color: "var(--primary)",
+                background: "var(--tag-blue-bg)",
+                border: "1px solid var(--tag-blue-border)",
+                color: "var(--tag-blue-text)",
               }}
               title="Google Search"
             >
@@ -229,9 +229,9 @@ export default function CoinDetailView({
                 onClick={() => setIsAddModalOpen(true)}
                 className={styles.actionBtn}
                 style={{
-                  background: "#fffbeb",
-                  border: "1px solid var(--brand-gold)",
-                  color: "#d97706",
+                  background: "var(--status-yellow-bg)",
+                  border: "1px solid var(--status-yellow-border)",
+                  color: "var(--status-yellow-text)",
                 }}
                 title="Add to Collection"
               >

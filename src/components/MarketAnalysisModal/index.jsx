@@ -37,9 +37,9 @@ export default function MarketAnalysisModal({ isOpen, onClose, coinData }) {
     const perc = ((price - baseVal) / baseVal) * 100;
     
     if (price > baseVal) {
-      return { perc: Math.round(perc), isOver: true, color: '#ef4444' }; // Red
+      return { perc: Math.round(perc), isOver: true, color: 'var(--market-down)' }; // Red
     } else {
-      return { perc: Math.abs(Math.round(perc)), isOver: false, color: '#10b981' }; // Green
+      return { perc: Math.abs(Math.round(perc)), isOver: false, color: 'var(--market-up)' }; // Green
     }
   };
 
@@ -88,18 +88,18 @@ export default function MarketAnalysisModal({ isOpen, onClose, coinData }) {
 
   const renderErrorState = () => (
     <div className={styles.loadingContainer}>
-      <AlertTriangle size={48} color="#ef4444" style={{marginBottom: 20}} />
-      <div className={styles.loadingText} style={{color: '#ef4444'}}>Analysis Failed</div>
+      <AlertTriangle size={48} color="var(--market-down)" style={{marginBottom: 20}} />
+      <div className={styles.loadingText} style={{color: 'var(--market-down)'}}>Analysis Failed</div>
       <div className={styles.loadingSubtext}>{error || "The market aggregator timed out or is currently unavailable."}</div>
     </div>
   );
 
   const renderCard = (item, idx) => {
     const delta = getDeltaParams(item.price_usd, item.grade);
-    let sourceColor = '#3b82f6'; // MA-Shops default blue
-    if (item.source.includes('eBay')) sourceColor = '#10b981'; // Green
-    if (item.source.includes('Okazii')) sourceColor = '#f59e0b'; // Yellow
-    if (item.source.includes('Archive') || item.source.includes('Sold')) sourceColor = '#64748b'; // Slate
+    let sourceColor = 'var(--primary)'; // MA-Shops default
+    if (item.source.includes('eBay')) sourceColor = 'var(--market-up)'; // Green
+    if (item.source.includes('Okazii')) sourceColor = 'var(--brand-gold)'; // Gold
+    if (item.source.includes('Archive') || item.source.includes('Sold')) sourceColor = 'var(--text-secondary)'; // Muted
 
     return (
       <a key={idx} href={item.item_url} className={styles.card} target="_blank" rel="noopener noreferrer">
@@ -176,7 +176,7 @@ export default function MarketAnalysisModal({ isOpen, onClose, coinData }) {
                 </div>
 
                 <div className={`${styles.kpiCard} ${styles.kpiCardSold}`}>
-                  <div className={styles.kpiHeader}><History size={18} color="#10b981"/> Historical Liquidity (Sold)</div>
+                  <div className={styles.kpiHeader}><History size={18} color="var(--market-up)"/> Historical Liquidity (Sold)</div>
                   <div className={styles.kpiGrid}>
                     <div className={styles.kpiMetric}>
                       <span className={styles.kpiLabel}>Floor</span>
@@ -184,7 +184,7 @@ export default function MarketAnalysisModal({ isOpen, onClose, coinData }) {
                     </div>
                     <div className={styles.kpiMetric}>
                       <span className={styles.kpiLabel}>Median</span>
-                      <span className={styles.kpiValue} style={{color: '#10b981'}}>${data.metrics?.sold?.median || '-'}</span>
+                      <span className={styles.kpiValue} style={{color: 'var(--market-up)'}}>${data.metrics?.sold?.median || '-'}</span>
                     </div>
                     <div className={styles.kpiMetric}>
                       <span className={styles.kpiLabel}>Record</span>
@@ -259,7 +259,7 @@ export default function MarketAnalysisModal({ isOpen, onClose, coinData }) {
 
             {/* SOLD GRID */}
             <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}><History size={20} color="#10b981"/> Historical Sold Market</h2>
+              <h2 className={styles.sectionTitle}><History size={20} color="var(--market-up)"/> Historical Sold Market</h2>
               <div className={styles.sortControls}>
                 <button 
                   className={`${styles.sortBtn} ${sortSold.key === 'date' && sortSold.dir === 'desc' ? styles.sortBtnActive : ''}`} 

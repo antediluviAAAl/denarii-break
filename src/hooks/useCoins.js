@@ -195,8 +195,9 @@ export function useCoins(options = { fetchCoins: true }) {
       categories: metaDataRaw?.categories || [],
       periods: periods || [],
       validCountryIds,
+      stats: metaDataRaw?.stats || null, // Export real stats
     },
-    totalCoins: 264962,
+    totalCoins: metaDataRaw?.stats?.total_coins || 0, 
     ownedCount: ownedDataRaw?.length || 0,
     ownedIds,
     refetch,
