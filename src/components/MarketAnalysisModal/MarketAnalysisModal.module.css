@@ -110,7 +110,6 @@
     font-weight: 600;
     font-size: 16px;
     margin-bottom: 15px;
-    color: var(--text-primary, #fff);
   }
   
   .kpiGrid {
@@ -236,7 +235,6 @@
   .sectionTitle {
     font-size: 18px;
     font-weight: 600;
-    color: var(--text-primary, #fff);
     display: flex;
     align-items: center;
     gap: 8px;
@@ -265,7 +263,6 @@
   
   .sortBtn:hover {
     background: var(--border-color, #333);
-    color: var(--text-primary, #fff);
   }
   
   .sortBtnActive {
